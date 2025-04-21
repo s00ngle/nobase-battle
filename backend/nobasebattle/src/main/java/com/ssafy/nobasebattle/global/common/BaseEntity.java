@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     @Id
-    private ObjectId id;
+    private String id;
 
     @CreatedDate
     @Field("created_at")

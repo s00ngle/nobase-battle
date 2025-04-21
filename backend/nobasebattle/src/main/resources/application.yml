@@ -13,4 +13,12 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
 
+auth:
+  jwt:
+    secretKey: asdwdasdawdasdasdasdqwdasdgretqwfsdfgsdfsefgwegweg
+    accessExp: 111111
+    refreshExp: 111111
+    header: Authorization
+    prefix: Bearer
+
 

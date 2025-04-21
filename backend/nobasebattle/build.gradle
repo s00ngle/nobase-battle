@@ -47,6 +47,8 @@ dependencies {
 	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	//property 설정
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
 }
 
