@@ -1,15 +1,17 @@
 import ThemeToggleButton from '@/components/ThemeToggleButton'
-import { transparentForm } from '@/styles/form'
+import { hover, transparentForm } from '@/styles/form'
 
 export default function Home() {
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
+    <div className="flex flex-col items-center">
       <ThemeToggleButton />
 
       <div>무근본 배틀</div>
-      <div className={`w-80 h-80 rounded-xl ${transparentForm}`}>
+      <div
+        className={`flex flex-col gap-2 w-full max-w-150 p-4 rounded-2xl ${transparentForm} ${hover}`}
+      >
         <div>test</div>
-        <div className={`w-20 h-20 rounded-xl ${transparentForm}`}>asdf</div>
+        <div className={`p-4 rounded-xl ${transparentForm} ${hover}`}>asdf</div>
       </div>
     </div>
   )

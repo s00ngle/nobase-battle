@@ -1,6 +1,6 @@
 'use client'
 
-import { transparentForm } from '@/styles/form'
+import { hover, transparentForm } from '@/styles/form'
 import { useEffect, useState } from 'react'
 
 export default function ThemeToggleButton() {
@@ -32,7 +32,7 @@ export default function ThemeToggleButton() {
     <button
       type="button"
       onClick={toggleDarkMode}
-      className={`mb-6 p-2 rounded-full ${transparentForm} transition-all duration-1000 cursor-pointer`}
+      className={`p-2 rounded-full ${transparentForm} ${hover} cursor-pointer`}
     >
       {darkMode ? '🌙' : '☀️'}
     </button>
