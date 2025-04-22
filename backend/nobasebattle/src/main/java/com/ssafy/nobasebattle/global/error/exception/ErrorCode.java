@@ -9,10 +9,14 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     /* 400 */
+    DUPLICATE_EMAIL(400, "이메일 중복입니다"),
+    DUPLICATE_USERNAME(400, "닉네임 중복입니다"),
+    LOGIN_FAILED(400, "아이디 또는 비밀번호가 일치하지 않습니다."),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_TOKEN(401, "토큰이 유효하지 않습니다."),
     EXPIRED_TOKEN(401, "토큰이 만료되었습니다."),
+
 
     /* 403 UNAUTHORIZED : 인가되지 않은 사용자 */
     REFRESH_TOKEN_EXPIRED_TOKEN(HttpStatus.FORBIDDEN.value(),"refreshToken 만료되었습니다."),

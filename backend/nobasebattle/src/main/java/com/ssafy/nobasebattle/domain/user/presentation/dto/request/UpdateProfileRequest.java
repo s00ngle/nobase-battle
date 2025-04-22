@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class TokenRefreshRequest {
+public class UpdateProfileRequest {
 
-    private String refreshToken;
+    private String nickname;
 }
