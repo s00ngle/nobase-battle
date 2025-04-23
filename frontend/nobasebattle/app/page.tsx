@@ -1,5 +1,4 @@
 import { hover, transparentForm } from '@/styles/form'
-import Link from 'next/link'
 
 export default function Home() {
   return (
@@ -11,8 +10,6 @@ export default function Home() {
         <div>test</div>
         <div className={`p-4 rounded-xl ${transparentForm} ${hover}`}>asdf</div>
       </div>
-
-      <Link href={'/test'}>TestPage</Link>
     </>
   )
 }

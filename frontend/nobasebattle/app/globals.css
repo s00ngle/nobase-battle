@@ -14,6 +14,14 @@
   --color-accent: #15d4ff;
 }
 
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   font-family: "YComputer", sans-serif;
 }
