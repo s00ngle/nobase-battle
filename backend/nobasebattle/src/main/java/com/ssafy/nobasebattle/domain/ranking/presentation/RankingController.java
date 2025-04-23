@@ -52,11 +52,11 @@ public class RankingController {
 
     @GetMapping("/text/daily/{id}")
     public Long getTextTodayRank(@PathVariable String id) {
-        return rankingService.getTextCharacterRank(id);
+        return rankingService.getTodayTextCharacterRank(id);
     }
 
     @GetMapping("/image/daily/{id}")
     public Long getImageTodayRank(@PathVariable String id) {
-        return rankingService.getImageCharacterRank(id);
+        return rankingService.getTodayImageCharacterRank(id);
     }
 }

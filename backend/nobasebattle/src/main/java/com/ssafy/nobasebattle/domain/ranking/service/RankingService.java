@@ -111,9 +111,18 @@ public class RankingService {
         return redisTemplate.opsForZSet().reverseRank(TEXT_RANKING_KEY, TEXT_RANKING_PREFIX + characterId);
     }
 
+    public Long getTodayTextCharacterRank(String characterId) {
+        return redisTemplate.opsForZSet().reverseRank(TEXT_RANKING_KEY + ":" + LocalDate.now(), TEXT_RANKING_PREFIX + characterId);
+    }
+
     public Long getImageCharacterRank(String characterId) {
         return redisTemplate.opsForZSet().reverseRank(IMAGE_RANKING_KEY, IMAGE_RANKING_PREFIX + characterId);
     }
+
+    public Long getTodayImageCharacterRank(String characterId) {
+        return redisTemplate.opsForZSet().reverseRank(IMAGE_RANKING_KEY + ":" + LocalDate.now(), IMAGE_RANKING_PREFIX + characterId);
+    }
+
 
 
     private List<RankingCharacterResponse> getFromRedisZSet(String zsetKey, String type, int count) {
