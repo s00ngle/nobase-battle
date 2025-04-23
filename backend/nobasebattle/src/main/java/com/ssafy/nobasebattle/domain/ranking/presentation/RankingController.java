@@ -1,8 +1,7 @@
 package com.ssafy.nobasebattle.domain.ranking.presentation;
 
-import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
+import com.ssafy.nobasebattle.domain.ranking.presentation.response.RankingCharacterResponse;
 import com.ssafy.nobasebattle.domain.ranking.service.RankingService;
-import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +20,22 @@ public class RankingController {
     private static final int count = 10;
 
     @GetMapping("/text/inf")
-    public List<TextCharacter> getTextRankers() {
+    public List<RankingCharacterResponse> getTextRankers() {
         return rankingService.getTextTopCharacters(count);
     }
 
     @GetMapping("/text/daily")
-    public List<TextCharacter> getTodayTextRankers() {
+    public List<RankingCharacterResponse> getTodayTextRankers() {
         return rankingService.getTodayTextTopRankers(count);
     }
 
     @GetMapping("/image/inf")
-    public List<ImageCharacter> getImageRankers() {
+    public List<RankingCharacterResponse> getImageRankers() {
         return rankingService.getImageTopCharacters(count);
     }
 
     @GetMapping("/image/daily")
-    public List<ImageCharacter> getTodayImageRankers() {
+    public List<RankingCharacterResponse> getTodayImageRankers() {
         return rankingService.getTodayImageTopRankers(count);
     }
 }
