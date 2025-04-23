@@ -34,6 +34,9 @@
       },
       "style": {
         "noUnusedTemplateLiteral": "info"
+      },
+      "a11y": {
+        "useKeyWithClickEvents": "off"
       }
     }
   },
