@@ -20,7 +20,10 @@ public enum ErrorCode {
 
     /* 404 NOT_FOUND : Resource를 찾을 수 없음 */
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
-
+    FILE_EMPTY(404,  "FILE empty"),
+    BAD_FILE_EXTENSION(404,  "FILE extension error"),
+    FILE_UPLOAD_FAIL(404,  "FILE upload fail"),
+    FILE_OVER_SIZE(404,  "FILE 크기가 10mb를 초과 하였습니다"),
 
     /* 500 */
     INTERNAL_SERVER_ERROR(500,"서버 에러");
