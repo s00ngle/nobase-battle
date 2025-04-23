@@ -1,15 +1,13 @@
 package com.ssafy.nobasebattle.domain.textcharacter.domain;
 
 import com.ssafy.nobasebattle.global.common.BaseEntity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@EqualsAndHashCode(callSuper = true)
 @Document(collection = "text_characters")
 @NoArgsConstructor
-@Data
+@Getter
 public class TextCharacter extends BaseEntity {
 
     private String name;
