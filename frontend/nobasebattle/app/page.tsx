@@ -1,3 +1,4 @@
+import InputBox from '@/components/common/InputBox'
 import { hover, transparentForm } from '@/styles/form'
 
 export default function Home() {
@@ -9,6 +10,8 @@ export default function Home() {
       >
         <div>test</div>
         <div className={`p-4 rounded-xl ${transparentForm} ${hover}`}>asdf</div>
+        <InputBox text='이메일'/>
+        <InputBox text='비밀번호'/>
       </div>
     </>
   )
