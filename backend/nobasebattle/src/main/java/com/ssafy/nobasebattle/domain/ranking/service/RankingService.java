@@ -33,10 +33,9 @@ public class RankingService {
     private static final String TEXT_RANKING_PREFIX = "text_character:";
     private static final String IMAGE_RANKING_KEY = "image_character_ranking";
     private static final String IMAGE_RANKING_PREFIX = "image_character:";
-    private static final int rate = 1000 * 60 * 60 * 24;
 
     @EventListener(ApplicationReadyEvent.class)
-    @Scheduled(fixedRate = rate)
+    @Scheduled(cron = "0 0 0 * * *")
     public void initializeRankingFromMongo() {
         List<TextCharacter> all = textCharacterRepository.findAll();
         if (all.isEmpty()) {
