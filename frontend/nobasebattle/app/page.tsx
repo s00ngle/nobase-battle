@@ -10,8 +10,8 @@ export default function Home() {
       >
         <div>test</div>
         <div className={`p-4 rounded-xl ${transparentForm} ${hover}`}>asdf</div>
-        <InputBox text='이메일'/>
-        <InputBox text='비밀번호'/>
+        <InputBox label='이메일'/>
+        <InputBox label='비밀번호'/>
       </div>
     </>
   )

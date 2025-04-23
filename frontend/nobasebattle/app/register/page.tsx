@@ -23,12 +23,12 @@ const Register = () => {
     >
       <Button text="빠른 시작" onClick={() => {}} />
       <InputBox
-        text="이메일"
+        label="이메일"
         value={email}
         onChange={emailHandler}
       />
       <InputBox
-        text="비밀번호"
+        label="비밀번호"
         type="password"
         value={password}
         onChange={passwordHandler}
