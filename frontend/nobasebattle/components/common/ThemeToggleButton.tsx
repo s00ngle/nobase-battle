@@ -3,11 +3,20 @@
 import { hover, transparentForm } from '@/styles/form'
 import { useEffect, useState } from 'react'
 
-const ThemeToggleButton = () => {
-  // 1. 기본값 true(다크모드)
-  const [darkMode, setDarkMode] = useState(true)
+function useHasMounted() {
+  const [hasMounted, setHasMounted] = useState(false)
 
-  // 2. 클라이언트에서 localStorage 값 적용
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
+
+  return hasMounted
+}
+
+const ThemeToggleButton = () => {
+  const [darkMode, setDarkMode] = useState(true)
+  const hasMounted = useHasMounted()
+
   useEffect(() => {
     const savedTheme = localStorage.getItem('darkMode')
     if (savedTheme !== null) {
@@ -15,7 +24,6 @@ const ThemeToggleButton = () => {
     }
   }, [])
 
-  // 3. darkMode 상태가 바뀔 때마다 html class와 localStorage 동기화
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark')
@@ -25,13 +33,15 @@ const ThemeToggleButton = () => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode))
   }, [darkMode])
 
-  // 4. 토글 함수
-  const toggleDarkMode = () => setDarkMode((prev) => !prev)
+  if (!hasMounted) {
+    // SSR 중에 하이드레이션 불일치를 방지하기 위해 빈 div 반환
+    return <div className={`p-2 rounded-full ${transparentForm} ${hover}`} />
+  }
 
   return (
     <button
       type="button"
-      onClick={toggleDarkMode}
+      onClick={() => setDarkMode((prev) => !prev)}
       className={`p-2 rounded-full ${transparentForm} ${hover} cursor-pointer`}
     >
       {darkMode ? '🌙' : '☀️'}
