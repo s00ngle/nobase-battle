@@ -12,6 +12,8 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(400, "이메일 중복입니다"),
     DUPLICATE_USERNAME(400, "닉네임 중복입니다"),
     LOGIN_FAILED(400, "아이디 또는 비밀번호가 일치하지 않습니다."),
+    CHARACTER_LIMIT(400, "캐릭터 생성 초과"),
+    TEXT_CHARACTER_NOT_HOST(400, "캐릭터 주인이 아닙니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_TOKEN(401, "토큰이 유효하지 않습니다."),
@@ -24,7 +26,7 @@ public enum ErrorCode {
 
     /* 404 NOT_FOUND : Resource를 찾을 수 없음 */
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
-
+    TEXT_CHARACTER_NOT_FOUND(404, "캐릭터를 찾을 수 없습니다"),
 
     /* 500 */
     INTERNAL_SERVER_ERROR(500,"서버 에러");
