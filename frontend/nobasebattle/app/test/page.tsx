@@ -1,9 +1,8 @@
 'use client'
 
 import CharacterTypeToggle from '@/components/character/CharacterTypeToggle'
+import type { CharacterType } from '@/types/CharacterType'
 import { useState } from 'react'
-
-type CharacterType = 'text' | 'image'
 
 const TestPage = () => {
   const [selectedType, setSelectedType] = useState<CharacterType>('text')
