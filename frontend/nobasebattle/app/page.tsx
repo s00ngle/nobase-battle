@@ -1,4 +1,4 @@
-import ThemeToggleButton from '@/components/ThemeToggleButton'
+import ThemeToggleButton from '@/components/common/ThemeToggleButton'
 import { hover, transparentForm } from '@/styles/form'
 
 export default function Home() {
