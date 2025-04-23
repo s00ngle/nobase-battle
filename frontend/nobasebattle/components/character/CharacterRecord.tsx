@@ -1,0 +1,36 @@
+interface RecordProps {
+  totalBattles: number;
+  wins: number;
+  losses: number;
+  draws: number;
+}
+
+const CharacterRecord = ({
+  totalBattles,
+  wins,
+  losses,
+  draws,
+}: RecordProps) => {
+  return (
+    <div className="flex gap-8">
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-base">배틀 수</span>
+        <span className="text-lg">{totalBattles}</span>
+      </div>
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-base">승리</span>
+        <span className="text-lg text-green-500">{wins}</span>
+      </div>
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-base">패배</span>
+        <span className="text-lg text-red-500">{losses}</span>
+      </div>
+      <div className="flex flex-col items-center gap-3">
+        <span className="text-base">무승부</span>
+        <span className="text-lg">{draws}</span>
+      </div>
+    </div>
+  );
+};
+
+export default CharacterRecord;
