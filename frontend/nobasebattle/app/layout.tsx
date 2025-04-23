@@ -15,7 +15,7 @@ export default function RootLayout({
     <html lang="ko">
       <body
         className={
-          'bg-white transition-all duration-300 p-8 dark:bg-gray-700 text-gray-800 dark:text-gray-200 antialiased'
+          'bg-white transition-all duration-300 px-6 py-20 min-w-[330px] min-h-svh dark:bg-gray-700 text-gray-800 dark:text-gray-200 antialiased'
         }
       >
         {children}
