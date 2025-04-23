@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -59,6 +62,13 @@ public class TextCharacterService {
         TextCharacter textCharacter = queryTextCharacter(textCharacterId);
         textCharacter.validUserIsHost(currentUserId);
         return getTextCharacterResponse(textCharacter);
+    }
+
+    public List<TextCharacterResponse> findAllUsersTextCharacter() {
+
+        String currentUserId = SecurityUtils.getCurrentUserId();
+        List<TextCharacter> characters = textCharacterRepository.findByUserId(currentUserId);
+        return characters.stream().map(this::getTextCharacterResponse).collect(Collectors.toList());
     }
 
     private TextCharacter queryTextCharacter(String id) {

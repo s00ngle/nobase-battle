@@ -7,6 +7,8 @@ import com.ssafy.nobasebattle.domain.textcharacter.service.TextCharacterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("/api/v1/characters/text")
 @RequiredArgsConstructor
 @RestController
@@ -37,5 +39,9 @@ public class TextCharacterController {
         return textCharacterService.getTextCharacterDetail(textCharacterId);
     }
 
-    
+    @GetMapping
+    public List<TextCharacterResponse> findUserTextCharacter() {
+        return textCharacterService.findAllUsersTextCharacter();
+    }
+
 }
