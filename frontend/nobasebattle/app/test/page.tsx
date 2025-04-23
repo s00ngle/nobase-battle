@@ -1,21 +1,19 @@
-import BadgeList from '@/components/common/BadgeList'
-import type { BadgeType } from '@/types/Badge'
+import CharacterInfo from "@/components/character/CharacterInfo";
+import CharacterItem from "@/components/character/CharacterItem";
+import { characterData } from "@/data/characterInfo";
 
 const TestPage = () => {
-  const badgeList: BadgeType[] = [
-    { text: '제1회 토너먼트 우승자', bgColor: 'accent' },
-    { text: '무근본상1', bgColor: 'red' },
-    { text: '무근본상2', bgColor: 'yellow' },
-    { text: '제2회 토너먼트 우승자', bgColor: 'green' },
-  ]
-
+  const data = characterData;
   return (
-    <>
-      <div className="text-5xl">Test Page</div>
+    <div>
+      <CharacterInfo
+        character={
+          <CharacterItem nickname={data.name} description={data.prompt} />
+        }
+        data={data}
+      />
+    </div>
+  );
+};
 
-      <BadgeList badges={badgeList} />
-    </>
-  )
-}
-
-export default TestPage
+export default TestPage;
