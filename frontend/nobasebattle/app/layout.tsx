@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import ThemeToggleButton from '@/components/common/ThemeToggleButton'
+import Header from '@/components/layout/Header'
 
 export const metadata: Metadata = {
   title: '무근본 배틀',
@@ -19,7 +19,7 @@ export default function RootLayout({
           'flex flex-col items-center bg-white transition-all duration-300 px-6 py-20 min-w-[330px] min-h-svh dark:bg-gray-700 text-gray-800 dark:text-gray-200 antialiased'
         }
       >
-        <ThemeToggleButton />
+        <Header />
         {children}
       </body>
     </html>

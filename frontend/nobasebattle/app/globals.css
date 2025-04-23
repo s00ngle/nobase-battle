@@ -10,6 +10,10 @@
   font-display: swap;
 }
 
+@theme {
+  --color-accent: #15d4ff;
+}
+
 body {
   font-family: "YComputer", sans-serif;
 }
