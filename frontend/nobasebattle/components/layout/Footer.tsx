@@ -24,7 +24,9 @@ const OptionList = [
 
 const Footer = () => {
   return (
-    <div className={`flex w-full justify-center fixed bottom-0 ${transparentForm}`}>
+    <div
+      className={`flex w-full justify-center fixed bottom-0 backdrop-blur-sm ${transparentForm}`}
+    >
       {OptionList.map((option) => (
         <Option key={option.link} text={option.text} link={option.link} />
       ))}
