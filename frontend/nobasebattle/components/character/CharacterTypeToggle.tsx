@@ -1,7 +1,7 @@
 'use client'
 
+import type { CharacterType } from '@/types/CharacterType'
 import CharacterTypeButton from './CharacterTypeButton'
-type CharacterType = 'text' | 'image'
 
 interface CharacterTypeToggleProps {
   selectedType: CharacterType
