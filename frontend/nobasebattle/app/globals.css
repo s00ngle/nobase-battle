@@ -1,6 +1,19 @@
 @import "tailwindcss";
 @custom-variant dark (&:is(.dark *));
 
+@font-face {
+  font-family: "YComputer";
+  src: url("/fonts/Ycomputer.ttf") format("truetype"), url("/fonts/Ycomputer.otf")
+    format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: "YComputer", sans-serif;
+}
+
 /* :root {
   --background: white;
   --foreground: black;
