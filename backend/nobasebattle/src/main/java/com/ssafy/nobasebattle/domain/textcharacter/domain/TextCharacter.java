@@ -47,4 +47,16 @@ public class TextCharacter extends BaseEntity {
         this.name = updateTextCharacterRequest.getName();
         this.prompt = updateTextCharacterRequest.getPrompt();
     }
+
+    public double calculateWinRate() {
+        int w = wins != null ? wins : 0;
+        int l = losses != null ? losses : 0;
+        int d = draws != null ? draws : 0;
+        int totalGames = w + l + d;
+        if (totalGames == 0) {
+            return 0.0;
+        }
+        double winRate = (double) w / totalGames * 100.0;
+        return (int) Math.floor(winRate);
+    }
 }

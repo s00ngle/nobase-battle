@@ -17,9 +17,9 @@ public class TextCharacterResponse {
     private Integer eloScore;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+    private Double winRate;
     // private HostInfoDto hostInfo;
     // private Boolean isOwner;
-
 
     public TextCharacterResponse(TextCharacter character) {
         this.TextCharacterId = character.getId();
@@ -31,6 +31,7 @@ public class TextCharacterResponse {
         this.eloScore = character.getEloScore();
         this.createAt = character.getCreatedAt();
         this.updateAt = character.getUpdatedAt();
+        this.winRate = character.calculateWinRate();
     }
 }
 

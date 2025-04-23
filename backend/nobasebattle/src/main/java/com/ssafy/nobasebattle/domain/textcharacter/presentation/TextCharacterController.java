@@ -32,4 +32,10 @@ public class TextCharacterController {
         return textCharacterService.updateEssay(textCharacterId, updateTextCharacterRequest);
     }
 
+    @GetMapping("/{id}")
+    public TextCharacterResponse getTextCharacterDetail(@PathVariable("id") String textCharacterId) {
+        return textCharacterService.getTextCharacterDetail(textCharacterId);
+    }
+
+    
 }

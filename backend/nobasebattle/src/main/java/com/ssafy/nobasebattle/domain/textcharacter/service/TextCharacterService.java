@@ -53,6 +53,14 @@ public class TextCharacterService {
         return getTextCharacterResponse(textCharacter);
     }
 
+    public TextCharacterResponse getTextCharacterDetail(String textCharacterId) {
+
+        String currentUserId = SecurityUtils.getCurrentUserId();
+        TextCharacter textCharacter = queryTextCharacter(textCharacterId);
+        textCharacter.validUserIsHost(currentUserId);
+        return getTextCharacterResponse(textCharacter);
+    }
+
     private TextCharacter queryTextCharacter(String id) {
         return textCharacterRepository
                 .findById(id)
