@@ -11,8 +11,8 @@ const data: Character[] = [
   { nickname: '김선명', description: '원내동 CU 야외 벤치 수호자' },
   { nickname: '김용순', description: '죽동 자택 경비원 지망생' },
   { nickname: '이해수', description: '관저 95 이해솔 동생' },
-  { nickname: '상승규', description: '집에 가고싶다' },
-  { nickname: '김찬우', description: '집에 가고싶다' },
+  { nickname: '김찬우', description: '청량중 이니에스타' },
+  { nickname: '상승규', description: '만년중 급식차 라이더' },
   { nickname: '신동운', description: '집에 가고싶다' },
 ]
 
