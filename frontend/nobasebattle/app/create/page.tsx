@@ -27,7 +27,12 @@ const CreatePage = () => {
       className={`flex flex-col gap-6 w-full max-w-150 p-4 rounded-2xl ${transparentForm} ${hover}`}
     >
       <div className="text-xl">새 캐릭터 만들기</div>
-      <InputBox label="캐릭터 이름(최대 20글자)" value={name} onChange={nameHandler} />
+      <InputBox
+        label="캐릭터 이름(최대 20글자)"
+        value={name}
+        onChange={nameHandler}
+        maxLength={20}
+      />
       <TextArea label="캐릭터 설명" value={description} onChange={descriptionHandler} />
       <Button text="캐릭터 생성" border={true} onClick={handleCreate} />
     </div>
