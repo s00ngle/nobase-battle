@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="ko">
       <body
         className={
-          'flex flex-col items-center bg-white transition-all duration-300 px-6 py-20 min-w-[330px] min-h-svh dark:bg-gray-700 text-gray-800 dark:text-gray-200 antialiased'
+          'flex flex-col items-center bg-white transition-colors duration-300 px-6 py-20 min-w-[330px] min-h-svh dark:bg-gray-700 text-gray-800 dark:text-gray-200 antialiased'
         }
       >
         <Header />
