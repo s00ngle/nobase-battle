@@ -7,7 +7,5 @@ public class FileEmptyException extends NoBaseBattleException {
 
     public static final NoBaseBattleException EXCEPTION = new FileEmptyException();
 
-    private FileEmptyException() {
-        super(ErrorCode.FILE_EMPTY);
-    }
+    private FileEmptyException() { super(ErrorCode.FILE_EMPTY); }
 }

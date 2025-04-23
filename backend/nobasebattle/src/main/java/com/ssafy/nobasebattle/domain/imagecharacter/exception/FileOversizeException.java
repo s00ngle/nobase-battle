@@ -7,7 +7,5 @@ public class FileOversizeException extends NoBaseBattleException {
 
     public static final NoBaseBattleException EXCEPTION = new FileOversizeException();
 
-    private FileOversizeException() {
-        super(ErrorCode.FILE_OVER_SIZE);
-    }
+    private FileOversizeException() { super(ErrorCode.FILE_OVER_SIZE); }
 }

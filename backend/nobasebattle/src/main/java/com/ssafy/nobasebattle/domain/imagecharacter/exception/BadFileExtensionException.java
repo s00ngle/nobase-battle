@@ -7,7 +7,5 @@ public class BadFileExtensionException extends NoBaseBattleException {
 
     public static final NoBaseBattleException EXCEPTION = new BadFileExtensionException();
 
-    private BadFileExtensionException() {
-        super(ErrorCode.BAD_FILE_EXTENSION);
-    }
+    private BadFileExtensionException() { super(ErrorCode.BAD_FILE_EXTENSION); }
 }
