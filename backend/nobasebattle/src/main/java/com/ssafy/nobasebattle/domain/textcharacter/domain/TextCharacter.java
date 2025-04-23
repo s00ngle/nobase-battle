@@ -1,6 +1,7 @@
 package com.ssafy.nobasebattle.domain.textcharacter.domain;
 
 import com.ssafy.nobasebattle.global.common.BaseEntity;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 public class TextCharacter extends BaseEntity {
 
+    private String userId;
     private String name;
     private String prompt;
     private Integer wins;
@@ -17,4 +19,15 @@ public class TextCharacter extends BaseEntity {
     private Integer draws;
     private Integer eloScore;
 //    private String colorRank;
+
+    @Builder
+    public TextCharacter(String userId, String name, String prompt, Integer wins, Integer losses, Integer draws, Integer eloScore) {
+        this.userId = userId;
+        this.name = name;
+        this.prompt = prompt;
+        this.wins = wins;
+        this.losses = losses;
+        this.draws = draws;
+        this.eloScore = eloScore;
+    }
 }

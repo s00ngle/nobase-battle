@@ -9,4 +9,7 @@ import org.springframework.data.mongodb.repository.Query;
 public interface TextCharacterRepository extends MongoRepository<TextCharacter, String> {
     @Query("{ 'createdAt' : { $gte: ?0, $lt: ?1 } }")
     List<TextCharacter> findByCreatedAtBetween(LocalDateTime createdAtAfter, LocalDateTime createdAtBefore);
+
+    long countByUserId(String userId);
+
 }
