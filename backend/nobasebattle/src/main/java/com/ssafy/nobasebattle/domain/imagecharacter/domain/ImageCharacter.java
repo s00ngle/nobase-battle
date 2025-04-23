@@ -1,10 +1,12 @@
 package com.ssafy.nobasebattle.domain.imagecharacter.domain;
 
 import com.ssafy.nobasebattle.global.common.BaseEntity;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "image_characters")
+@Getter
 @NoArgsConstructor
 public class ImageCharacter extends BaseEntity {
 
