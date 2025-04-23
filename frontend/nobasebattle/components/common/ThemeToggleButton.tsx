@@ -3,7 +3,7 @@
 import { hover, transparentForm } from '@/styles/form'
 import { useEffect, useState } from 'react'
 
-export default function ThemeToggleButton() {
+const ThemeToggleButton = () => {
   // 1. 기본값 true(다크모드)
   const [darkMode, setDarkMode] = useState(true)
 
@@ -38,3 +38,5 @@ export default function ThemeToggleButton() {
     </button>
   )
 }
+
+export default ThemeToggleButton
