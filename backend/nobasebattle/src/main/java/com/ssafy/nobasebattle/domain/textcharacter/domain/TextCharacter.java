@@ -1,5 +1,6 @@
 package com.ssafy.nobasebattle.domain.textcharacter.domain;
 
+import com.ssafy.nobasebattle.domain.textcharacter.exception.NotTextCharacterHostException;
 import com.ssafy.nobasebattle.global.common.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,5 +30,15 @@ public class TextCharacter extends BaseEntity {
         this.losses = losses;
         this.draws = draws;
         this.eloScore = eloScore;
+    }
+
+    public void validUserIsHost(String id) {
+        if (!checkUserIsHost(id)) {
+            throw NotTextCharacterHostException.EXCEPTION;
+        }
+    }
+
+    public Boolean checkUserIsHost(String id) {
+        return userId.equals(id);
     }
 }

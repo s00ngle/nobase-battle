@@ -4,10 +4,7 @@ import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.request.Crea
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.response.TextCharacterResponse;
 import com.ssafy.nobasebattle.domain.textcharacter.service.TextCharacterService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/characters/text")
 @RequiredArgsConstructor
@@ -21,5 +18,9 @@ public class TextCharacterController {
         return textCharacterService.createTextCharacter(characterRequest);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteEssay(@PathVariable("id") String textCharacterId) {
+        textCharacterService.deleteTextCharacter(textCharacterId);
+    }
 
 }

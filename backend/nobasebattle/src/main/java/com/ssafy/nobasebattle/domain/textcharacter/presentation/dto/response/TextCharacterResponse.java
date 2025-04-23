@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 public class TextCharacterResponse {
 
+    private String TextCharacterId;
     private String name;
     private String prompt;
     private Integer wins;
@@ -21,6 +22,7 @@ public class TextCharacterResponse {
 
 
     public TextCharacterResponse(TextCharacter character) {
+        this.TextCharacterId = character.getId();
         this.name = character.getName();
         this.prompt = character.getPrompt();
         this.wins = character.getWins();

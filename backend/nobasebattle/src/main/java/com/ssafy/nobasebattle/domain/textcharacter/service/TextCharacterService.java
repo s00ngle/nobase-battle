@@ -3,6 +3,7 @@ package com.ssafy.nobasebattle.domain.textcharacter.service;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.repository.TextCharacterRepository;
 import com.ssafy.nobasebattle.domain.textcharacter.exception.CharacterLimitExceededException;
+import com.ssafy.nobasebattle.domain.textcharacter.exception.TextCharacterNotFoundException;
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.request.CreateTextCharacterRequest;
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.response.TextCharacterResponse;
 import com.ssafy.nobasebattle.domain.user.domain.User;
@@ -31,6 +32,21 @@ public class TextCharacterService {
         TextCharacter textCharacter = makeEssay(createTextCharacterRequest, user);
         textCharacterRepository.save(textCharacter);
         return getTextCharacterResponse(textCharacter);
+    }
+
+
+    public void deleteTextCharacter(String textCharacterId){
+
+        User user = userUtils.getUserFromSecurityContext();
+        TextCharacter textCharacter = queryTextCharacter(textCharacterId);
+        textCharacter.validUserIsHost(user.getId());
+        textCharacterRepository.delete(textCharacter);
+    }
+
+    private TextCharacter queryTextCharacter(String id) {
+        return textCharacterRepository
+                .findById(id)
+                .orElseThrow(()-> TextCharacterNotFoundException.EXCEPTION);
     }
 
     private TextCharacter makeEssay(CreateTextCharacterRequest createTextCharacterRequest, User user){
