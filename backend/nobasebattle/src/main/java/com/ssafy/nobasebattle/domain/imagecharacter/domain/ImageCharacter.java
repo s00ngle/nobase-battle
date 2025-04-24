@@ -47,6 +47,22 @@ public class ImageCharacter extends BaseEntity {
         return userId.equals(id);
     }
 
+    public void updateWins(Integer wins) {
+        this.wins = wins;
+    }
+
+    public void updateLosses(Integer losses) {
+        this.losses = losses;
+    }
+
+    public void updateDraws(Integer draws) {
+        this.draws = draws;
+    }
+
+    public void updateEloScore(Integer eloScore) {
+        this.eloScore = eloScore;
+    }
+
     public void updateName(UpdateImageCharacterRequest updateImageCharacterRequest) {
         this.name = updateImageCharacterRequest.getName();
     }

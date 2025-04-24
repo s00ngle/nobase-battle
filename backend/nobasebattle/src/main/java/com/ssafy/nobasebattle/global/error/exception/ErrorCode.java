@@ -15,6 +15,9 @@ public enum ErrorCode {
     CHARACTER_LIMIT(400, "캐릭터 생성 초과"),
     TEXT_CHARACTER_NOT_HOST(400, "캐릭터 주인이 아닙니다"),
     IMAGE_CHARACTER_NOT_HOST(400, "캐릭터 주인이 아닙니다"),
+    INVALID_BATTLE_MODE(400, "유효하지 않은 배틀 모드입니다."),
+    OPPONENT_REQUIRED(400, "CHALLENGE 모드에서는 상대 캐릭터 ID가 필요합니다."),
+    BATTLE_AGAINST_SELF(400, "자신의 캐릭터끼리 배틀할 수 없습니다."),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_TOKEN(401, "토큰이 유효하지 않습니다."),
