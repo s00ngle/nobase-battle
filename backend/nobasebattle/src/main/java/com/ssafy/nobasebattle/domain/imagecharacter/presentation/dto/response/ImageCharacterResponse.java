@@ -17,6 +17,7 @@ public class ImageCharacterResponse {
     private Integer totalBattles;
     private Double winRate;
     private Integer eloScore;
+    private LocalDateTime lastBattleTime;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     // private HostInfoDto hostInfo;
@@ -32,6 +33,7 @@ public class ImageCharacterResponse {
         this.totalBattles = character.calculateTotalBattles();
         this.winRate = character.calculateWinRate();
         this.eloScore = character.getEloScore();
+        this.lastBattleTime = character.getLastBattleTime();
         this.createAt = character.getCreatedAt();
         this.updateAt = character.getUpdatedAt();
     }

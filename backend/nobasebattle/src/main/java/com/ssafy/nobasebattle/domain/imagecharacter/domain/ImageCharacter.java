@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Document(collection = "image_characters")
 @Getter
 @NoArgsConstructor
@@ -20,10 +22,11 @@ public class ImageCharacter extends BaseEntity {
     private Integer losses;
     private Integer draws;
     private Integer eloScore;
+    private LocalDateTime lastBattleTime;
 //    private String colorRank;
 
     @Builder
-    public ImageCharacter(String userId, String name, String imageUrl, Integer wins, Integer losses, Integer draws, Integer eloScore) {
+    public ImageCharacter(String userId, String name, String imageUrl, Integer wins, Integer losses, Integer draws, Integer eloScore, LocalDateTime lastBattleTime) {
         this.userId = userId;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -31,6 +34,7 @@ public class ImageCharacter extends BaseEntity {
         this.losses = losses;
         this.draws = draws;
         this.eloScore = eloScore;
+        this.lastBattleTime = lastBattleTime;
     }
 
     public void validUserIsHost(String id) {
@@ -41,6 +45,22 @@ public class ImageCharacter extends BaseEntity {
 
     public Boolean checkUserIsHost(String id) {
         return userId.equals(id);
+    }
+
+    public void updateWins(Integer wins) {
+        this.wins = wins;
+    }
+
+    public void updateLosses(Integer losses) {
+        this.losses = losses;
+    }
+
+    public void updateDraws(Integer draws) {
+        this.draws = draws;
+    }
+
+    public void updateEloScore(Integer eloScore) {
+        this.eloScore = eloScore;
     }
 
     public void updateName(UpdateImageCharacterRequest updateImageCharacterRequest) {

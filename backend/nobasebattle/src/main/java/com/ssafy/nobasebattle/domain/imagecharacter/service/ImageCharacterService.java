@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,6 +114,7 @@ public class ImageCharacterService {
                 .losses(0)
                 .draws(0)
                 .eloScore(0)
+                .lastBattleTime(LocalDateTime.now().minusMinutes(2))
                 .build();
     }
 
