@@ -37,30 +37,55 @@ public class RankingService {
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(cron = "0 0 0 * * *")
     public void initializeRankingFromMongo() {
-        List<TextCharacter> all = textCharacterRepository.findAll();
-        if (all.isEmpty()) {
+        LocalDateTime start = LocalDate.now().atStartOfDay();
+        LocalDateTime end = start.plusDays(1);
+        String todayTextKey = TEXT_RANKING_KEY + ":" + LocalDate.now();
+        String todayImageKey = IMAGE_RANKING_KEY + ":" + LocalDate.now();
+
+        List<TextCharacter> allText = textCharacterRepository.findAll();
+        if (allText.isEmpty()) {
             log.info("No text characters found");
         }
+        List<TextCharacter> todayTextRank = textCharacterRepository.findByCreatedAtBetween(start, end);
+        if (todayTextRank.isEmpty()) {
+            log.info("No Today text characters found");
+        }
+        List<ImageCharacter> allImage = imageCharacterRepository.findAll();
+        if (allImage.isEmpty()) {
+            log.info("No Image characters found");
+        }
+        List<ImageCharacter> todayImageRank = imageCharacterRepository.findByCreatedAtBetween(start, end);
+        if (todayImageRank.isEmpty()) {
+            log.info("No Today text characters found");
+        }
 
-        for (TextCharacter character : all) {
+        for (TextCharacter character : allText) {
             if (character.getEloScore() != null) {
-                log.info("all characters : {}", character.getName());
                 String redisKey = TEXT_RANKING_PREFIX + character.getId();
                 redisTemplate.opsForZSet().add(TEXT_RANKING_KEY, redisKey, character.getEloScore());
                 redisTemplate.opsForValue().set(redisKey, character);
             }
         }
 
-        LocalDateTime start = LocalDate.now().atStartOfDay();
-        LocalDateTime end = start.plusDays(1);
-        String todayKey = TEXT_RANKING_KEY + ":" + LocalDate.now();
-
-        List<TextCharacter> todayRank = textCharacterRepository.findByCreatedAtBetween(start, end);
-        for (TextCharacter character : todayRank) {
+        for (ImageCharacter character : allImage) {
             if (character.getEloScore() != null) {
-                log.info("today characters : {}", character.getName());
+                String redisKey = IMAGE_RANKING_PREFIX + character.getId();
+                redisTemplate.opsForZSet().add(IMAGE_RANKING_KEY, redisKey, character.getEloScore());
+                redisTemplate.opsForValue().set(redisKey, character);
+            }
+        }
+
+        for (TextCharacter character : todayTextRank) {
+            if (character.getEloScore() != null) {
                 String redisKey = TEXT_RANKING_PREFIX + character.getId();
-                redisTemplate.opsForZSet().add(todayKey, redisKey, character.getEloScore());
+                redisTemplate.opsForZSet().add(todayTextKey, redisKey, character.getEloScore());
+            }
+        }
+
+        for (ImageCharacter character : todayImageRank) {
+            if (character.getEloScore() != null) {
+                String redisKey = IMAGE_RANKING_PREFIX + character.getId();
+                redisTemplate.opsForZSet().add(todayImageKey, redisKey, character.getEloScore());
             }
         }
 
@@ -80,10 +105,6 @@ public class RankingService {
 
     public List<RankingCharacterResponse> getTodayImageTopRankers(int count) {
         return getFromRedisZSet(IMAGE_RANKING_KEY + ":" + LocalDate.now(), "IMAGE", count);
-    }
-
-    public Long getCharacterRank(String characterId) {
-        return redisTemplate.opsForZSet().reverseRank(TEXT_RANKING_KEY, TEXT_RANKING_PREFIX + characterId);
     }
 
     private List<RankingCharacterResponse> getFromRedisZSet(String zsetKey, String type, int count) {
