@@ -8,11 +8,11 @@ import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.request.Crea
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.request.UpdateTextCharacterRequest;
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.response.TextCharacterResponse;
 import com.ssafy.nobasebattle.global.utils.security.SecurityUtils;
-import com.ssafy.nobasebattle.global.utils.user.UserUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @Service
 public class TextCharacterService {
 
-    private final UserUtils userUtils;
     private final TextCharacterRepository textCharacterRepository;
 
     public TextCharacterResponse createTextCharacter(CreateTextCharacterRequest createTextCharacterRequest){
@@ -33,7 +32,7 @@ public class TextCharacterService {
             throw CharacterLimitExceededException.EXCEPTION;
         }
 
-        TextCharacter textCharacter = makeEssay(createTextCharacterRequest, userId);
+        TextCharacter textCharacter = makeTextCharacter(createTextCharacterRequest, userId);
         textCharacterRepository.save(textCharacter);
         return getTextCharacterResponse(textCharacter);
     }
@@ -77,7 +76,7 @@ public class TextCharacterService {
                 .orElseThrow(()-> TextCharacterNotFoundException.EXCEPTION);
     }
 
-    private TextCharacter makeEssay(CreateTextCharacterRequest createTextCharacterRequest, String userId){
+    private TextCharacter makeTextCharacter(CreateTextCharacterRequest createTextCharacterRequest, String userId){
 
         return TextCharacter.builder()
                 .userId(userId)
@@ -87,6 +86,7 @@ public class TextCharacterService {
                 .losses(0)
                 .draws(0)
                 .eloScore(0)
+                .lastBattleTime(LocalDateTime.now().minusMinutes(2))
                 .build();
     }
 

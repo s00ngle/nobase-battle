@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 @Document(collection = "text_characters")
 @NoArgsConstructor
 @Getter
@@ -20,10 +22,11 @@ public class TextCharacter extends BaseEntity {
     private Integer losses;
     private Integer draws;
     private Integer eloScore;
+    private LocalDateTime lastBattleTime;
 //    private String colorRank;
 
     @Builder
-    public TextCharacter(String userId, String name, String prompt, Integer wins, Integer losses, Integer draws, Integer eloScore) {
+    public TextCharacter(String userId, String name, String prompt, Integer wins, Integer losses, Integer draws, Integer eloScore, LocalDateTime lastBattleTime) {
         this.userId = userId;
         this.name = name;
         this.prompt = prompt;
@@ -31,6 +34,7 @@ public class TextCharacter extends BaseEntity {
         this.losses = losses;
         this.draws = draws;
         this.eloScore = eloScore;
+        this.lastBattleTime = lastBattleTime;
     }
 
     public void validUserIsHost(String id) {
@@ -58,5 +62,13 @@ public class TextCharacter extends BaseEntity {
         }
         double winRate = (double) w / totalGames * 100.0;
         return (int) Math.floor(winRate);
+    }
+
+    public Integer calculateTotalBattle() {
+        return wins + losses + draws;
+    }
+
+    public void updateLastBattleTime() {
+        this.lastBattleTime = LocalDateTime.now();
     }
 }
