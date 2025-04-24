@@ -7,12 +7,13 @@ import Button from '@/components/common/Button'
 import { battleData } from '@/data/battleData'
 import type { TCharacterResponse } from '@/types/Character'
 import { getCharacter } from '@/utils/characters'
+import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const Character = () => {
+  const params = useParams()
   const [result, setResult] = useState<boolean>(false)
   const [characterData, setCharacterData] = useState<TCharacterResponse | null>(null)
-  const id = '6808830b9de4765e66289dad'
 
   const resultHandler = () => {
     setResult(true)
@@ -21,14 +22,17 @@ const Character = () => {
   useEffect(() => {
     const fetchCharacter = async () => {
       try {
-        const data = await getCharacter(id)
+        if (!params.id) return
+        const data = await getCharacter(params.id as string)
         setCharacterData(data)
+        console.log('결과:', data)
       } catch (error) {
         console.error('캐릭터 정보를 불러오는데 실패했습니다:', error)
+        // 에러 처리를 위한 상태 업데이트나 사용자 피드백을 추가할 수 있습니다
       }
     }
     fetchCharacter()
-  }, [])
+  }, [params.id])
 
   return (
     <div className="flex flex-col justify-center gap-6 max-w-150">
