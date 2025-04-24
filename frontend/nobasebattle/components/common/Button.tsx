@@ -5,6 +5,7 @@ interface ButtonProps {
   border?: boolean;
   onClick?: () => void;
   fill?: boolean;
+  disabled?: boolean
 }
 
 const Button = ({
@@ -12,11 +13,13 @@ const Button = ({
   border = false,
   onClick,
   fill = false,
+  disabled = false
 }: ButtonProps) => {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={`${border ? "border border-1-white" : ""}
       ${fill ? "w-full" : ""}
       ${transparentForm} ${hover} px-3 py-2 rounded-lg text-xl cursor-pointer`}
