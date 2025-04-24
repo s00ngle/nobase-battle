@@ -1,19 +1,18 @@
-import CharacterInfo from "@/components/character/CharacterInfo";
-import CharacterItem from "@/components/character/CharacterItem";
-import { characterData } from "@/data/characterInfo";
+import CharacterInfo from '@/components/character/CharacterInfo'
+import CharacterItem from '@/components/character/CharacterItem'
+import { characterData } from '@/data/characterInfo'
 
 const TestPage = () => {
-  const data = characterData;
+  const data = characterData
   return (
     <div>
       <CharacterInfo
-        character={
-          <CharacterItem nickname={data.name} description={data.prompt} />
-        }
+        character={<CharacterItem nickname={data.name} description={data.prompt} />}
         data={data}
       />
+      test
     </div>
-  );
-};
+  )
+}
 
-export default TestPage;
+export default TestPage
