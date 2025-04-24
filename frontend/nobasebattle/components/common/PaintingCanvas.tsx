@@ -66,7 +66,6 @@ const PaintingCanvas: React.FC = () => {
   }
 
   const startDrawing = (event: ReactMouseEvent | ReactTouchEvent) => {
-    event.preventDefault() // 기본 동작 방지
     setIsDrawing(true)
     const position = getCanvasCoordinates(event)
     setLastPosition(position)
@@ -77,7 +76,6 @@ const PaintingCanvas: React.FC = () => {
   }
 
   const draw = (event: ReactMouseEvent | ReactTouchEvent) => {
-    event.preventDefault() // 기본 동작 방지
     if (!isDrawing || !canvasRef.current) return
 
     const context = canvasRef.current.getContext('2d')
