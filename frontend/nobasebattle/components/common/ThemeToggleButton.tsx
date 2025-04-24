@@ -42,7 +42,7 @@ const ThemeToggleButton = () => {
     <button
       type="button"
       onClick={() => setDarkMode((prev) => !prev)}
-      className={`p-2 rounded-full ${transparentForm} ${hover} cursor-pointer`}
+      className={`w-10 h-10 rounded-full ${transparentForm} ${hover} cursor-pointer`}
     >
       {darkMode ? '🌙' : '☀️'}
     </button>
