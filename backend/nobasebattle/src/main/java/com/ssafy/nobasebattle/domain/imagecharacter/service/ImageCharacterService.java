@@ -113,7 +113,7 @@ public class ImageCharacterService {
                 .wins(0)
                 .losses(0)
                 .draws(0)
-                .eloScore(0)
+                .eloScore(1000)
                 .lastBattleTime(LocalDateTime.now().minusMinutes(2))
                 .build();
     }
