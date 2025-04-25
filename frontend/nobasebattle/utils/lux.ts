@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+const BASE_URL = 'http://43.201.97.202'
 
 /**
  * API 요청을 위한 클라이언트
