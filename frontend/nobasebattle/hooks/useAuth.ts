@@ -54,7 +54,7 @@ export const useAuth = () => {
     try {
       clearAuth()
       await deleteCookie('token')
-      await router.push('/')
+      router.push('/register')
     } catch (error) {
       console.error('로그아웃 중 오류 발생:', error)
     }
