@@ -37,6 +37,9 @@ public enum ErrorCode {
     TEXT_CHARACTER_NOT_FOUND(404, "캐릭터를 찾을 수 없습니다"),
     IMAGE_CHARACTER_NOT_FOUND(404, "캐릭터를 찾을 수 없습니다"),
 
+    /* 429 Too Many Requests : 시간 제한 내 중복 요청 */
+    BATTLE_COOLDOWN(429, "10초 내에는 다시 배틀을 신청할 수 없습니다."),
+
     /* 500 */
     INTERNAL_SERVER_ERROR(500,"서버 에러");
 

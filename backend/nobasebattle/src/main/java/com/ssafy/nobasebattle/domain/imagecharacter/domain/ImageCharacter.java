@@ -63,6 +63,10 @@ public class ImageCharacter extends BaseEntity {
         this.eloScore = eloScore;
     }
 
+    public void updateLastBattleTime() {
+        this.lastBattleTime = LocalDateTime.now();
+    }
+
     public void updateName(UpdateImageCharacterRequest updateImageCharacterRequest) {
         this.name = updateImageCharacterRequest.getName();
     }
