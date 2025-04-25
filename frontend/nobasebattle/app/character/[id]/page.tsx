@@ -4,7 +4,6 @@ import BattleResult from '@/components/character/BattleResult'
 import CharacterInfo from '@/components/character/CharacterInfo'
 import CharacterItem from '@/components/character/CharacterItem'
 import Button from '@/components/common/Button'
-import Loading from '@/components/common/Loading'
 import { battleData } from '@/data/battleData'
 import type { TCharacterResponse } from '@/types/Character'
 import { getCharacter } from '@/utils/characters'
@@ -35,20 +34,47 @@ const Character = () => {
     fetchCharacter()
   }, [])
 
-  if (isLoading) {
-    return <Loading className="flex justify-center items-center h-screen -translate-y-30" />
-  }
-
   return (
-    <div className="flex flex-col justify-center gap-6 max-w-150">
-      {characterData && (
-        <CharacterInfo
-          character={
-            <CharacterItem nickname={characterData?.name} description={characterData?.prompt} />
-          }
-          data={characterData}
-        />
-      )}
+    <div className="flex flex-col justify-center gap-6 w-full max-w-150">
+      <CharacterInfo
+        character={
+          <CharacterItem
+            nickname={characterData?.name || ''}
+            description={characterData?.prompt || ''}
+            isLoading={isLoading}
+          />
+        }
+        data={
+          isLoading
+            ? {
+                name: '',
+                prompt: '',
+                eloScore: 0,
+                rank: 0,
+                winRate: 0,
+                wins: 0,
+                losses: 0,
+                draws: 0,
+                totalBattles: 0,
+                badges: [],
+                textCharacterId: '',
+              }
+            : characterData || {
+                name: '',
+                prompt: '',
+                eloScore: 0,
+                rank: 0,
+                winRate: 0,
+                wins: 0,
+                losses: 0,
+                draws: 0,
+                totalBattles: 0,
+                badges: [],
+                textCharacterId: '',
+              }
+        }
+        isLoading={isLoading}
+      />
       <Button text={'배틀 시작'} onClick={resultHandler} />
       {result && <BattleResult data={battleData.data} />}
     </div>
