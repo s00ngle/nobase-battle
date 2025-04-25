@@ -15,8 +15,8 @@ export const useAuth = () => {
     setAuth(accessToken, role)
     await setCookie('token', accessToken, {
       path: '/',
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: false,
+      sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60, // 7일
     })
     router.push('/')

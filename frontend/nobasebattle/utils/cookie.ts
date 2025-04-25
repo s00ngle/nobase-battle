@@ -9,9 +9,9 @@ export const setCookie = (name: string, value: string, options?: CookieOptions):
   return new Promise((resolve) => {
     const {
       path = '/',
-      secure = process.env.NODE_ENV === 'production',
-      sameSite = 'strict',
-      maxAge,
+      secure = false,
+      sameSite = 'lax',
+      maxAge = 7 * 24 * 60 * 60,
     } = options || {}
 
     let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`
@@ -20,14 +20,25 @@ export const setCookie = (name: string, value: string, options?: CookieOptions):
     if (sameSite) cookieString += `; samesite=${sameSite}`
     if (maxAge) cookieString += `; max-age=${maxAge}`
 
-    document.cookie = cookieString
+    try {
+      document.cookie = cookieString
+    } catch (error) {
+      console.error('쿠키 설정 실패:', error)
+    }
 
-    // 쿠키가 실제로 설정되었는지 확인
     const checkCookie = () => {
-      if (getCookie(name) === value) {
+      const currentValue = getCookie(name)
+      if (currentValue === value) {
+        console.log('쿠키 설정 성공:', name)
         resolve()
       } else {
-        setTimeout(checkCookie, 10)
+        console.log('쿠키 설정 재시도 중:', name)
+        try {
+          document.cookie = cookieString
+        } catch (error) {
+          console.error('쿠키 재설정 실패:', error)
+        }
+        setTimeout(checkCookie, 100)
       }
     }
 
