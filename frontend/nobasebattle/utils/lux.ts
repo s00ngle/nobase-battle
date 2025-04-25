@@ -1,5 +1,7 @@
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || ''
 
+import { useAuthStore } from '@/store/authStore'
+
 /**
  * API 요청을 위한 클라이언트
  *
@@ -35,11 +37,15 @@ export const lux = {
       }
     }
 
+    const accessToken = useAuthStore.getState().accessToken
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    }
+
     const response = await fetch(url.toString(), {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
     })
 
     if (!response.ok) {
@@ -55,11 +61,15 @@ export const lux = {
   },
 
   async post<T>(endpoint: string, body: unknown): Promise<T | null> {
+    const accessToken = useAuthStore.getState().accessToken
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    }
+
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(body),
     })
 
@@ -76,11 +86,15 @@ export const lux = {
   },
 
   async put<T>(endpoint: string, body: unknown): Promise<T | null> {
+    const accessToken = useAuthStore.getState().accessToken
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    }
+
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(body),
     })
 
@@ -97,11 +111,15 @@ export const lux = {
   },
 
   async delete<T>(endpoint: string): Promise<T | null> {
+    const accessToken = useAuthStore.getState().accessToken
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    }
+
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
     })
 
     if (!response.ok) {
