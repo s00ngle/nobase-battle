@@ -1,5 +1,8 @@
+'use client'
+
 import { hover, transparentForm } from '@/styles/form'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 interface OptionProps {
   text: string
@@ -30,6 +33,12 @@ const OptionList = [
 ]
 
 const Footer = () => {
+  const pathname = usePathname()
+
+  if (pathname === '/register') {
+    return null
+  }
+
   return (
     <div
       className={`flex w-full justify-center fixed bottom-0 backdrop-blur-sm ${transparentForm}`}
