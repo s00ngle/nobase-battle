@@ -1,10 +1,12 @@
+'use client'
+
 import { hover, transparentForm } from '@/styles/form'
 import IconButton from '../common/IconButton'
 import SkeletonLoading from '../common/SkeletonLoading'
 
 export interface CharacterItemProps {
   nickname: string
-  description: string
+  description?: string
   onClick?: () => void
   isLoading?: boolean
 }
@@ -22,7 +24,7 @@ const CharacterItem = ({
     >
       <div className="flex justify-between">
         {isLoading ? (
-          <SkeletonLoading width="8rem" height="1.5rem" />
+          <SkeletonLoading width="8rem" height="1.5rem" className="rounded-md" />
         ) : (
           <div className="text-xl">{nickname}</div>
         )}
@@ -31,7 +33,12 @@ const CharacterItem = ({
           <IconButton icon="delete.svg" />
         </div>
       </div>
-      {isLoading ? <SkeletonLoading width="12rem" height="1.5rem" /> : <div>{description}</div>}
+      {description &&
+        (isLoading ? (
+          <SkeletonLoading width="12rem" height="1.5rem" className="rounded-md" />
+        ) : (
+          <div>{description}</div>
+        ))}
     </div>
   )
 }

@@ -1,38 +1,71 @@
+import type { ImageCharacter, TextCharacter } from '@/app/types/character'
 import { transparentForm } from '@/styles/form'
-import { useState } from 'react'
+import IconButton from '../common/IconButton'
+import SkeletonLoading from '../common/SkeletonLoading'
 import CharacterItem from './CharacterItem'
 
-type Character = {
-  nickname: string
-  description: string
+type CharacterType = 'text' | 'image'
+
+interface CharacterListProps {
+  characters: TextCharacter[] | ImageCharacter[]
+  type: CharacterType
+  isLoading?: boolean
+  maxCount?: number
 }
 
-const data: Character[] = [
-  { nickname: '김선명', description: '원내동 CU 야외 벤치 수호자' },
-  { nickname: '김용순', description: '죽동 자택 경비원 지망생' },
-  { nickname: '이해수', description: '관저 95 이해솔 동생' },
-  { nickname: '김찬우', description: '청량중 이니에스타' },
-  { nickname: '상승규', description: '만년중 급식차 라이더' },
-  { nickname: '신동운', description: '집에 가고싶다' },
-]
-
-const CharacterList = () => {
-  const [character] = useState<Character[] | null>(data)
-
+const CharacterList = ({
+  characters,
+  type,
+  isLoading = false,
+  maxCount = 5,
+}: CharacterListProps) => {
   return (
     <div className={`flex flex-col gap-3 w-full flex-1 rounded-2xl p-4 ${transparentForm}`}>
-      <div className="text-xl">캐릭터 목록</div>
-      {!character && <div className="text-2xl">캐릭터가 아직 없어요</div>}
-      {character && (
+      <div className="flex items-center gap-2">
+        <div className="text-xl">
+          {type === 'text' ? '텍스트 캐릭터 목록' : '이미지 캐릭터 목록'}
+        </div>
+        <div className="text-base text-gray-800 dark:text-gray-200">
+          ({characters.length}/{maxCount})
+        </div>
+      </div>
+      {isLoading ? (
         <div className="flex flex-col gap-3 flex-1 overflow-y-auto">
-          {character.map((item) => {
-            return (
-              <CharacterItem
-                key={item.nickname + item.description}
-                nickname={item.nickname}
-                description={item.description}
-              />
-            )
+          {Array.from({ length: 3 }, (_, index) => (
+            <div
+              key={`skeleton-loading-${index}-${Date.now()}`}
+              className={`flex flex-col gap-3 w-full p-3 rounded-2xl ${transparentForm}`}
+            >
+              <div className="flex justify-between">
+                <SkeletonLoading width="8rem" height="1.5rem" className="rounded-md" />
+                <div className="flex gap-2">
+                  <IconButton icon="pen.svg" />
+                  <IconButton icon="delete.svg" />
+                </div>
+              </div>
+              {type === 'text' && (
+                <SkeletonLoading width="12rem" height="1.5rem" className="rounded-md" />
+              )}
+            </div>
+          ))}
+        </div>
+      ) : characters.length === 0 ? (
+        <div className="text-2xl">캐릭터가 아직 없어요</div>
+      ) : (
+        <div className="flex flex-col gap-3 flex-1 overflow-y-auto">
+          {characters.map((character) => {
+            if (type === 'text') {
+              const textChar = character as TextCharacter
+              return (
+                <CharacterItem
+                  key={textChar.textCharacterId}
+                  nickname={textChar.name}
+                  description={textChar.prompt}
+                />
+              )
+            }
+            const imageChar = character as ImageCharacter
+            return <CharacterItem key={imageChar.characterId} nickname={imageChar.name} />
           })}
         </div>
       )}
