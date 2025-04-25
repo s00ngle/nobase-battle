@@ -51,9 +51,13 @@ export const useAuth = () => {
   }
 
   const signOut = async () => {
-    clearAuth()
-    await deleteCookie('token')
-    router.push('/')
+    try {
+      clearAuth()
+      await deleteCookie('token')
+      await router.push('/')
+    } catch (error) {
+      console.error('로그아웃 중 오류 발생:', error)
+    }
   }
 
   return {
