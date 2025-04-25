@@ -1,11 +1,12 @@
-import { hover, transparentForm } from "@/styles/form";
+import { hover, transparentForm } from '@/styles/form'
 
 interface ButtonProps {
-  text: string;
-  border?: boolean;
-  onClick?: () => void;
-  fill?: boolean;
+  text: string
+  border?: boolean
+  onClick?: () => void
+  fill?: boolean
   disabled?: boolean
+  type?: 'button' | 'submit' | 'reset'
 }
 
 const Button = ({
@@ -13,20 +14,21 @@ const Button = ({
   border = false,
   onClick,
   fill = false,
-  disabled = false
+  disabled = false,
+  type = 'button',
 }: ButtonProps) => {
   return (
     <button
-      type="button"
+      type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`${border ? "border border-1-white" : ""}
-      ${fill ? "w-full" : ""}
+      className={`${border ? 'border border-1-white' : ''}
+      ${fill ? 'w-full' : ''}
       ${transparentForm} ${hover} px-3 py-2 rounded-lg text-xl cursor-pointer`}
     >
       {text}
     </button>
-  );
-};
+  )
+}
 
-export default Button;
+export default Button
