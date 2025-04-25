@@ -7,6 +7,25 @@ import Header from '@/components/layout/Header'
 export const metadata: Metadata = {
   title: '무근본 배틀',
   description: '나만의 캐릭터를 만들어서 승리해 보세요.',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/favicon-apple.png',
+  },
+  openGraph: {
+    title: '무근본 배틀 - 나만의 캐릭터를 만들어서 승리해 보세요.',
+    description: '세계 최강! 프롬프팅 배틀',
+    url: 'http://43.201.97.202/',
+    images: [
+      {
+        url: 'http://43.201.97.202/openGraphThumbnail.png',
+        width: 1200,
+        height: 630,
+        alt: '무근본 배틀',
+      },
+    ],
+    siteName: '무근본 배틀',
+    type: 'website',
+  },
 }
 
 export default function RootLayout({
