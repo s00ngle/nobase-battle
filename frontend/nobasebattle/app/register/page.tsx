@@ -1,7 +1,6 @@
 'use client'
 
 import { ErrorBoundary } from '@/app/components/common/ErrorBoundary'
-import { AuthGuard } from '@/components/auth/AuthGuard'
 import Button from '@/components/common/Button'
 import InputBox from '@/components/common/InputBox'
 import { useAuth } from '@/hooks/useAuth'
@@ -104,18 +103,16 @@ const Register = () => {
   }, [anonymousSignIn])
 
   return (
-    <AuthGuard requireAuth={false}>
-      <ErrorBoundary>
-        <Suspense fallback={<LoadingFallback />}>
-          <RegisterForm
-            isLoading={isLoading}
-            error={error}
-            onSubmit={handleSubmit}
-            onAnonymousSignIn={handleAnonymousSignIn}
-          />
-        </Suspense>
-      </ErrorBoundary>
-    </AuthGuard>
+    <ErrorBoundary>
+      <Suspense fallback={<LoadingFallback />}>
+        <RegisterForm
+          isLoading={isLoading}
+          error={error}
+          onSubmit={handleSubmit}
+          onAnonymousSignIn={handleAnonymousSignIn}
+        />
+      </Suspense>
+    </ErrorBoundary>
   )
 }
 

@@ -1,5 +1,6 @@
 import { useAuthStore } from '@/store/authStore'
 import { authApi } from '@/utils/api/auth'
+import { deleteCookie, setCookie } from '@/utils/cookie'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -10,7 +11,14 @@ export const useAuth = () => {
   const [error, setError] = useState<string | null>(null)
 
   const handleAuthSuccess = (response: { data: { accessToken: string; role: string } }) => {
-    setAuth(response.data.accessToken, response.data.role)
+    const { accessToken, role } = response.data
+    setAuth(accessToken, role)
+    setCookie('token', accessToken, {
+      path: '/',
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60, // 7일
+    })
     router.push('/')
   }
 
@@ -44,6 +52,7 @@ export const useAuth = () => {
 
   const signOut = () => {
     clearAuth()
+    deleteCookie('token')
     router.push('/')
   }
 
