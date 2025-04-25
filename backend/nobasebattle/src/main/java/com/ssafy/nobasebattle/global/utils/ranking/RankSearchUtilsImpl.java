@@ -68,7 +68,7 @@ public class RankSearchUtilsImpl implements RankSearchUtils {
         redisTemplate.opsForZSet().remove(todayTextKey, redisKey);
     }
 
-    @Overrided
+    @Override
     public void deleteImageCharacterFromRank(ImageCharacter character) {
         String redisKey = IMAGE_RANKING_PREFIX + character.getId();
         String todayImageKey = IMAGE_RANKING_KEY + ":" + LocalDate.now();
