@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/rankings")
+@RequestMapping("/api/v1/rankings")
 @RequiredArgsConstructor
 public class RankingController {
 

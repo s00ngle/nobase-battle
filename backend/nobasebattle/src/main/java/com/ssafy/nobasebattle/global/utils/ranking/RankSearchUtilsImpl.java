@@ -57,4 +57,24 @@ public class RankSearchUtilsImpl implements RankSearchUtils {
         redisTemplate.opsForValue().set(redisKey, character);
         redisTemplate.opsForZSet().add(todayImageKey, redisKey, character.getEloScore());
     }
+
+    @Override
+    public void deleteTextCharacterFromRank(TextCharacter character) {
+        String redisKey = TEXT_RANKING_PREFIX + character.getId();
+        String todayTextKey = TEXT_RANKING_KEY + ":" + LocalDate.now();
+
+        redisTemplate.opsForZSet().remove(TEXT_RANKING_KEY, redisKey);
+        redisTemplate.delete(redisKey);
+        redisTemplate.opsForZSet().remove(todayTextKey, redisKey);
+    }
+
+    @Overrided
+    public void deleteImageCharacterFromRank(ImageCharacter character) {
+        String redisKey = IMAGE_RANKING_PREFIX + character.getId();
+        String todayImageKey = IMAGE_RANKING_KEY + ":" + LocalDate.now();
+
+        redisTemplate.opsForZSet().remove(IMAGE_RANKING_KEY, redisKey);
+        redisTemplate.delete(redisKey);
+        redisTemplate.opsForZSet().remove(todayImageKey, redisKey);
+    }
 }
