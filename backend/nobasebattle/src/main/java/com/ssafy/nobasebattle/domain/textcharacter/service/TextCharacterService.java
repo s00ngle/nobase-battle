@@ -48,6 +48,7 @@ public class TextCharacterService implements TextCharacterServiceUtils {
         String userId = SecurityUtils.getCurrentUserId();
         TextCharacter textCharacter = queryTextCharacter(textCharacterId);
         textCharacter.validUserIsHost(userId);
+        rankSearchUtils.deleteTextCharacterFromRank(textCharacter);
         textCharacterRepository.delete(textCharacter);
     }
 
