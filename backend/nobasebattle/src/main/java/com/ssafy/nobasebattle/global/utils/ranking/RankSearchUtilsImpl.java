@@ -1,5 +1,7 @@
 package com.ssafy.nobasebattle.global.utils.ranking;
 
+import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
+import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -7,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class RankSearchUtilsImpl implements RankSearchUtils{
+public class RankSearchUtilsImpl implements RankSearchUtils {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
@@ -30,5 +32,23 @@ public class RankSearchUtilsImpl implements RankSearchUtils{
 
     public Long getTodayImageCharacterRank(String characterId) {
         return redisTemplate.opsForZSet().reverseRank(IMAGE_RANKING_KEY + ":" + LocalDate.now(), IMAGE_RANKING_PREFIX + characterId);
+    }
+
+    public void addTextCharacterToRank(TextCharacter character) {
+        String redisKey = TEXT_RANKING_PREFIX + character.getId();
+        String todayTextKey = TEXT_RANKING_KEY + ":" + LocalDate.now();
+
+        redisTemplate.opsForZSet().add(TEXT_RANKING_KEY, redisKey, character.getEloScore());
+        redisTemplate.opsForValue().set(redisKey, character);
+        redisTemplate.opsForZSet().add(todayTextKey, redisKey, character.getEloScore());
+    }
+
+    public void addImageCharacterToRank(ImageCharacter character) {
+        String redisKey = IMAGE_RANKING_PREFIX + character.getId();
+        String todayImageKey = IMAGE_RANKING_KEY + ":" + LocalDate.now();
+
+        redisTemplate.opsForZSet().add(IMAGE_RANKING_KEY, redisKey, character.getEloScore());
+        redisTemplate.opsForValue().set(redisKey, character);
+        redisTemplate.opsForZSet().add(todayImageKey, redisKey, character.getEloScore());
     }
 }
