@@ -1,4 +1,4 @@
-import type { ApiResponse, ImageCharacter, ImageCharacterListResponse } from '@/app/types/character'
+import type { ApiResponse, ImageCharacter } from '@/app/types/character'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -21,11 +21,9 @@ export async function GET() {
       },
     ]
 
-    const response: ApiResponse<ImageCharacterListResponse> = {
+    const response: ApiResponse<ImageCharacter[]> = {
       status: 200,
-      data: {
-        content: mockData,
-      },
+      data: mockData,
       success: true,
       timeStamp: new Date().toISOString(),
     }
@@ -35,7 +33,7 @@ export async function GET() {
     return NextResponse.json(
       {
         status: 500,
-        data: { content: [] },
+        data: [],
         success: false,
         timeStamp: new Date().toISOString(),
       },
