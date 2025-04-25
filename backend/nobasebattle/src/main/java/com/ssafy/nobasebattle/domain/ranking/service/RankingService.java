@@ -37,10 +37,14 @@ public class RankingService {
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(cron = "0 0 0 * * *")
     public void initializeRankingFromMongo() {
+
         LocalDateTime start = LocalDate.now().atStartOfDay();
         LocalDateTime end = start.plusDays(1);
         String todayTextKey = TEXT_RANKING_KEY + ":" + LocalDate.now();
         String todayImageKey = IMAGE_RANKING_KEY + ":" + LocalDate.now();
+
+        redisTemplate.delete(todayTextKey);
+        redisTemplate.delete(todayImageKey);
 
         List<TextCharacter> allText = textCharacterRepository.findAll();
         if (allText.isEmpty()) {
