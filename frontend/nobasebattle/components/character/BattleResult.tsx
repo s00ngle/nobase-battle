@@ -11,9 +11,9 @@ const BattleResult = ({ data }: ResultProps) => {
       <p className="text-xl">결과: {data.result}! </p>
       <div className={`flex flex-col ${transparentForm} w-full px-3 py-3 rounded-2xl gap-3`}>
         <span className="text-xl text-center">
-          {data.firstCharacter.name} vs {data.secondCharacter.name}
+          {data?.firstCharacter.name} vs {data?.secondCharacter.name}
         </span>
-        <p className="text-lg">{data.battleLog}</p>
+        <p className="text-lg">{data?.battleLog}</p>
       </div>
     </div>
   )
