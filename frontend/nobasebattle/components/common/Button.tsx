@@ -6,12 +6,20 @@ interface ButtonProps {
   onClick?: () => void
   fill?: boolean
   disabled?: boolean
+  type?: 'button' | 'submit' | 'reset'
 }
 
-const Button = ({ text, border = false, onClick, fill = false, disabled = false }: ButtonProps) => {
+const Button = ({
+  text,
+  border = false,
+  onClick,
+  fill = false,
+  disabled = false,
+  type = 'button',
+}: ButtonProps) => {
   return (
     <button
-      type="button"
+      type={type}
       onClick={onClick}
       disabled={disabled}
       className={`${border ? 'border border-1-white' : ''}
