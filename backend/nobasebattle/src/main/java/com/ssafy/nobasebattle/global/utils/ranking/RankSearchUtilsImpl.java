@@ -18,22 +18,27 @@ public class RankSearchUtilsImpl implements RankSearchUtils {
     private static final String IMAGE_RANKING_KEY = "image_character_ranking";
     private static final String IMAGE_RANKING_PREFIX = "image_character:";
 
+    @Override
     public Long getTextCharacterRank(String characterId) {
         return redisTemplate.opsForZSet().reverseRank(TEXT_RANKING_KEY, TEXT_RANKING_PREFIX + characterId);
     }
 
+    @Override
     public Long getTodayTextCharacterRank(String characterId) {
         return redisTemplate.opsForZSet().reverseRank(TEXT_RANKING_KEY + ":" + LocalDate.now(), TEXT_RANKING_PREFIX + characterId);
     }
 
+    @Override
     public Long getImageCharacterRank(String characterId) {
         return redisTemplate.opsForZSet().reverseRank(IMAGE_RANKING_KEY, IMAGE_RANKING_PREFIX + characterId);
     }
 
+    @Override
     public Long getTodayImageCharacterRank(String characterId) {
         return redisTemplate.opsForZSet().reverseRank(IMAGE_RANKING_KEY + ":" + LocalDate.now(), IMAGE_RANKING_PREFIX + characterId);
     }
 
+    @Override
     public void addTextCharacterToRank(TextCharacter character) {
         String redisKey = TEXT_RANKING_PREFIX + character.getId();
         String todayTextKey = TEXT_RANKING_KEY + ":" + LocalDate.now();
@@ -43,6 +48,7 @@ public class RankSearchUtilsImpl implements RankSearchUtils {
         redisTemplate.opsForZSet().add(todayTextKey, redisKey, character.getEloScore());
     }
 
+    @Override
     public void addImageCharacterToRank(ImageCharacter character) {
         String redisKey = IMAGE_RANKING_PREFIX + character.getId();
         String todayImageKey = IMAGE_RANKING_KEY + ":" + LocalDate.now();
