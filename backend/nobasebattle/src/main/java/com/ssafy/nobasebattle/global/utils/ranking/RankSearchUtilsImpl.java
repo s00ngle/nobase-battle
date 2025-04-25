@@ -20,23 +20,30 @@ public class RankSearchUtilsImpl implements RankSearchUtils {
 
     @Override
     public Long getTextCharacterRank(String characterId) {
-        return redisTemplate.opsForZSet().reverseRank(TEXT_RANKING_KEY, TEXT_RANKING_PREFIX + characterId);
+        Long rank = redisTemplate.opsForZSet().reverseRank(TEXT_RANKING_KEY, TEXT_RANKING_PREFIX + characterId);
+        return rank == null ? null : rank + 1;
     }
 
     @Override
     public Long getTodayTextCharacterRank(String characterId) {
-        return redisTemplate.opsForZSet().reverseRank(TEXT_RANKING_KEY + ":" + LocalDate.now(), TEXT_RANKING_PREFIX + characterId);
+        Long rank = redisTemplate.opsForZSet().reverseRank(
+            TEXT_RANKING_KEY + ":" + LocalDate.now(), TEXT_RANKING_PREFIX + characterId);
+        return rank == null ? null : rank + 1;
     }
 
     @Override
     public Long getImageCharacterRank(String characterId) {
-        return redisTemplate.opsForZSet().reverseRank(IMAGE_RANKING_KEY, IMAGE_RANKING_PREFIX + characterId);
+        Long rank = redisTemplate.opsForZSet().reverseRank(IMAGE_RANKING_KEY, IMAGE_RANKING_PREFIX + characterId);
+        return rank == null ? null : rank + 1;
     }
 
     @Override
     public Long getTodayImageCharacterRank(String characterId) {
-        return redisTemplate.opsForZSet().reverseRank(IMAGE_RANKING_KEY + ":" + LocalDate.now(), IMAGE_RANKING_PREFIX + characterId);
+        Long rank = redisTemplate.opsForZSet().reverseRank(
+            IMAGE_RANKING_KEY + ":" + LocalDate.now(), IMAGE_RANKING_PREFIX + characterId);
+        return rank == null ? null : rank + 1;
     }
+
 
     @Override
     public void addTextCharacterToRank(TextCharacter character) {
