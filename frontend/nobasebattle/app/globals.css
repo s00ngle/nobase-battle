@@ -3,11 +3,22 @@
 
 @font-face {
   font-family: "YComputer";
-  src: url("/fonts/Ycomputer.ttf") format("truetype"), url("/fonts/Ycomputer.otf")
-    format("opentype");
+  src: url("/fonts/Ycomputer.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@supports (-webkit-touch-callout: none) {
+  @font-face {
+    font-family: "YComputer";
+    src: url("/fonts/Ycomputer.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
 }
 
 @theme {
@@ -23,7 +34,10 @@
 }
 
 body {
-  font-family: "YComputer", sans-serif;
+  font-family: "YComputer", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* :root {
