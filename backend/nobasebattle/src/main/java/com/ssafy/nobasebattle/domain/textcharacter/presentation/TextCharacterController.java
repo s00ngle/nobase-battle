@@ -17,17 +17,17 @@ public class TextCharacterController {
     private final TextCharacterService textCharacterService;
 
     @PostMapping
-    public TextCharacterResponse createEssay(@RequestBody CreateTextCharacterRequest characterRequest) {
+    public TextCharacterResponse createTextCharacter(@RequestBody CreateTextCharacterRequest characterRequest) {
         return textCharacterService.createTextCharacter(characterRequest);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEssay(@PathVariable("id") String textCharacterId) {
+    public void deleteTextCharacter(@PathVariable("id") String textCharacterId) {
         textCharacterService.deleteTextCharacter(textCharacterId);
     }
 
     @PatchMapping("/{id}")
-    public TextCharacterResponse updateEssay(
+    public TextCharacterResponse updateTextCharacter(
             @PathVariable("id") String textCharacterId,
             @RequestBody UpdateTextCharacterRequest updateTextCharacterRequest) {
 

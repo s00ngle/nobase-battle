@@ -6,11 +6,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 public class ExceptionFilter extends OncePerRequestFilter {
 
@@ -23,8 +25,12 @@ public class ExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (NoBaseBattleException e) {
+
+            log.info("============= NoBaseBattleException ===================");
             writeErrorResponse(response, e.getErrorCode(), request.getRequestURL().toString());
         } catch (Exception e) {
+
+            log.info("============= exception ===================");
             if (e.getCause() instanceof NoBaseBattleException) {
                 writeErrorResponse(
                         response,
@@ -43,6 +49,8 @@ public class ExceptionFilter extends OncePerRequestFilter {
 
     private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode, String path)
             throws IOException {
+
+        log.info("=============예외 잡히는 곳 ===================");
         ErrorResponse errorResponse =
                 new ErrorResponse(
                         errorCode.getStatus(), errorCode.getReason(), path);

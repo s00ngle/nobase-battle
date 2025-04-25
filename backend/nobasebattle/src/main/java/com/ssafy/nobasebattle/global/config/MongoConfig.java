@@ -22,24 +22,15 @@ public class MongoConfig {
     public MappingMongoConverter mappingMongoConverter(
             MongoDatabaseFactory mongoDatabaseFactory,
             MongoMappingContext context,
-            MongoCustomConversions conversions // 커스텀 컨버전 주입
+            MongoCustomConversions conversions
     ) {
-
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDatabaseFactory);
         MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, context);
-
-        // ✅ 커스텀 컨버전 적용 (timezone 포함)
         converter.setCustomConversions(conversions);
-
-        // ✅ _class 필드 제거
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
-
         return converter;
     }
 
-    /**
-     * LocalDateTime <-> Date 변환 시 Asia/Seoul 시간대 적용
-     */
     @Bean
     public MongoCustomConversions mongoCustomConversions() {
         return new MongoCustomConversions(List.of(
@@ -51,15 +42,16 @@ public class MongoConfig {
     static class LocalDateTimeToDateConverter implements Converter<LocalDateTime, Date> {
         @Override
         public Date convert(LocalDateTime source) {
-            return Date.from(source.atZone(ZoneId.of("Asia/Seoul")).toInstant());
+            // 한국 시간(Asia/Seoul)을 UTC로 간주하여 저장
+            return Date.from(source.atZone(ZoneId.of("UTC")).toInstant());
         }
-
     }
 
     static class DateToLocalDateTimeConverter implements Converter<Date, LocalDateTime> {
         @Override
         public LocalDateTime convert(Date source) {
-            return LocalDateTime.ofInstant(source.toInstant(), ZoneId.of("Asia/Seoul"));
+            // MongoDB의 Date를 한국 시간(Asia/Seoul)으로 간주
+            return LocalDateTime.ofInstant(source.toInstant(), ZoneId.of("UTC"));
         }
     }
 
