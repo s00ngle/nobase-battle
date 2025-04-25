@@ -9,7 +9,10 @@ interface IconButtonProps {
 
 const IconButton = ({ icon, onClick, isDark = false }: IconButtonProps) => {
   return (
-    <div className={`p-1.5 rounded-md ${hover} w-fit cursor-pointer`} onClick={onClick}>
+    <div
+      className={`p-1.5 rounded-md ${hover} w-fit cursor-pointer active:scale-90 transition-transform duration-200`}
+      onClick={onClick}
+    >
       <div className={`${isDark ? 'dark-icon' : 'light-icon'}`}>
         <Image src={`/${icon}`} alt={icon} width={14} height={14} />
       </div>
