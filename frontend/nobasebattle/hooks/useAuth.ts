@@ -54,7 +54,25 @@ export const useAuth = () => {
     try {
       clearAuth()
       await deleteCookie('token')
-      router.push('/register')
+      // 쿠키가 완전히 삭제되었는지 확인
+      const checkCookieDeleted = () => {
+        const cookies = document.cookie.split(';')
+        return !cookies.some(cookie => cookie.trim().startsWith('token='))
+      }
+      
+      // 쿠키가 완전히 삭제될 때까지 대기
+      let retries = 0
+      const maxRetries = 5
+      const waitForCookieDeletion = () => {
+        if (checkCookieDeleted() || retries >= maxRetries) {
+          router.push('/register')
+        } else {
+          retries++
+          setTimeout(waitForCookieDeletion, 100)
+        }
+      }
+      
+      waitForCookieDeletion()
     } catch (error) {
       console.error('로그아웃 중 오류 발생:', error)
     }
