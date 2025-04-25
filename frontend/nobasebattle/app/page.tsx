@@ -2,7 +2,6 @@
 
 import { ErrorBoundary } from '@/app/components/common/ErrorBoundary'
 import type { ImageCharacter, TextCharacter } from '@/app/types/character'
-import { AuthGuard } from '@/components/auth/AuthGuard'
 import CharacterList from '@/components/character/CharacterList'
 import CharacterTypeToggle from '@/components/character/CharacterTypeToggle'
 import Button from '@/components/common/Button'
@@ -82,22 +81,20 @@ const MainPage = () => {
   )
 
   return (
-    <AuthGuard requireAuth={true}>
-      <div className="w-full max-w-150 flex flex-col items-center gap-6">
-        {characterTypeToggle}
+    <div className="w-full max-w-150 flex flex-col items-center gap-6">
+      {characterTypeToggle}
 
-        <ErrorBoundary>
-          <Suspense fallback={<div>로딩 중...</div>}>
-            {error ? <div>{error}</div> : characterList}
-          </Suspense>
-        </ErrorBoundary>
+      <ErrorBoundary>
+        <Suspense fallback={<div>로딩 중...</div>}>
+          {error ? <div>{error}</div> : characterList}
+        </Suspense>
+      </ErrorBoundary>
 
-        <div className="flex flex-col gap-3">
-          {selectedType === 'text' && <Button text="텍스트로 캐릭터 생성" />}
-          {selectedType === 'image' && <Button text="그림으로 캐릭터 생성" />}
-        </div>
+      <div className="flex flex-col gap-3">
+        {selectedType === 'text' && <Button text="텍스트로 캐릭터 생성" />}
+        {selectedType === 'image' && <Button text="그림으로 캐릭터 생성" />}
       </div>
-    </AuthGuard>
+    </div>
   )
 }
 
