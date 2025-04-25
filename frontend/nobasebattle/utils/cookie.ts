@@ -5,22 +5,34 @@ interface CookieOptions {
   maxAge?: number
 }
 
-export const setCookie = (name: string, value: string, options: CookieOptions = {}) => {
-  const {
-    path = '/',
-    secure = process.env.NODE_ENV === 'production',
-    sameSite = 'strict',
-    maxAge,
-  } = options
+export const setCookie = (name: string, value: string, options?: CookieOptions): Promise<void> => {
+  return new Promise((resolve) => {
+    const {
+      path = '/',
+      secure = process.env.NODE_ENV === 'production',
+      sameSite = 'strict',
+      maxAge,
+    } = options || {}
 
-  let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`
+    let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`
+    if (path) cookieString += `; path=${path}`
+    if (secure) cookieString += '; secure'
+    if (sameSite) cookieString += `; samesite=${sameSite}`
+    if (maxAge) cookieString += `; max-age=${maxAge}`
 
-  if (path) cookieString += `; path=${path}`
-  if (secure) cookieString += '; secure'
-  if (sameSite) cookieString += `; samesite=${sameSite}`
-  if (maxAge) cookieString += `; max-age=${maxAge}`
+    document.cookie = cookieString
 
-  document.cookie = cookieString
+    // 쿠키가 실제로 설정되었는지 확인
+    const checkCookie = () => {
+      if (getCookie(name) === value) {
+        resolve()
+      } else {
+        setTimeout(checkCookie, 10)
+      }
+    }
+
+    checkCookie()
+  })
 }
 
 export const getCookie = (name: string): string | null => {

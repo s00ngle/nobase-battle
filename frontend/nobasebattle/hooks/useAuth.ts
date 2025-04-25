@@ -10,10 +10,10 @@ export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleAuthSuccess = (response: { data: { accessToken: string; role: string } }) => {
+  const handleAuthSuccess = async (response: { data: { accessToken: string; role: string } }) => {
     const { accessToken, role } = response.data
     setAuth(accessToken, role)
-    setCookie('token', accessToken, {
+    await setCookie('token', accessToken, {
       path: '/',
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
@@ -27,7 +27,7 @@ export const useAuth = () => {
       setIsLoading(true)
       setError(null)
       const response = await authApi.signUp({ email, password })
-      handleAuthSuccess(response)
+      await handleAuthSuccess(response)
     } catch (err) {
       setError('회원가입에 실패했습니다.')
       throw err
@@ -41,7 +41,7 @@ export const useAuth = () => {
       setIsLoading(true)
       setError(null)
       const response = await authApi.anonymousSignIn()
-      handleAuthSuccess(response)
+      await handleAuthSuccess(response)
     } catch (err) {
       setError('빠른 시작에 실패했습니다.')
       throw err
