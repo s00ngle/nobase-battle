@@ -50,9 +50,9 @@ export const useAuth = () => {
     }
   }
 
-  const signOut = () => {
+  const signOut = async () => {
     clearAuth()
-    deleteCookie('token')
+    await deleteCookie('token')
     router.push('/')
   }
 
