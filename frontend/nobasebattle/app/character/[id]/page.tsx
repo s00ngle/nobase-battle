@@ -26,8 +26,6 @@ const Character = () => {
         const data = await getCharacter(id)
         setCharacterData(data)
         console.log('결과:', data)
-        // API 호출 후 2초 동안 로딩 유지
-        await new Promise((resolve) => setTimeout(resolve, 20000))
       } catch (error) {
         console.error('캐릭터 정보를 불러오는데 실패했습니다:', error)
       } finally {
