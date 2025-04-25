@@ -11,4 +11,7 @@ public interface RankSearchUtils {
 
     void addTextCharacterToRank(TextCharacter character);
     void addImageCharacterToRank(ImageCharacter character);
+
+    void deleteTextCharacterFromRank(TextCharacter character);
+    void deleteImageCharacterFromRank(ImageCharacter character);
 }
