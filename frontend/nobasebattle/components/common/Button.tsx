@@ -24,7 +24,7 @@ const Button = ({
       disabled={disabled}
       className={`${border ? 'border border-1-white' : ''}
       ${fill ? 'w-full' : ''}
-      ${transparentForm} ${hover} px-3 py-2 rounded-lg text-xl cursor-pointer`}
+      ${transparentForm} ${hover} px-3 py-2 rounded-lg text-xl cursor-pointer active:scale-95 transition-transform duration-200`}
     >
       {text}
     </button>

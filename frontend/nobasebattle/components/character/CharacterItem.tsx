@@ -19,7 +19,7 @@ const CharacterItem = ({
 }: CharacterItemProps) => {
   return (
     <div
-      className={`flex flex-col gap-3 w-full p-3 rounded-2xl cursor-pointer ${transparentForm} ${hover}`}
+      className={`flex flex-col gap-3 w-full p-3 rounded-2xl cursor-pointer hover:scale-98 transition-transform duration-200 ${transparentForm} ${hover}`}
       onClick={onClick}
     >
       <div className="flex justify-between">
