@@ -15,4 +15,9 @@ public interface TextCharacterRepository extends MongoRepository<TextCharacter, 
 
     List<TextCharacter> findByUserId(String userId);
 
+    @Query("{ 'userId': { $ne: ?0 } }")
+    List<TextCharacter> findByUserIdNot(String userId);
+
+    List<TextCharacter> findByUserIdAndIdNot(String userId, String id);
+
 }

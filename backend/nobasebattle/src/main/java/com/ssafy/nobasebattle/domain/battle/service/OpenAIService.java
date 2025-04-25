@@ -56,6 +56,33 @@ public class OpenAIService {
         }
     }
 
+    public BattleResult analyzeTextAndDetermineBattle(String firstCharacterName, String firstCharacterPrompt,
+                                                      String secondCharacterName, String secondCharacterPrompt) {
+        try {
+            String prompt = buildTextBattlePrompt(firstCharacterName, firstCharacterPrompt, secondCharacterName, secondCharacterPrompt);
+
+            HttpHeaders headers = createHeaders();
+            ObjectNode requestBody = createTextRequestBody(prompt);
+
+            HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
+
+            log.info("OpenAI API 요청 전송 중...");
+            String response = restTemplate.postForObject(openaiApiUrl, request, String.class);
+
+            // 응답 파싱
+            JsonNode responseJson = objectMapper.readTree(response);
+            String content = responseJson.path("choices").path(0).path("message").path("content").asText();
+            log.info("OpenAI API 응답 받음: {}", content.substring(0, Math.min(100, content.length())) + "...");
+
+            return parseBattleResponse(content);
+
+        } catch (Exception e) {
+            log.error("OpenAI API 호출 중 오류 발생: {}", e.getMessage());
+            return new BattleResult(0, "API 오류로 인해 배틀 결과를 생성할 수 없습니다. 두 캐릭터는 비겼습니다.");
+        }
+    }
+
+
     /**
      * 배틀 프롬프트 생성
      */
@@ -76,6 +103,29 @@ public class OpenAIService {
                         "battle_log는 한국어로 작성해주세요.",
                 firstCharacterName,
                 secondCharacterName
+        );
+    }
+
+    private String buildTextBattlePrompt(String firstCharacterName, String firstCharacterPrompt,
+                                         String secondCharacterName, String secondCharacterPrompt) {
+        return String.format(
+                "두 가상 캐릭터의 텍스트 프롬프트를 분석하고 배틀 결과를 판정한 후 흥미진진한 배틀 이야기를 작성해주세요.\n\n" +
+                        "첫 번째 캐릭터 이름: %s\n" +
+                        "첫 번째 캐릭터 프롬프트: %s\n" +
+                        "두 번째 캐릭터 이름: %s\n" +
+                        "두 번째 캐릭터 프롬프트: %s\n\n" +
+                        "1. 각 캐릭터의 특징, 능력, 스타일 등을 프롬프트에서 분석해주세요.\n" +
+                        "2. 두 캐릭터가 배틀을 했을 때의 결과를 판정해주세요.\n" +
+                        "3. 누가 이겼는지 명확히 판정해주세요 (무승부도 가능).\n" +
+                        "4. 배틀 과정을 300자 내외의 흥미진진한 이야기로 작성해주세요.\n\n" +
+                        "반드시 다음 JSON 형식으로 응답해주세요:\n" +
+                        "{\n" +
+                        "  \"result\": 1 또는 -1 또는 0, (1: 첫 번째 캐릭터 승리, -1: 두 번째 캐릭터 승리, 0: 무승부)\n" +
+                        "  \"battle_log\": \"배틀 이야기\"\n" +
+                        "}\n\n" +
+                        "battle_log는 한국어로 작성해주세요.",
+                firstCharacterName, firstCharacterPrompt,
+                secondCharacterName, secondCharacterPrompt
         );
     }
 
@@ -134,6 +184,42 @@ public class OpenAIService {
 
             contentArray.add(imageContent);
         }
+
+        userMessage.set("content", contentArray);
+
+        messagesArray.add(systemMessage);
+        messagesArray.add(userMessage);
+        requestBody.set("messages", messagesArray);
+
+        requestBody.put("max_tokens", 800);
+        requestBody.put("temperature", 0.7);
+
+        return requestBody;
+    }
+
+    private ObjectNode createTextRequestBody(String prompt) {
+        ObjectNode requestBody = objectMapper.createObjectNode();
+        requestBody.put("model", "gpt-4.1 nano");
+
+        ObjectNode responseFormat = objectMapper.createObjectNode();
+        responseFormat.put("type", "json_object");
+        requestBody.set("response_format", responseFormat);
+
+        ArrayNode messagesArray = objectMapper.createArrayNode();
+
+        ObjectNode systemMessage = objectMapper.createObjectNode();
+        systemMessage.put("role", "system");
+        systemMessage.put("content", "당신은 창의적인 배틀 게임 마스터입니다. 캐릭터 프롬프트를 분석하고 흥미로운 배틀 결과를 판정합니다. 항상 JSON 형식으로 응답하세요.");
+
+        ObjectNode userMessage = objectMapper.createObjectNode();
+        userMessage.put("role", "user");
+
+        ArrayNode contentArray = objectMapper.createArrayNode();
+
+        ObjectNode textContent = objectMapper.createObjectNode();
+        textContent.put("type", "text");
+        textContent.put("text", prompt);
+        contentArray.add(textContent);
 
         userMessage.set("content", contentArray);
 
