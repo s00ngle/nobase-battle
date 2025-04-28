@@ -1,3 +1,5 @@
+import type { BadgeType } from '@/types/Badge'
+
 export interface TextCharacter {
   name: string
   prompt: string
@@ -22,7 +24,7 @@ export interface ImageCharacter {
   winRate: number
   eloScore: number
   rank: number
-  badges: string[]
+  badges: BadgeType[]
   createdAt: string
   updatedAt: string
 }

@@ -11,5 +11,8 @@ export const characterData: TCharacterResponse = {
   winRate: 80.2,
   eloScore: 2000,
   rank: 1234,
-  badges: ['제 1회 토너먼트 우승자', '20연승 달성'],
+  badges: [
+    { text: '제 1회 토너먼트 우승자', imageUrl: '/badge1.png' },
+    { text: '20연승 달성', imageUrl: '/badge2.png' },
+  ],
 }

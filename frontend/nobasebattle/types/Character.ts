@@ -1,3 +1,5 @@
+import type { BadgeType } from './Badge'
+
 export interface TCharacterResponse {
   textCharacterId: string
   name: string
@@ -9,7 +11,7 @@ export interface TCharacterResponse {
   winRate: number
   eloScore: number
   rank: number
-  badges: string[]
+  badges: BadgeType[]
   createdAt?: string
   updatedAt?: string
 }

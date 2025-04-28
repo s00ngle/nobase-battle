@@ -15,10 +15,10 @@ interface InfoProps {
 }
 
 const badgeList: BadgeType[] = [
-  { text: '제1회 토너먼트 우승자', bgColor: 'accent' },
-  { text: '무근본상1', bgColor: 'red' },
-  { text: '무근본상2', bgColor: 'yellow' },
-  { text: '제2회 토너먼트 우승자', bgColor: 'green' },
+  { text: '제1회 토너먼트 우승자', imageUrl: '/favicon.png' },
+  { text: '무근본상1', imageUrl: '/favicon.png' },
+  { text: '무근본상2', imageUrl: '/favicon.png' },
+  { text: '제2회 토너먼트 우승자', imageUrl: '/favicon.png' },
 ]
 
 const CharacterInfo = ({ character, data, isLoading = false }: InfoProps) => {

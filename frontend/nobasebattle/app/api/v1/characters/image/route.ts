@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const mockData: ImageCharacter[] = [
       {
-        characterId: '1',
+        imageCharacterId: '1',
         name: '캐릭터1',
         imageUrl: 'https://example.com/image1.jpg',
         wins: 10,
@@ -15,7 +15,10 @@ export async function GET() {
         winRate: 0.588,
         eloScore: 1500,
         rank: 1,
-        badges: ['badge1', 'badge2'],
+        badges: [
+          { text: 'badge1', imageUrl: '/favicon.png' },
+          { text: 'badge2', imageUrl: '/favicon.png' },
+        ],
         createdAt: '2025-04-23T15:04:59.243',
         updatedAt: '2025-04-23T15:04:59.243',
       },
