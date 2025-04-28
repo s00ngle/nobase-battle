@@ -4,7 +4,8 @@ import BattleResult from '@/components/character/BattleResult'
 import CharacterInfo from '@/components/character/CharacterInfo'
 import CharacterItem from '@/components/character/CharacterItem'
 import Button from '@/components/common/Button'
-import type { TBattleResponse } from '@/types/Battle'
+import useTimer from '@/hooks/useTimer'
+import type { ApiResponse, IBattleResponse, TBattleResponse } from '@/types/Battle'
 import type { ICharacterResponse, TCharacterResponse } from '@/types/Character'
 import { fetchRandomImageBattle, fetchRandomTextBattle } from '@/utils/api/battle'
 import { getImageCharacter, getTextCharacter } from '@/utils/characters'
@@ -17,23 +18,33 @@ const Character = () => {
     TCharacterResponse | ICharacterResponse | null
   >(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [battleResult, setBattleResult] = useState<TBattleResponse | null>(null)
+  const [isBattleLoading, setIsBattleLoading] = useState(false)
+  const [battleResult, setBattleResult] = useState<TBattleResponse | IBattleResponse | null>(null)
+  const [lastBattleTime, setLastBattleTime] = useState<string | null>(null)
   const params = useParams()
   const type = params.type as string
   const id = params.id as string
 
+  const { isActive, secondsLeft } = useTimer(lastBattleTime)
+
   const resultHandler = async () => {
     try {
+      setIsBattleLoading(true)
+      let response: ApiResponse<TBattleResponse | IBattleResponse> | undefined
       if (type === 'text') {
-        const response = await fetchRandomTextBattle(id)
-        setBattleResult(response.data)
+        response = await fetchRandomTextBattle(id)
       } else if (type === 'image') {
-        const response = await fetchRandomImageBattle(id)
-        setBattleResult(response.data)
+        response = await fetchRandomImageBattle(id)
       }
-      setResult(true)
+      if (response?.data) {
+        setBattleResult(response.data)
+        setResult(true)
+        setLastBattleTime(response.data.createdAt)
+      }
     } catch (error) {
       console.error('배틀 결과를 불러오는데 실패했습니다:', error)
+    } finally {
+      setIsBattleLoading(false)
     }
   }
 
@@ -123,7 +134,17 @@ const Character = () => {
         }
         isLoading={isLoading}
       />
-      <Button text={'배틀 시작'} onClick={resultHandler} />
+      <Button
+        text={
+          isBattleLoading
+            ? '결과 로딩중...'
+            : !isActive && lastBattleTime
+              ? `${secondsLeft}초 후 배틀 가능`
+              : '배틀 시작'
+        }
+        onClick={resultHandler}
+        disabled={isBattleLoading || (!isActive && lastBattleTime !== null)}
+      />
       {result && battleResult && <BattleResult data={battleResult} />}
     </div>
   )

@@ -24,7 +24,6 @@ const BattleResult = ({ data }: ResultProps) => {
               : data.result === -1
                 ? '패배'
                 : ''}
-          !
         </span>
       </p>
       <div className={`flex flex-col ${transparentForm} w-full px-3 py-3 rounded-2xl gap-3`}>

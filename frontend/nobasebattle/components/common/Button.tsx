@@ -7,6 +7,7 @@ interface ButtonProps {
   fill?: boolean
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
+  className?: string
 }
 
 const Button = ({
@@ -16,6 +17,7 @@ const Button = ({
   fill = false,
   disabled = false,
   type = 'button',
+  className = '',
 }: ButtonProps) => {
   return (
     <button
@@ -24,7 +26,8 @@ const Button = ({
       disabled={disabled}
       className={`${border ? 'border border-1-white' : ''}
       ${fill ? 'w-full' : ''}
-      ${transparentForm} ${hover} px-3 py-2 rounded-lg text-xl cursor-pointer active:scale-95 transition-transform duration-200`}
+      ${transparentForm} ${hover} px-3 py-2 rounded-lg text-xl ${disabled ? 'cursor-not-allowed' : 'cursor-pointer active:scale-95'}  transition-transform duration-200
+      ${className}`}
     >
       {text}
     </button>
