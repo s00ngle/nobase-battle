@@ -57,6 +57,32 @@ export const getCookie = (name: string): string | null => {
   return null
 }
 
-export const deleteCookie = (name: string, path = '/') => {
-  document.cookie = `${encodeURIComponent(name)}=; path=${path}; expires=Thu, 01 Jan 1970 00:00:00 GMT`
+export const deleteCookie = (name: string, path = '/'): Promise<void> => {
+  return new Promise((resolve) => {
+    const cookieString = `${encodeURIComponent(name)}=; path=${path}; expires=Thu, 01 Jan 1970 00:00:00 GMT`
+    
+    try {
+      document.cookie = cookieString
+    } catch (error) {
+      console.error('쿠키 삭제 실패:', error)
+    }
+
+    const checkCookieDeleted = () => {
+      const currentValue = getCookie(name)
+      if (!currentValue) {
+        console.log('쿠키 삭제 성공:', name)
+        resolve()
+      } else {
+        console.log('쿠키 삭제 재시도 중:', name)
+        try {
+          document.cookie = cookieString
+        } catch (error) {
+          console.error('쿠키 재삭제 실패:', error)
+        }
+        setTimeout(checkCookieDeleted, 100)
+      }
+    }
+
+    checkCookieDeleted()
+  })
 }

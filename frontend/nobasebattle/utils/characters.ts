@@ -1,7 +1,6 @@
 import type {
   ApiResponse,
   ImageCharacter,
-  ImageCharacterListResponse,
   TextCharacter,
 } from '@/app/types/character'
 import type { TCharacterResponse } from '@/types/Character'
@@ -35,13 +34,13 @@ export const fetchTextCharacters = async (): Promise<TextCharacter[]> => {
 
 export const fetchImageCharacters = async (): Promise<ImageCharacter[]> => {
   try {
-    const response = await lux.get<ApiResponse<ImageCharacterListResponse>>(
+    const response = await lux.get<ApiResponse<ImageCharacter[]>>(
       '/api/v1/characters/image',
     )
-    if (!response?.data?.content) {
+    if (!response?.data) {
       throw new Error('이미지 캐릭터 목록을 가져오는데 실패했습니다')
     }
-    return response.data.content
+    return response.data
   } catch (error) {
     console.error('Error fetching image characters:', error)
     throw error
