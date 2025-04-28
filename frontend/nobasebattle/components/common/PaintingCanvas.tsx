@@ -275,7 +275,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
             onTouchMove={draw}
             onTouchEnd={stopDrawing}
             onTouchCancel={stopDrawing}
-            aria-label="서명 캔버스"
+            aria-label="그림 캔버스"
           />
           <div
             ref={eraserCursorRef}

@@ -23,7 +23,7 @@ const CharacterList = ({
   const router = useRouter()
 
   const handleCharacterClick = (id: string) => {
-    router.push(`/character/${id}`)
+    router.push(`/character/${type}/${id}`)
   }
 
   return (
@@ -78,6 +78,8 @@ const CharacterList = ({
                 key={imageChar.imageCharacterId}
                 nickname={imageChar.name}
                 onClick={() => handleCharacterClick(imageChar.imageCharacterId)}
+                imageUrl={imageChar.imageUrl}
+                imageSize="sm"
               />
             )
           })}

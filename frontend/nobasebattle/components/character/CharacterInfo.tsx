@@ -1,5 +1,5 @@
 import { hover, transparentForm } from '@/styles/form'
-import type { TCharacterResponse } from '@/types/Character'
+import type { ICharacterResponse, TCharacterResponse } from '@/types/Character'
 import type React from 'react'
 import BadgeList from '../common/BadgeList'
 import IconButton from '../common/IconButton'
@@ -8,15 +8,10 @@ import CharacterRecord from './CharacterRecord'
 import CharacterStatusSummary from './CharacterStatusSummary'
 
 interface InfoProps {
-  data: TCharacterResponse['data']
+  data: TCharacterResponse | ICharacterResponse
   character: React.ReactNode
   isLoading?: boolean
 }
-
-// const badgeList: BadgeType[] = [
-//   { text: '30연승 달성', imageUrl: '/badge-30-icon.png' },
-//   { text: '50연승 달성', imageUrl: '/badge-50-icon.png' },
-// ]
 
 const CharacterInfo = ({ character, data, isLoading = false }: InfoProps) => {
   return (
@@ -56,7 +51,7 @@ const CharacterInfo = ({ character, data, isLoading = false }: InfoProps) => {
         <p className="text-xl">획득뱃지</p>
         {isLoading ? (
           <SkeletonLoading width="100%" height="2rem" className="rounded-xl" />
-        ) : data.badges.length > 0 ? (
+        ) : data.badges && data.badges.length > 0 ? (
           <BadgeList badges={data.badges} />
         ) : (
           <div className={`text-center text-lg rounded-xl p-2 ${transparentForm}`}>

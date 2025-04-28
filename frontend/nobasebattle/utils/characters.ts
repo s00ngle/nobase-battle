@@ -1,5 +1,5 @@
 import type { ApiResponse, ImageCharacter, TextCharacter } from '@/app/types/character'
-import type { TCharacterResponse } from '@/types/Character'
+import type { ICharacterResponse, TCharacterResponse } from '@/types/Character'
 import { lux } from './lux'
 
 interface CreateTextCharacterRequest {
@@ -22,13 +22,28 @@ interface ApiError {
   }
 }
 
-export const getCharacter = async (id: string): Promise<TCharacterResponse> => {
+export const getTextCharacter = async (id: string): Promise<TCharacterResponse> => {
   try {
-    const data = await lux.get<TCharacterResponse>(`/api/v1/characters/text/${id}`)
-    if (!data) {
+    const response = await lux.get<ApiResponse<TCharacterResponse>>(`/api/v1/characters/text/${id}`)
+    if (!response?.data) {
       throw new Error('캐릭터 정보를 가져오는데 실패했습니다')
     }
-    return data
+    return response.data
+  } catch (error) {
+    console.error('API 호출 중 에러 발생:', error)
+    throw error
+  }
+}
+
+export const getImageCharacter = async (id: string): Promise<ICharacterResponse> => {
+  try {
+    const response = await lux.get<ApiResponse<ICharacterResponse>>(
+      `/api/v1/characters/image/${id}`,
+    )
+    if (!response?.data) {
+      throw new Error('캐릭터 정보를 가져오는데 실패했습니다')
+    }
+    return response.data
   } catch (error) {
     console.error('API 호출 중 에러 발생:', error)
     throw error

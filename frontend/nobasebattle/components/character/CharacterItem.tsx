@@ -1,21 +1,26 @@
 'use client'
 
 import { hover, transparentForm } from '@/styles/form'
+import Image from 'next/image'
 import IconButton from '../common/IconButton'
 import SkeletonLoading from '../common/SkeletonLoading'
 
 export interface CharacterItemProps {
   nickname: string
   description?: string
+  imageUrl?: string
   onClick?: () => void
   isLoading?: boolean
+  imageSize?: 'sm' | 'lg'
 }
 
 const CharacterItem = ({
   nickname,
   description,
+  imageUrl,
   onClick,
   isLoading = false,
+  imageSize = 'lg',
 }: CharacterItemProps) => {
   return (
     <div
@@ -33,6 +38,17 @@ const CharacterItem = ({
           <IconButton icon="delete.svg" />
         </div>
       </div>
+      {imageUrl && (
+        <div className="flex justify-center">
+          <div
+            className={`bg-gray-200 rounded-md relative aspect-video ${
+              imageSize === 'sm' ? 'w-80' : 'w-full'
+            }`}
+          >
+            <Image src={imageUrl} alt="character" fill className="object-contain" />
+          </div>
+        </div>
+      )}
       {description &&
         (isLoading ? (
           <SkeletonLoading width="12rem" height="1.5rem" className="rounded-md" />
