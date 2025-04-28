@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 interface IconButtonProps {
   icon: string
-  onClick?: () => void
+  onClick?: (event: React.MouseEvent) => void
   isDark?: boolean
 }
 
