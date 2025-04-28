@@ -54,7 +54,7 @@ const CharacterItem = ({
       {imageUrl && (
         <div className="flex justify-center">
           <div
-            className={`bg-gray-200 rounded-md relative aspect-video ${
+            className={`bg-white rounded-md relative aspect-video ${
               imageSize === 'sm' ? 'w-80' : 'w-full'
             }`}
           >
