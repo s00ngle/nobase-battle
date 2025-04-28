@@ -5,11 +5,14 @@ import Badge from './Badge'
 interface BadgeListProps {
   badges?: BadgeType[]
   size?: number
+  isTransparent?: boolean
 }
 
-const BadgeList = ({ badges, size = 40 }: BadgeListProps) => {
+const BadgeList = ({ badges, size = 40, isTransparent = true }: BadgeListProps) => {
   return (
-    <div className={`flex gap-3 p-3 rounded-2xl w-full max-w-150 flex-wrap ${transparentForm}`}>
+    <div
+      className={`flex gap-3 p-3 rounded-2xl w-full max-w-150 flex-wrap ${isTransparent ? transparentForm : ''}`}
+    >
       {badges?.map((badge) => {
         return <Badge text={badge.text} imageUrl={badge.imageUrl} key={badge.text} size={size} />
       })}

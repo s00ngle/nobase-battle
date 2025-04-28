@@ -11,8 +11,8 @@ interface RankingItemsProps {
 
 const RankingItems = ({ rank, characterName, username, eloScore }: RankingItemsProps) => {
   const badgeList: BadgeType[] = [
-    { text: '제 1회 토너먼트 우승자', imageUrl: '/favicon.png' },
-    { text: '20연승 달성', imageUrl: '/favicon.png' },
+    { text: '30연승 달성', imageUrl: '/badge-30-icon.png' },
+    { text: '50연승 달성', imageUrl: '/badge-50-icon.png' },
   ]
   return (
     <div className={`flex justify-between px-4 py-4 rounded-xl ${transparentForm} ${hover}`}>
@@ -25,7 +25,7 @@ const RankingItems = ({ rank, characterName, username, eloScore }: RankingItemsP
       </div>
       <div className="flex flex-col justify-center items-end gap-1">
         <span className="text-xl">{eloScore}점</span>
-        {badgeList.length > 0 && <BadgeList badges={badgeList} size={20} />}
+        {badgeList.length > 0 && <BadgeList badges={badgeList} size={25} isTransparent={false} />}
       </div>
     </div>
   )

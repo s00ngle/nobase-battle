@@ -15,10 +15,8 @@ interface InfoProps {
 }
 
 const badgeList: BadgeType[] = [
-  { text: '제1회 토너먼트 우승자', imageUrl: '/favicon.png' },
-  { text: '무근본상1', imageUrl: '/favicon.png' },
-  { text: '무근본상2', imageUrl: '/favicon.png' },
-  { text: '제2회 토너먼트 우승자', imageUrl: '/favicon.png' },
+  { text: '30연승 달성', imageUrl: '/badge-30-icon.png' },
+  { text: '50연승 달성', imageUrl: '/badge-50-icon.png' },
 ]
 
 const CharacterInfo = ({ character, data, isLoading = false }: InfoProps) => {
