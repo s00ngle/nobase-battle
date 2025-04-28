@@ -9,7 +9,7 @@ import CharacterRecord from './CharacterRecord'
 import CharacterStatusSummary from './CharacterStatusSummary'
 
 interface InfoProps {
-  data: TCharacterResponse
+  data: TCharacterResponse['data']
   character: React.ReactNode
   isLoading?: boolean
 }
