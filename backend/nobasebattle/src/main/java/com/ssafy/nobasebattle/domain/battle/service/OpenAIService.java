@@ -88,14 +88,13 @@ public class OpenAIService {
      */
     private String buildImageBattlePrompt(String firstCharacterName, String secondCharacterName) {
         return String.format(
-                "두 가상 캐릭터 이미지를 분석하고 배틀 결과를 판정한 후 흥미진진한 배틀 이야기를 작성해주세요.\n\n" +
-                        "첫 번째 캐릭터 이름: %s\n" +
-                        "두 번째 캐릭터 이름: %s\n\n" +
-                        "1. 각 캐릭터의 특징, 능력, 장비, 스타일 등을 분석해주세요.\n" +
-                        "2. 두 캐릭터가 배틀을 했을 때의 결과를 판정해주세요.\n" +
-                        "3. 누가 이겼는지 명확히 판정해주세요 (무승부도 가능).\n" +
-                        "4. 배틀 과정을 300자 내외의 흥미진진한 이야기로 작성해주세요.\n\n" +
-                        "반드시 다음 JSON 형식으로 응답해주세요:\n" +
+                "image 1 this character name is %s. image 2 this character name is %s. 이미지를 보고 두 캐릭터에 대한 특징과 전투력을 분석해." +
+                        " 특징에 맞춰서 스킬을 만들어. 배틀 결과를 작성해. ### 지시문 ### \\n 예시를 참고해서 유사한 어조와 문체로 내용을 작성해. " +
+                        "battlelog를 string으로 채워야 해. 두 캐릭터에 대한 배틀 결과를 매우 창의적이고 엉뚱하고 재미있게 줄글로 작성해. 어린 아이들도 재미있게 느끼도록 엉뚱하게 작성해야해. 두 캐릭터가 맞붙어서 서로의 스킬을 활용하여 대결을 진행하고 마지막에는 승패가 결정되는 내용까지 작성해. " +
+                        "두 캐릭터가 만나는 과정은 작성하지 마. 두 캐릭터의 특성이 잘 드러나도록 대결 과정을 작성해. 절대 대화체로 작성하지 마. 독백체로 작성해. " +
+                        "마지막 줄에는 어떤 캐릭터가 승리했는지도 알려줘. 한글로 4문장 안에 모든 내용을 마무리 해." +
+                        " \\n ### 예시 ### 프롬프트 엔지니어는 붕괴맨의 '설정 붕괴' 시도를 역이용하여, '붕괴' 자체를 프롬프트의 일부로 포함시켰다. 붕괴맨은 자신의 '설정의 틀'이 흔들리는 것을 감지했지만, 이미 프롬프트 엔지니어의 전략 안에 갇혀 있었다. 결국, 붕괴의 파편 속에서 프롬프트 엔지니어는 승리했다.\\n" +
+                        "### 제공된 가이드라인을 따르지 않으면 페널티가 부과될 것입니다. 모든 지침을 주의깊게 읽고 반드시 지켜야 해. 반드시 창의적으로 작성해. charater 1의 승패에 따라 result는 int로 채워. 1 (승리) -1 (패배) 0 (무승부)" +
                         "{\n" +
                         "  \"result\": 1 또는 -1 또는 0, (1: 첫 번째 캐릭터 승리, -1: 두 번째 캐릭터 승리, 0: 무승부)\n" +
                         "  \"battle_log\": \"배틀 이야기\"\n" +
@@ -106,24 +105,47 @@ public class OpenAIService {
         );
     }
 
+//    private String buildTextBattlePrompt(String firstCharacterName, String firstCharacterPrompt,
+//                                         String secondCharacterName, String secondCharacterPrompt) {
+//        return String.format(
+//                "두 가상 캐릭터의 텍스트 프롬프트를 분석하고 배틀 결과를 판정한 후 흥미진진한 배틀 이야기를 작성해주세요.\n\n" +
+//                        "첫 번째 캐릭터 이름: %s\n" +
+//                        "첫 번째 캐릭터 프롬프트: %s\n" +
+//                        "두 번째 캐릭터 이름: %s\n" +
+//                        "두 번째 캐릭터 프롬프트: %s\n\n" +
+//                        "1. 각 캐릭터의 특징, 능력, 스타일 등을 프롬프트에서 분석해주세요.\n" +
+//                        "2. 두 캐릭터가 배틀을 했을 때의 결과를 판정해주세요.\n" +
+//                        "3. 누가 이겼는지 명확히 판정해주세요 (무승부도 가능).\n" +
+//                        "4. 배틀 과정을 300자 내외의 흥미진진한 이야기로 작성해주세요.\n\n" +
+//                        "반드시 다음 JSON 형식으로 응답해주세요:\n" +
+//                        "{\n" +
+//                        "  \"result\": 1 또는 -1 또는 0, (1: 첫 번째 캐릭터 승리, -1: 두 번째 캐릭터 승리, 0: 무승부)\n" +
+//                        "  \"battle_log\": \"배틀 이야기\"\n" +
+//                        "}\n\n" +
+//                        "battle_log는 한국어로 작성해주세요.",
+//                firstCharacterName, firstCharacterPrompt,
+//                secondCharacterName, secondCharacterPrompt
+//        );
+//    }
+
     private String buildTextBattlePrompt(String firstCharacterName, String firstCharacterPrompt,
                                          String secondCharacterName, String secondCharacterPrompt) {
         return String.format(
-                "두 가상 캐릭터의 텍스트 프롬프트를 분석하고 배틀 결과를 판정한 후 흥미진진한 배틀 이야기를 작성해주세요.\n\n" +
-                        "첫 번째 캐릭터 이름: %s\n" +
-                        "첫 번째 캐릭터 프롬프트: %s\n" +
-                        "두 번째 캐릭터 이름: %s\n" +
-                        "두 번째 캐릭터 프롬프트: %s\n\n" +
-                        "1. 각 캐릭터의 특징, 능력, 스타일 등을 프롬프트에서 분석해주세요.\n" +
-                        "2. 두 캐릭터가 배틀을 했을 때의 결과를 판정해주세요.\n" +
-                        "3. 누가 이겼는지 명확히 판정해주세요 (무승부도 가능).\n" +
-                        "4. 배틀 과정을 300자 내외의 흥미진진한 이야기로 작성해주세요.\n\n" +
+                "### 지시문 ### \n 예시를 참고해서 유사한 어조와 문체로 내용을 작성해. battlelog를 string으로 채워야 해. " +
+                        "두 캐릭터에 대한 배틀 결과를 매우 창의적이고 엉뚱하고 재미있게 줄글로 작성해. 어린 아이들도 재미있게 느끼도록 엉뚱하게 작성해야해. "+
+                        "두 캐릭터가 맞붙어서 서로의 스킬을 활용하여 대결을 진행하고 마지막에는 승패가 결정되는 내용까지 작성해. 두 캐릭터가 만나는 과정은 작성하지 마. " +
+                        "두 캐릭터의 특성이 잘 드러나도록 대결 과정을 작성해. 절대 대화체로 작성하지 마. 독백체로 작성해. 마지막 줄에는 어떤 캐릭터가 승리했는지도 알려줘. 한글로 4문장 안에 모든 내용을 마무리 해. " +
+                        " \n ### 예시 ### 프롬프트 엔지니어는 붕괴맨의 '설정 붕괴' 시도를 역이용하여, '붕괴' 자체를 프롬프트의 일부로 포함시켰다. 붕괴맨은 자신의 '설정의 틀'이 흔들리는 것을 감지했지만, 이미 프롬프트 엔지니어의 전략 안에 갇혀 있었다. 결국, 붕괴의 파편 속에서 프롬프트 엔지니어는 승리했다.\n " +
+                        "### character 1: name is %s. character 1 explaination: %s ### \n " +
+                        "### character 2: name is %s. character 2 explaination: %s ### \n" +
+                        "### 제공된 가이드라인을 따르지 않으면 페널티가 부과될 것입니다. 모든 지침을 주의깊게 읽고 반드시 지켜야 해. 반드시 창의적으로 작성해. charater 1의 승패에 따라 result는 int로 채워. 1 (승리) -1 (패배) 0 (무승부) " +
                         "반드시 다음 JSON 형식으로 응답해주세요:\n" +
                         "{\n" +
                         "  \"result\": 1 또는 -1 또는 0, (1: 첫 번째 캐릭터 승리, -1: 두 번째 캐릭터 승리, 0: 무승부)\n" +
                         "  \"battle_log\": \"배틀 이야기\"\n" +
                         "}\n\n" +
                         "battle_log는 한국어로 작성해주세요.",
+
                 firstCharacterName, firstCharacterPrompt,
                 secondCharacterName, secondCharacterPrompt
         );
@@ -192,14 +214,14 @@ public class OpenAIService {
         requestBody.set("messages", messagesArray);
 
         requestBody.put("max_tokens", 800);
-        requestBody.put("temperature", 0.7);
+        requestBody.put("temperature", 1);
 
         return requestBody;
     }
 
     private ObjectNode createTextRequestBody(String prompt) {
         ObjectNode requestBody = objectMapper.createObjectNode();
-        requestBody.put("model", "gpt-4.1 nano");
+        requestBody.put("model", "gpt-4o-mini");
 
         ObjectNode responseFormat = objectMapper.createObjectNode();
         responseFormat.put("type", "json_object");
@@ -228,7 +250,7 @@ public class OpenAIService {
         requestBody.set("messages", messagesArray);
 
         requestBody.put("max_tokens", 800);
-        requestBody.put("temperature", 0.7);
+        requestBody.put("temperature", 1);
 
         return requestBody;
     }
