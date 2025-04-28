@@ -4,13 +4,15 @@ import BattleResult from '@/components/character/BattleResult'
 import CharacterInfo from '@/components/character/CharacterInfo'
 import CharacterItem from '@/components/character/CharacterItem'
 import Button from '@/components/common/Button'
+import { BATTLE_LOADING_MESSAGES } from '@/constants/messages'
+import useRandomMessage from '@/hooks/useRandomMessage'
 import useTimer from '@/hooks/useTimer'
 import type { ApiResponse, IBattleResponse, TBattleResponse } from '@/types/Battle'
 import type { ICharacterResponse, TCharacterResponse } from '@/types/Character'
 import { fetchRandomImageBattle, fetchRandomTextBattle } from '@/utils/api/battle'
 import { getImageCharacter, getTextCharacter } from '@/utils/characters'
 import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const Character = () => {
   const [result, setResult] = useState<boolean>(false)
@@ -21,11 +23,41 @@ const Character = () => {
   const [isBattleLoading, setIsBattleLoading] = useState(false)
   const [battleResult, setBattleResult] = useState<TBattleResponse | IBattleResponse | null>(null)
   const [lastBattleTime, setLastBattleTime] = useState<string | null>(null)
+  const resultRef = useRef<HTMLDivElement>(null)
   const params = useParams()
   const type = params.type as string
   const id = params.id as string
 
   const { isActive, secondsLeft } = useTimer(lastBattleTime)
+  const loadingMessage = useRandomMessage(BATTLE_LOADING_MESSAGES)
+
+  useEffect(() => {
+    if (result && battleResult && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [result, battleResult])
+
+  const fetchCharacter = useCallback(async () => {
+    try {
+      let response: TCharacterResponse | ICharacterResponse
+      if (type === 'text') {
+        response = await getTextCharacter(id)
+      } else if (type === 'image') {
+        response = await getImageCharacter(id)
+      } else {
+        throw new Error('잘못된 캐릭터 타입입니다')
+      }
+      setCharacterData(response)
+    } catch (error) {
+      console.error('캐릭터 정보를 불러오는데 실패했습니다:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [type, id])
+
+  useEffect(() => {
+    fetchCharacter()
+  }, [fetchCharacter])
 
   const resultHandler = async () => {
     try {
@@ -40,6 +72,7 @@ const Character = () => {
         setBattleResult(response.data)
         setResult(true)
         setLastBattleTime(response.data.createdAt)
+        await fetchCharacter()
       }
     } catch (error) {
       console.error('배틀 결과를 불러오는데 실패했습니다:', error)
@@ -47,28 +80,6 @@ const Character = () => {
       setIsBattleLoading(false)
     }
   }
-
-  useEffect(() => {
-    console.log('type : ', type)
-    const fetchCharacter = async () => {
-      try {
-        let response: TCharacterResponse | ICharacterResponse
-        if (type === 'text') {
-          response = await getTextCharacter(id)
-        } else if (type === 'image') {
-          response = await getImageCharacter(id)
-        } else {
-          throw new Error('잘못된 캐릭터 타입입니다')
-        }
-        setCharacterData(response)
-      } catch (error) {
-        console.error('캐릭터 정보를 불러오는데 실패했습니다:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    fetchCharacter()
-  }, [id, type])
 
   const defaultData: TCharacterResponse = {
     textCharacterId: '',
@@ -137,7 +148,7 @@ const Character = () => {
       <Button
         text={
           isBattleLoading
-            ? '결과 로딩중...'
+            ? loadingMessage
             : !isActive && lastBattleTime
               ? `${secondsLeft}초 후 배틀 가능`
               : '배틀 시작'
@@ -145,7 +156,7 @@ const Character = () => {
         onClick={resultHandler}
         disabled={isBattleLoading || (!isActive && lastBattleTime !== null)}
       />
-      {result && battleResult && <BattleResult data={battleResult} />}
+      <div ref={resultRef}>{result && battleResult && <BattleResult data={battleResult} />}</div>
     </div>
   )
 }
