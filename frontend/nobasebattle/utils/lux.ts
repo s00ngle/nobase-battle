@@ -28,6 +28,15 @@ import { useAuthStore } from '@/store/authStore'
  * // DELETE 요청 (데이터 삭제)
  * const result = await lux.delete<{ success: boolean }>('/api/characters/1')
  */
+
+interface ErrorResponse {
+  status: number
+  reason: string
+  path: string
+  success: boolean
+  timeStamp: string
+}
+
 export const lux = {
   async get<T>(endpoint: string, params?: Record<string, string>): Promise<T | null> {
     const url = new URL(`${BASE_URL}${endpoint}`)
@@ -49,7 +58,8 @@ export const lux = {
     })
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      const errorData = (await response.json()) as ErrorResponse
+      throw { response: errorData }
     }
 
     // 204 No Content 응답 처리
@@ -74,7 +84,8 @@ export const lux = {
     })
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      const errorData = (await response.json()) as ErrorResponse
+      throw { response: errorData }
     }
 
     // 204 No Content 응답 처리
@@ -99,7 +110,8 @@ export const lux = {
     })
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      const errorData = (await response.json()) as ErrorResponse
+      throw { response: errorData }
     }
 
     // 204 No Content 응답 처리
@@ -123,10 +135,35 @@ export const lux = {
     })
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      const errorData = (await response.json()) as ErrorResponse
+      throw { response: errorData }
     }
 
     // 204 No Content 응답 처리
+    if (response.status === 204) {
+      return null
+    }
+
+    return response.json()
+  },
+
+  async postForm<T>(endpoint: string, formData: FormData): Promise<T | null> {
+    const accessToken = useAuthStore.getState().accessToken
+    const headers: Record<string, string> = {
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    }
+
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const errorData = (await response.json()) as ErrorResponse
+      throw { response: errorData }
+    }
+
     if (response.status === 204) {
       return null
     }
