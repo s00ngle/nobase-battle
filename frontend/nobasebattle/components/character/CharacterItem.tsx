@@ -63,8 +63,8 @@ const CharacterItem = ({
               alt="character"
               fill
               className="object-contain"
-              priority
-              sizes={imageSize === 'sm' ? '320px' : '100vw'}
+              sizes={imageSize === 'sm' ? '320px' : '33vw'}
+              priority={imageSize === 'lg'}
             />
           </div>
         </div>
