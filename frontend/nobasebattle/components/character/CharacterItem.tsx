@@ -58,7 +58,14 @@ const CharacterItem = ({
               imageSize === 'sm' ? 'w-80' : 'w-full'
             }`}
           >
-            <Image src={imageUrl} alt="character" fill className="object-contain" priority />
+            <Image
+              src={imageUrl}
+              alt="character"
+              fill
+              className="object-contain"
+              priority
+              sizes={imageSize === 'sm' ? '320px' : '100vw'}
+            />
           </div>
         </div>
       )}
