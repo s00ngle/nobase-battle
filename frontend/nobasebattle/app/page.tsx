@@ -6,6 +6,7 @@ import CharacterList from '@/components/character/CharacterList'
 import CharacterTypeToggle from '@/components/character/CharacterTypeToggle'
 import Button from '@/components/common/Button'
 import { fetchImageCharacters, fetchTextCharacters } from '@/utils/characters'
+import { useRouter } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 
 type CharacterType = 'text' | 'image'
@@ -17,6 +18,7 @@ const MainPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [loadedTypes, setLoadedTypes] = useState<Set<CharacterType>>(new Set())
+  const router = useRouter()
 
   const fetchCharacters = useCallback(async () => {
     if (loadedTypes.has(selectedType)) {
@@ -81,6 +83,18 @@ const MainPage = () => {
     [selectedType, handleClickText, handleClickImage],
   )
 
+  const handleCreateClick = useCallback(
+    (type: CharacterType) => {
+      const characterCount = type === 'text' ? textCharacters.length : imageCharacters.length
+      if (characterCount >= 5) {
+        alert('캐릭터는 최대 5개까지만 생성할 수 있습니다.')
+        return
+      }
+      router.push(`/create/${type}`)
+    },
+    [router, textCharacters.length, imageCharacters.length],
+  )
+
   return (
     <div className="w-full max-w-150 flex flex-col items-center gap-6">
       {characterTypeToggle}
@@ -92,8 +106,12 @@ const MainPage = () => {
       </ErrorBoundary>
 
       <div className="flex flex-col gap-3">
-        {selectedType === 'text' && <Button text="텍스트로 캐릭터 생성" />}
-        {selectedType === 'image' && <Button text="그림으로 캐릭터 생성" />}
+        {selectedType === 'text' && (
+          <Button text="텍스트로 캐릭터 생성" onClick={() => handleCreateClick('text')} />
+        )}
+        {selectedType === 'image' && (
+          <Button text="그림으로 캐릭터 생성" onClick={() => handleCreateClick('image')} />
+        )}
       </div>
     </div>
   )

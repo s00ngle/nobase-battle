@@ -14,8 +14,13 @@ import Button from './Button'
 
 type Tool = 'pen' | 'eraser'
 
-const PaintingCanvas: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+interface PaintingCanvasProps {
+  canvasRef?: React.RefObject<HTMLCanvasElement | null>
+}
+
+const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanvasRef }) => {
+  const internalCanvasRef = useRef<HTMLCanvasElement | null>(null)
+  const canvasRefToUse = externalCanvasRef || internalCanvasRef
   const [isDrawing, setIsDrawing] = useState(false)
   const [lastPosition, setLastPosition] = useState<{
     x: number
@@ -45,7 +50,7 @@ const PaintingCanvas: React.FC = () => {
 
   // Convert event coordinates to canvas-relative coordinates with proper scaling
   const getCanvasCoordinates = (event: ReactMouseEvent | ReactTouchEvent) => {
-    const canvas = canvasRef.current
+    const canvas = canvasRefToUse.current
     if (!canvas) return { x: 0, y: 0 }
 
     const rect = canvas.getBoundingClientRect()
@@ -76,9 +81,9 @@ const PaintingCanvas: React.FC = () => {
   }
 
   const draw = (event: ReactMouseEvent | ReactTouchEvent) => {
-    if (!isDrawing || !canvasRef.current) return
+    if (!isDrawing || !canvasRefToUse.current) return
 
-    const context = canvasRef.current.getContext('2d')
+    const context = canvasRefToUse.current.getContext('2d')
     if (!context || !lastPosition) return
 
     const currentPosition = getCanvasCoordinates(event)
@@ -96,7 +101,7 @@ const PaintingCanvas: React.FC = () => {
   }
 
   const erase = (position: { x: number; y: number }) => {
-    const canvas = canvasRef.current
+    const canvas = canvasRefToUse.current
     if (!canvas) return
 
     const context = canvas.getContext('2d')
@@ -116,7 +121,7 @@ const PaintingCanvas: React.FC = () => {
   }
 
   const clearCanvas = () => {
-    const canvas = canvasRef.current
+    const canvas = canvasRefToUse.current
     if (!canvas) return
 
     const context = canvas.getContext('2d')
@@ -126,7 +131,7 @@ const PaintingCanvas: React.FC = () => {
   }
 
   const saveCanvas = () => {
-    const canvas = canvasRef.current
+    const canvas = canvasRefToUse.current
     if (!canvas) return
 
     const dataURL = canvas.toDataURL('image/png')
@@ -164,7 +169,7 @@ const PaintingCanvas: React.FC = () => {
     (event: globalThis.MouseEvent) => {
       if (activeTool !== 'eraser' || !eraserCursorRef.current) return
 
-      const canvas = canvasRef.current
+      const canvas = canvasRefToUse.current
       if (!canvas) return
 
       const rect = canvas.getBoundingClientRect()
@@ -181,7 +186,7 @@ const PaintingCanvas: React.FC = () => {
         eraserCursorRef.current.style.display = 'none'
       }
     },
-    [activeTool, eraseSize],
+    [activeTool, eraseSize, canvasRefToUse],
   )
 
   // 지우개 커서 숨기기
@@ -194,7 +199,7 @@ const PaintingCanvas: React.FC = () => {
   // 캔버스 크기 설정 및 디바이스 픽셀 비율 감지
   useEffect(() => {
     const updateCanvasSize = () => {
-      const container = canvasRef.current?.parentElement
+      const container = canvasRefToUse.current?.parentElement
       if (container) {
         // 부모 요소의 크기에 맞게 설정
         const newWidth = container.clientWidth
@@ -205,7 +210,7 @@ const PaintingCanvas: React.FC = () => {
         setCanvasHeight(newHeight)
 
         // 캔버스 요소가 있으면 크기 즉시 업데이트
-        const canvas = canvasRef.current
+        const canvas = canvasRefToUse.current
         if (canvas) {
           canvas.width = newWidth
           canvas.height = newHeight
@@ -217,11 +222,11 @@ const PaintingCanvas: React.FC = () => {
     window.addEventListener('resize', updateCanvasSize)
 
     return () => window.removeEventListener('resize', updateCanvasSize)
-  }, [])
+  }, [canvasRefToUse])
 
   // 캔버스에 그리기 설정 업데이트
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = canvasRefToUse.current
     if (canvas) {
       const context = canvas.getContext('2d')
       if (context) {
@@ -234,11 +239,11 @@ const PaintingCanvas: React.FC = () => {
         context.strokeStyle = strokeColor
       }
     }
-  }, [strokeColor, lineWidth, dpr])
+  }, [strokeColor, lineWidth, dpr, canvasRefToUse])
 
   // 캔버스에 마우스 이벤트 리스너 등록
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = canvasRefToUse.current
     if (canvas) {
       canvas.addEventListener('mousemove', updateEraserCursor)
       canvas.addEventListener('mouseleave', hideEraserCursor)
@@ -248,7 +253,7 @@ const PaintingCanvas: React.FC = () => {
         canvas.removeEventListener('mouseleave', hideEraserCursor)
       }
     }
-  }, [updateEraserCursor, hideEraserCursor])
+  }, [updateEraserCursor, hideEraserCursor, canvasRefToUse])
 
   return (
     <div className="mt-4 flex flex-col gap-2">
@@ -256,7 +261,7 @@ const PaintingCanvas: React.FC = () => {
       <div className={`w-full rounded-xl p-4 ${transparentForm}`}>
         <div className="relative">
           <canvas
-            ref={canvasRef}
+            ref={canvasRefToUse}
             className="bg-white rounded-xl touch-none"
             style={{
               width: `${canvasWidth}px`,
@@ -311,14 +316,6 @@ const PaintingCanvas: React.FC = () => {
                 <p className="text-sm mb-2 font-medium">색상 선택</p>
                 <div className="flex space-x-2">
                   {colorOptions.map((color) => (
-                    // <button
-                    //   type="button"
-                    //   key={color}
-                    //   className={`w-8 h-8 rounded-full border-2 transition-colors duration-300 ${strokeColor === color ? 'border-white' : 'border-transparent'} cursor-pointer`}
-                    //   style={{ backgroundColor: color }}
-                    //   onClick={() => handleColorChange(color)}
-                    //   aria-label={`${color} 색상 선택`}
-                    // />
                     <button
                       type="button"
                       key={color}
@@ -327,7 +324,6 @@ const PaintingCanvas: React.FC = () => {
                       aria-label={`${color} 색상 선택`}
                     >
                       <div
-                        // className="bg-gray-800 dark:bg-gray-200"
                         style={{
                           width: '20px',
                           height: '20px',
@@ -356,7 +352,6 @@ const PaintingCanvas: React.FC = () => {
                         style={{
                           width: '80%',
                           height: `${width}px`,
-                          // backgroundColor: 'black',
                           borderRadius: '2px',
                         }}
                       />
@@ -385,7 +380,6 @@ const PaintingCanvas: React.FC = () => {
                       style={{
                         width: `${size / 2}px`,
                         height: `${size / 2}px`,
-                        // backgroundColor: 'gray',
                         borderRadius: '50%',
                       }}
                     />
