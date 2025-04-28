@@ -1,9 +1,9 @@
 ./gradlew clean build -x test --no-daemon
 
-sudo docker stop nbb
-sudo docker rm nbb
-sudo docker image remove nobase
+docker stop nbb
+docker rm nbb
+docker image remove nobase
 
-sudo docker build -t nobase .
+docker build -t nobase .
 
-sudo docker run -d --name nbb --env-file .env -e TZ=Asia/Seoul -p 8080:8080 --network test nobase
+docker run -d --name nbb --env-file .env -e TZ=Asia/Seoul -p 8080:8080 --network test nobase
