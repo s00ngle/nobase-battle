@@ -6,4 +6,4 @@ sudo docker image remove nobase
 
 sudo docker build -t nobase .
 
-sudo docker run -d --name nbb --env-file .env -p 8080:8080 --network test nobase
+sudo docker run -d --name nbb --env-file .env -e TZ=Asia/Seoul -p 8080:8080 --network test nobase
