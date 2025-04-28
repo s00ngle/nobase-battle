@@ -1,8 +1,31 @@
-import type { TBattleResponse } from '@/types/Battle'
+import type { TBattleApiResponse} from '@/types/Battle'
 import { lux } from '../lux'
 
-export const fetchTextBattle = async (characterId: string) => {
-  const response = await lux.post<TBattleResponse>('/api/v1/battles/text', { characterId })
+interface IFetchBattle {
+  characterId: string
+  mode: string
+  opponentId?: string
+}
+
+export const fetchRandomTextBattle = async (characterId: string) => {
+  const body: IFetchBattle = {
+    characterId,
+    mode: 'RANDOM',
+  }
+
+  const response = await lux.post<TBattleApiResponse>('/api/v1/battles/text', body)
   if (!response) throw new Error('텍스트 배틀 생성에 실패했습니다.')
+  return response
+}
+
+export const fetchChallengeTextBattle = async (characterId: string, opponentId: string) => {
+  const body: IFetchBattle = {
+    characterId,
+    mode: 'CHALLENGE',
+    opponentId,
+  }
+
+  const response = await lux.post<TBattleApiResponse>('/api/v1/battles/text', body)
+  if (!response) throw new Error('랭킹에 도전하는 데 실패했습니다.')
   return response
 }

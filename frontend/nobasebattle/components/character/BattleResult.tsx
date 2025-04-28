@@ -1,3 +1,5 @@
+'use client'
+
 import { transparentForm } from '@/styles/form'
 import type { TBattleResponse } from '@/types/Battle'
 
