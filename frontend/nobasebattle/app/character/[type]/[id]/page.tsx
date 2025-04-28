@@ -30,7 +30,7 @@ const Character = () => {
   const [lastBattleTime, setLastBattleTime] = useState<string | null>(null)
   const resultRef = useRef<HTMLDivElement>(null)
   const params = useParams()
-  const type = params.type as string
+  const type = params.type as 'text' | 'image'
   const id = params.id as string
   const router = useRouter()
   const { isActive, secondsLeft } = useTimer(lastBattleTime)
@@ -185,7 +185,9 @@ const Character = () => {
         onClick={resultHandler}
         disabled={isBattleLoading || (!isActive && lastBattleTime !== null)}
       />
-      <div ref={resultRef}>{result && battleResult && <BattleResult data={battleResult} />}</div>
+      <div ref={resultRef}>
+        {result && battleResult && <BattleResult data={battleResult} type={type} />}
+      </div>
     </div>
   )
 }
