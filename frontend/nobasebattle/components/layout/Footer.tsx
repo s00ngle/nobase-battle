@@ -25,11 +25,6 @@ const OptionList = [
   { text: '투기장', link: '/event' },
   { text: '랭킹', link: '/rank' },
   { text: '프로필', link: '/profile' },
-  { text: '테스트', link: '/test' },
-  { text: '캐릭터', link: '/character/1' },
-  { text: '등록', link: '/register' },
-  { text: '텍스트생성', link: '/create/text' },
-  { text: '이미지생성', link: '/create/image' },
 ]
 
 const Footer = () => {

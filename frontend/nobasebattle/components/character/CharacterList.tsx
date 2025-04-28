@@ -1,5 +1,6 @@
 import type { ImageCharacter, TextCharacter } from '@/app/types/character'
 import { transparentForm } from '@/styles/form'
+import { useRouter } from 'next/navigation'
 import IconButton from '../common/IconButton'
 import SkeletonLoading from '../common/SkeletonLoading'
 import CharacterItem from './CharacterItem'
@@ -19,6 +20,12 @@ const CharacterList = ({
   isLoading = false,
   maxCount = 5,
 }: CharacterListProps) => {
+  const router = useRouter()
+
+  const handleCharacterClick = (id: string) => {
+    router.push(`/character/${id}`)
+  }
+
   return (
     <div className={`flex flex-col gap-3 w-full flex-1 rounded-2xl p-4 ${transparentForm}`}>
       <div className="flex items-center gap-2">
@@ -61,11 +68,18 @@ const CharacterList = ({
                   key={textChar.textCharacterId}
                   nickname={textChar.name}
                   description={textChar.prompt}
+                  onClick={() => handleCharacterClick(textChar.textCharacterId)}
                 />
               )
             }
             const imageChar = character as ImageCharacter
-            return <CharacterItem key={imageChar.characterId} nickname={imageChar.name} />
+            return (
+              <CharacterItem
+                key={imageChar.imageCharacterId}
+                nickname={imageChar.name}
+                onClick={() => handleCharacterClick(imageChar.imageCharacterId)}
+              />
+            )
           })}
         </div>
       )}
