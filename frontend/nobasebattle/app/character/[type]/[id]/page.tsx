@@ -6,7 +6,7 @@ import CharacterItem from '@/components/character/CharacterItem'
 import Button from '@/components/common/Button'
 import type { TBattleResponse } from '@/types/Battle'
 import type { ICharacterResponse, TCharacterResponse } from '@/types/Character'
-import { fetchRandomTextBattle } from '@/utils/api/battle'
+import { fetchRandomImageBattle, fetchRandomTextBattle } from '@/utils/api/battle'
 import { getImageCharacter, getTextCharacter } from '@/utils/characters'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -24,8 +24,13 @@ const Character = () => {
 
   const resultHandler = async () => {
     try {
-      const response = await fetchRandomTextBattle(id)
-      setBattleResult(response.data)
+      if (type === 'text') {
+        const response = await fetchRandomTextBattle(id)
+        setBattleResult(response.data)
+      } else if (type === 'image') {
+        const response = await fetchRandomImageBattle(id)
+        setBattleResult(response.data)
+      }
       setResult(true)
     } catch (error) {
       console.error('배틀 결과를 불러오는데 실패했습니다:', error)
