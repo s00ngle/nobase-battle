@@ -65,7 +65,7 @@ const CharacterList = ({
               )
             }
             const imageChar = character as ImageCharacter
-            return <CharacterItem key={imageChar.characterId} nickname={imageChar.name} />
+            return <CharacterItem key={imageChar.imageCharacterId} nickname={imageChar.name} />
           })}
         </div>
       )}

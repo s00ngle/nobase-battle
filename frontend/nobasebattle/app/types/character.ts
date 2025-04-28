@@ -12,7 +12,7 @@ export interface TextCharacter {
 }
 
 export interface ImageCharacter {
-  characterId: string
+  imageCharacterId: string
   name: string
   imageUrl: string
   wins: number
