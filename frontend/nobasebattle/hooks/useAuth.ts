@@ -53,6 +53,7 @@ export const useAuth = () => {
   const signOut = () => {
     clearAuth()
     deleteCookie('token')
+    localStorage.removeItem('auth-storage')
     router.push('/')
   }
 
