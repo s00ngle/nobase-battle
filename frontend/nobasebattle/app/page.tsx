@@ -20,6 +20,7 @@ const MainPage = () => {
 
   const fetchCharacters = useCallback(async () => {
     if (loadedTypes.has(selectedType)) {
+      console.log('이미 로드된 캐릭터 타입입니다.')
       return
     }
 

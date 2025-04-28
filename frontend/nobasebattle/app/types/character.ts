@@ -33,7 +33,3 @@ export interface ApiResponse<T> {
   success: boolean
   timeStamp: string
 }
-
-export interface ImageCharacterListResponse {
-  content: ImageCharacter[]
-}
