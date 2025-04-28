@@ -53,6 +53,7 @@ export const useAuth = () => {
   const signOut = async () => {
     try {
       clearAuth()
+      localStorage.removeItem('auth-storage') // Zustand persist storage 제거
       await deleteCookie('token')
       // 쿠키가 완전히 삭제되었는지 확인
       const checkCookieDeleted = () => {
