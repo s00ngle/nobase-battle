@@ -7,13 +7,16 @@ interface RankingItemsProps {
   characterName: string
   username?: string
   eloScore: number
+  badgeList?: BadgeType[]
 }
 
-const RankingItems = ({ rank, characterName, username, eloScore }: RankingItemsProps) => {
-  const badgeList: BadgeType[] = [
-    { text: '30연승 달성', imageUrl: '/badge-30-icon.png' },
-    { text: '50연승 달성', imageUrl: '/badge-50-icon.png' },
-  ]
+const RankingItems = ({
+  rank,
+  characterName,
+  username,
+  eloScore,
+  badgeList = [],
+}: RankingItemsProps) => {
   return (
     <div className={`flex justify-between px-4 py-4 rounded-xl ${transparentForm} ${hover}`}>
       <div className="flex gap-7 items-center">
@@ -25,7 +28,9 @@ const RankingItems = ({ rank, characterName, username, eloScore }: RankingItemsP
       </div>
       <div className="flex flex-col justify-center items-end gap-1">
         <span className="text-xl">{eloScore}점</span>
-        {badgeList.length > 0 && <BadgeList badges={badgeList} size={25} isTransparent={false} />}
+        {badgeList && badgeList.length > 0 && (
+          <BadgeList badges={badgeList} size={25} isTransparent={false} isPadding={false} />
+        )}
       </div>
     </div>
   )
