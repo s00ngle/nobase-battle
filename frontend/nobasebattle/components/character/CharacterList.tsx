@@ -1,5 +1,7 @@
 import type { ImageCharacter, TextCharacter } from '@/app/types/character'
 import { transparentForm } from '@/styles/form'
+import { deleteTextCharacter } from '@/utils/characters'
+import { deleteImageCharacter } from '@/utils/characters'
 import { useRouter } from 'next/navigation'
 import IconButton from '../common/IconButton'
 import SkeletonLoading from '../common/SkeletonLoading'
@@ -24,6 +26,29 @@ const CharacterList = ({
 
   const handleCharacterClick = (id: string) => {
     router.push(`/character/${type}/${id}`)
+  }
+
+  const handleDelete = async (id: string) => {
+    try {
+      const isConfirmed = confirm('정말로 이 캐릭터를 삭제하시겠습니까?')
+
+      if (!isConfirmed) return
+
+      if (type === 'text') {
+        await deleteTextCharacter(id)
+      } else if (type === 'image') {
+        await deleteImageCharacter(id)
+      }
+      alert('삭제되었습니다.')
+      router.push('/')
+    } catch (error) {
+      console.error('캐릭터 삭제 중 오류 발생:', error)
+      alert('캐릭터 삭제 중 오류가 발생했습니다. 다시 시도해주세요.')
+    }
+  }
+
+  const handleEdit = (id: string) => {
+    alert(`edit id: ${id}`)
   }
 
   return (
@@ -69,6 +94,8 @@ const CharacterList = ({
                   nickname={textChar.name}
                   description={textChar.prompt}
                   onClick={() => handleCharacterClick(textChar.textCharacterId)}
+                  onDelete={() => handleDelete(textChar.textCharacterId)}
+                  onEdit={() => handleEdit(textChar.textCharacterId)}
                 />
               )
             }
@@ -80,6 +107,8 @@ const CharacterList = ({
                 onClick={() => handleCharacterClick(imageChar.imageCharacterId)}
                 imageUrl={imageChar.imageUrl}
                 imageSize="sm"
+                onDelete={() => handleDelete(imageChar.imageCharacterId)}
+                onEdit={() => handleEdit(imageChar.imageCharacterId)}
               />
             )
           })}

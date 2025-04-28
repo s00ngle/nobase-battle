@@ -10,8 +10,13 @@ import useTimer from '@/hooks/useTimer'
 import type { ApiResponse, IBattleResponse, TBattleResponse } from '@/types/Battle'
 import type { ICharacterResponse, TCharacterResponse } from '@/types/Character'
 import { fetchRandomImageBattle, fetchRandomTextBattle } from '@/utils/api/battle'
-import { getImageCharacter, getTextCharacter } from '@/utils/characters'
-import { useParams } from 'next/navigation'
+import {
+  deleteImageCharacter,
+  deleteTextCharacter,
+  getImageCharacter,
+  getTextCharacter,
+} from '@/utils/characters'
+import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 const Character = () => {
@@ -27,7 +32,7 @@ const Character = () => {
   const params = useParams()
   const type = params.type as string
   const id = params.id as string
-
+  const router = useRouter()
   const { isActive, secondsLeft } = useTimer(lastBattleTime)
   const loadingMessage = useRandomMessage(BATTLE_LOADING_MESSAGES)
 
@@ -113,6 +118,28 @@ const Character = () => {
     updatedAt: '',
   }
 
+  const handleDelete = async (id: string) => {
+    try {
+      const isConfirmed = confirm('정말로 이 캐릭터를 삭제하시겠습니까?')
+
+      if (!isConfirmed) return
+
+      if (type === 'text') {
+        await deleteTextCharacter(id)
+      } else if (type === 'image') {
+        await deleteImageCharacter(id)
+      }
+      alert('삭제되었습니다.')
+      router.push('/')
+    } catch (error) {
+      console.error('캐릭터 삭제 중 오류 발생:', error)
+      alert('캐릭터 삭제 중 오류가 발생했습니다. 다시 시도해주세요.')
+    }
+  }
+
+  const handleEdit = (id: string) => {
+    alert(`edit id: ${id}`)
+  }
   return (
     <div className="flex flex-col justify-center gap-6 w-full max-w-150">
       <CharacterInfo
@@ -134,6 +161,8 @@ const Character = () => {
                   : undefined
             }
             isLoading={isLoading}
+            onDelete={() => handleDelete(id)}
+            onEdit={() => handleEdit(id)}
           />
         }
         data={

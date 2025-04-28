@@ -12,6 +12,8 @@ export interface CharacterItemProps {
   onClick?: () => void
   isLoading?: boolean
   imageSize?: 'sm' | 'lg'
+  onDelete?: () => void
+  onEdit?: () => void
 }
 
 const CharacterItem = ({
@@ -21,7 +23,18 @@ const CharacterItem = ({
   onClick,
   isLoading = false,
   imageSize = 'lg',
+  onDelete,
+  onEdit,
 }: CharacterItemProps) => {
+  const handleEdit = (event: React.MouseEvent) => {
+    event.stopPropagation()
+    onEdit?.()
+  }
+  const handleDelete = (event: React.MouseEvent) => {
+    event.stopPropagation()
+    onDelete?.()
+  }
+
   return (
     <div
       className={`flex flex-col gap-3 w-full p-3 rounded-2xl cursor-pointer hover:scale-98 transition-transform duration-200 ${transparentForm} ${hover}`}
@@ -34,8 +47,8 @@ const CharacterItem = ({
           <div className="text-xl">{nickname}</div>
         )}
         <div className="flex gap-2">
-          <IconButton icon="pen.svg" />
-          <IconButton icon="delete.svg" />
+          <IconButton icon="pen.svg" onClick={handleEdit} />
+          <IconButton icon="delete.svg" onClick={handleDelete} />
         </div>
       </div>
       {imageUrl && (

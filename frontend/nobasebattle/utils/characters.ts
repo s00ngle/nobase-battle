@@ -129,3 +129,21 @@ export const createImageCharacter = async (
     throw error
   }
 }
+
+export const deleteTextCharacter = async (id: string): Promise<void> => {
+  try {
+    await lux.delete(`/api/v1/characters/text/${id}`)
+  } catch (error) {
+    console.error('텍스트 캐릭터 삭제 중 에러 발생:', error)
+    throw error
+  }
+}
+
+export const deleteImageCharacter = async (id: string): Promise<void> => {
+  try {
+    await lux.delete(`/api/v1/characters/image/${id}`)
+  } catch (error) {
+    console.error('이미지 캐릭터 삭제 중 에러 발생:', error)
+    throw error
+  }
+}
