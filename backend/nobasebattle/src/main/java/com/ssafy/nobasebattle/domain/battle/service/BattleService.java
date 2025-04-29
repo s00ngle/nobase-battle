@@ -51,7 +51,9 @@ public class BattleService {
 
         Battle battle = calculateImageBattleResult(myCharacter, opponentCharacter);
 
-        updateCharactersStats(myCharacter, opponentCharacter, battle.getResult());
+        if(("RANDOM").equals(battleRequest.getMode())) {
+            updateCharactersStats(myCharacter, opponentCharacter, battle.getResult());
+        }
 
         return new BattleResponse(battle, myCharacter, opponentCharacter);
     }
@@ -67,7 +69,9 @@ public class BattleService {
 
         Battle battle = calculateTextBattleResult(myCharacter, opponentCharacter);
 
-        updateTextCharactersStats(myCharacter, opponentCharacter, battle.getResult());
+        if(("RANDOM").equals(battleRequest.getMode())) {
+            updateTextCharactersStats(myCharacter, opponentCharacter, battle.getResult());
+        }
 
         return new BattleResponse(battle, myCharacter, opponentCharacter);
     }
