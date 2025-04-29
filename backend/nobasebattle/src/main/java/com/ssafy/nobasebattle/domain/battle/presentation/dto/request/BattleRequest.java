@@ -8,6 +8,12 @@ import lombok.Getter;
 public class BattleRequest {
 
     private String characterId;
-    private String mode = "RANDOM";  // 기본값: RANDOM
+    private String mode;  // 기본값: RANDOM
     private String opponentId;
+
+    public void validate() {
+        if (mode == null) {
+            mode = "RANDOM";
+        }
+    }
 }
