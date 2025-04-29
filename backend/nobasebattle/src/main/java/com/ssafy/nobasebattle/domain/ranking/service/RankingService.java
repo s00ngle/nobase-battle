@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -116,6 +117,8 @@ public class RankingService {
 
         if (top == null || top.isEmpty()) return List.of();
 
+        AtomicInteger rankCounter = new AtomicInteger(1);
+
         return top.stream()
             .map(tuple -> {
                 String key = (String) tuple.getValue();
@@ -123,6 +126,7 @@ public class RankingService {
 
                 if ("TEXT".equals(type) && obj instanceof TextCharacter text) {
                     return RankingCharacterResponse.builder()
+                        .rank(rankCounter.getAndIncrement())
                         .characterId(text.getId())
                         .name(text.getName())
                         .prompt(text.getPrompt())
@@ -136,6 +140,7 @@ public class RankingService {
 
                 } else if ("IMAGE".equals(type) && obj instanceof ImageCharacter image) {
                     return RankingCharacterResponse.builder()
+                        .rank(rankCounter.getAndIncrement())
                         .characterId(image.getId())
                         .name(image.getName())
                         .imageUrl(image.getImageUrl())
