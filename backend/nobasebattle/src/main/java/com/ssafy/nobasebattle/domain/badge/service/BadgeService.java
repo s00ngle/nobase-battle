@@ -7,6 +7,7 @@ import com.ssafy.nobasebattle.domain.badge.presentation.dto.request.BadgeRequest
 import com.ssafy.nobasebattle.domain.badge.presentation.dto.response.BadgeResponse;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.repository.ImageCharacterRepository;
+import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.repository.TextCharacterRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,20 +50,18 @@ public class BadgeService {
         return new BadgeInfo(badge);
     }
 
-    // 승리 기반 뱃지 확인 및 부여
     public void checkAndAwardWinBadges(ImageCharacter imageCharacter, int wins) {
 
         List<Badge> winBasedBadges = badgeRepository.findByBadgeTypeOrderByConditionAsc("WIN_BASED");
 
         if (winBasedBadges.isEmpty()) {
-            return; // 승수 기반 뱃지가 없으면 종료
+            return;
         }
 
         boolean updated = false;
 
-        // 모든 승수 기반 뱃지를 확인
         for (Badge badge : winBasedBadges) {
-            // 필요한 승수를 달성했고, 아직 해당 뱃지가 없는 경우
+
             if (badge.getCondition() <= wins && !imageCharacter.hasBadge(badge.getText())) {
                 imageCharacter.addBadge(badge);
                 updated = true;
@@ -74,31 +73,49 @@ public class BadgeService {
         }
     }
 
+    public void checkAndAwardWinBadgesText(TextCharacter textCharacter, int wins) {
+
+        List<Badge> winBasedBadges = badgeRepository.findByBadgeTypeOrderByConditionAsc("WIN_BASED");
+
+        if (winBasedBadges.isEmpty()) {
+            return;
+        }
+
+        boolean updated = false;
+
+        for (Badge badge : winBasedBadges) {
+
+            if (badge.getCondition() <= wins && !textCharacter.hasBadge(badge.getText())) {
+                textCharacter.addBadge(badge);
+                updated = true;
+            }
+        }
+
+        if (updated) {
+            textCharacterRepository.save(textCharacter);
+        }
+    }
+
     public List<BadgeInfo> getBadgeInfos(List<BadgeResponse> badges) {
-        // 뱃지 응답이 없으면 빈 리스트 반환
+
         if (badges == null || badges.isEmpty()) {
             return Collections.emptyList();
         }
 
-        // 모든 뱃지 텍스트 추출
         List<String> badgeTexts = badges.stream()
                 .map(BadgeResponse::getText)
                 .collect(Collectors.toList());
 
-        // 텍스트를 키로, Badge를 값으로 하는 맵 생성
-        // findAllByTextIn 메소드는 Repository에 추가해야 함
         List<Badge> allBadges = badgeRepository.findAllByTextIn(badgeTexts);
         Map<String, Badge> badgeMap = allBadges.stream()
                 .collect(Collectors.toMap(Badge::getText, badge -> badge));
 
-        // 결과 리스트 생성
         List<BadgeInfo> badgeInfos = new ArrayList<>();
         for (BadgeResponse badgeResponse : badges) {
             Badge badge = badgeMap.get(badgeResponse.getText());
             if (badge != null) {
                 badgeInfos.add(new BadgeInfo(badge));
             } else {
-                // 로깅 또는 예외 처리
                 log.warn("해당 텍스트의 뱃지를 찾을 수 없습니다: {}", badgeResponse.getText());
             }
         }

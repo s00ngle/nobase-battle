@@ -338,6 +338,8 @@ public class BattleService {
 
         if (isWin) {
             character.updateWins(wins + 1);
+
+            badgeService.checkAndAwardWinBadgesText(character, character.getWins());
         } else if (isLoss) {
             character.updateLosses(losses + 1);
         } else if (isDraw) {

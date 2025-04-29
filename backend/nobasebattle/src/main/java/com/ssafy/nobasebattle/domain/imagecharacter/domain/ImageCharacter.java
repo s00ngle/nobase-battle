@@ -96,7 +96,6 @@ public class ImageCharacter extends BaseEntity {
     }
 
     public void addBadge(Badge badge) {
-        // 중복 체크
         boolean hasBadge = this.badges.stream()
                 .anyMatch(b -> b.getText().equals(badge.getText()));
 
@@ -105,7 +104,6 @@ public class ImageCharacter extends BaseEntity {
         }
     }
 
-    // 특정 뱃지 보유 여부 확인
     public boolean hasBadge(String text) {
         return this.badges.stream()
                 .anyMatch(b -> b.getText().equals(text));
