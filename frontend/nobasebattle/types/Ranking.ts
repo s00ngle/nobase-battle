@@ -1,10 +1,10 @@
-import type { BadgeType } from "./Badge"
+import type { BadgeType } from './Badge'
 
 export interface Character {
   characterId: string
   name: string
   username: string
-  imgUrl: string
+  imgUrl?: string
   prompt: string
   rank: number
   wins: number
@@ -13,7 +13,7 @@ export interface Character {
   eloScore: number
   createdAt: string
   updatedAt: string
-  badges:  BadgeType[]
+  badges: BadgeType[]
 }
 
 export interface CharacterRankingApiResponse {
