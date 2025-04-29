@@ -14,6 +14,7 @@ interface CharacterListProps {
   type: CharacterType
   isLoading?: boolean
   maxCount?: number
+  onDelete?: () => void
 }
 
 const CharacterList = ({
@@ -21,6 +22,7 @@ const CharacterList = ({
   type,
   isLoading = false,
   maxCount = 5,
+  onDelete,
 }: CharacterListProps) => {
   const router = useRouter()
 
@@ -40,7 +42,7 @@ const CharacterList = ({
         await deleteImageCharacter(id)
       }
       alert('삭제되었습니다.')
-      router.push('/')
+      onDelete?.()
     } catch (error) {
       console.error('캐릭터 삭제 중 오류 발생:', error)
       alert('캐릭터 삭제 중 오류가 발생했습니다. 다시 시도해주세요.')

@@ -21,11 +21,6 @@ const MainPage = () => {
   const router = useRouter()
 
   const fetchCharacters = useCallback(async () => {
-    if (loadedTypes.has(selectedType)) {
-      console.log('이미 로드된 캐릭터 타입입니다.')
-      return
-    }
-
     try {
       setIsLoading(true)
       if (selectedType === 'text') {
@@ -43,7 +38,7 @@ const MainPage = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [selectedType, loadedTypes])
+  }, [selectedType])
 
   useEffect(() => {
     fetchCharacters()
@@ -67,9 +62,10 @@ const MainPage = () => {
         characters={currentCharacters}
         type={selectedType}
         isLoading={isLoading && !loadedTypes.has(selectedType)}
+        onDelete={fetchCharacters}
       />
     ),
-    [currentCharacters, selectedType, isLoading, loadedTypes],
+    [currentCharacters, selectedType, isLoading, loadedTypes, fetchCharacters],
   )
 
   const characterTypeToggle = useMemo(
