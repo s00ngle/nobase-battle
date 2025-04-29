@@ -25,6 +25,11 @@ import { useAuthStore } from '@/store/authStore'
  *   type: '수정된 타입'
  * })
  *
+ * // PATCH 요청 (부분 수정)
+ * const updatedCharacter = await lux.patch<Character>('/api/characters/1', {
+ *   name: '수정된 이름'
+ * })
+ *
  * // DELETE 요청 (데이터 삭제)
  * const result = await lux.delete<{ success: boolean }>('/api/characters/1')
  */
@@ -37,10 +42,17 @@ interface ErrorResponse {
   timeStamp: string
 }
 
+const getUrl = (endpoint: string) => {
+  if (BASE_URL) {
+    return new URL(`${BASE_URL}${endpoint}`)
+  }
+  return endpoint
+}
+
 export const lux = {
   async get<T>(endpoint: string, params?: Record<string, string>): Promise<T | null> {
-    const url = new URL(`${BASE_URL}${endpoint}`)
-    if (params) {
+    const url = getUrl(endpoint)
+    if (params && url instanceof URL) {
       for (const [key, value] of Object.entries(params)) {
         url.searchParams.append(key, value)
       }
@@ -77,7 +89,7 @@ export const lux = {
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     }
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    const response = await fetch(getUrl(endpoint).toString(), {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
@@ -103,8 +115,34 @@ export const lux = {
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     }
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    const response = await fetch(getUrl(endpoint).toString(), {
       method: 'PUT',
+      headers,
+      body: JSON.stringify(body),
+    })
+
+    if (!response.ok) {
+      const errorData = (await response.json()) as ErrorResponse
+      throw { response: errorData }
+    }
+
+    // 204 No Content 응답 처리
+    if (response.status === 204) {
+      return null
+    }
+
+    return response.json()
+  },
+
+  async patch<T>(endpoint: string, body: unknown): Promise<T | null> {
+    const accessToken = useAuthStore.getState().accessToken
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    }
+
+    const response = await fetch(getUrl(endpoint).toString(), {
+      method: 'PATCH',
       headers,
       body: JSON.stringify(body),
     })
@@ -129,7 +167,7 @@ export const lux = {
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     }
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    const response = await fetch(getUrl(endpoint).toString(), {
       method: 'DELETE',
       headers,
     })
@@ -153,7 +191,7 @@ export const lux = {
       ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
     }
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    const response = await fetch(getUrl(endpoint).toString(), {
       method: 'POST',
       headers,
       body: formData,

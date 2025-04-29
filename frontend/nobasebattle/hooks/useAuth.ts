@@ -66,7 +66,6 @@ export const useAuth = () => {
       const maxRetries = 5
       const waitForCookieDeletion = () => {
         if (checkCookieDeleted() || retries >= maxRetries) {
-          // Next.js router 대신 window.location 사용
           window.location.href = '/register'
         } else {
           retries++
