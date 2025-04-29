@@ -48,77 +48,96 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
   // 디바이스 픽셀 비율 저장
   const [dpr] = useState(1)
 
-  // Convert event coordinates to canvas-relative coordinates with proper scaling
-  const getCanvasCoordinates = (event: ReactMouseEvent | ReactTouchEvent) => {
-    const canvas = canvasRefToUse.current
-    if (!canvas) return { x: 0, y: 0 }
+  const getCanvasCoordinates = useCallback(
+    (event: ReactMouseEvent | ReactTouchEvent) => {
+      const canvas = canvasRefToUse.current
+      if (!canvas) return { x: 0, y: 0 }
 
-    const rect = canvas.getBoundingClientRect()
-    const scaleX = canvas.width / rect.width
-    const scaleY = canvas.height / rect.height
+      const rect = canvas.getBoundingClientRect()
+      const scaleX = canvas.width / rect.width
+      const scaleY = canvas.height / rect.height
 
-    if ('touches' in event) {
-      const touch = event.touches[0]
-      return {
-        x: (touch.clientX - rect.left) * scaleX,
-        y: (touch.clientY - rect.top) * scaleY,
+      if ('touches' in event) {
+        const touch = event.touches[0]
+        return {
+          x: (touch.clientX - rect.left) * scaleX,
+          y: (touch.clientY - rect.top) * scaleY,
+        }
       }
-    }
-    return {
-      x: (event.clientX - rect.left) * scaleX,
-      y: (event.clientY - rect.top) * scaleY,
-    }
-  }
+      return {
+        x: (event.clientX - rect.left) * scaleX,
+        y: (event.clientY - rect.top) * scaleY,
+      }
+    },
+    [canvasRefToUse],
+  )
 
-  const startDrawing = (event: ReactMouseEvent | ReactTouchEvent) => {
-    setIsDrawing(true)
-    const position = getCanvasCoordinates(event)
-    setLastPosition(position)
+  const erase = useCallback(
+    (position: { x: number; y: number }) => {
+      const canvas = canvasRefToUse.current
+      if (!canvas) return
 
-    if (activeTool === 'eraser') {
-      erase(position)
-    }
-  }
+      const context = canvas.getContext('2d')
+      if (!context) return
 
-  const draw = (event: ReactMouseEvent | ReactTouchEvent) => {
-    if (!isDrawing || !canvasRefToUse.current) return
-
-    const context = canvasRefToUse.current.getContext('2d')
-    if (!context || !lastPosition) return
-
-    const currentPosition = getCanvasCoordinates(event)
-
-    if (activeTool === 'pen') {
+      context.save()
+      context.globalCompositeOperation = 'destination-out'
       context.beginPath()
-      context.moveTo(lastPosition.x, lastPosition.y)
-      context.lineTo(currentPosition.x, currentPosition.y)
-      context.stroke()
-    } else if (activeTool === 'eraser') {
-      erase(currentPosition)
-    }
+      context.arc(position.x, position.y, eraseSize / 2, 0, Math.PI * 2)
+      context.fill()
+      context.restore()
+    },
+    [eraseSize, canvasRefToUse],
+  )
 
-    setLastPosition(currentPosition)
-  }
-
-  const erase = (position: { x: number; y: number }) => {
-    const canvas = canvasRefToUse.current
-    if (!canvas) return
-
-    const context = canvas.getContext('2d')
-    if (!context) return
-
-    context.save()
-    context.globalCompositeOperation = 'destination-out'
-    context.beginPath()
-    context.arc(position.x, position.y, eraseSize / 2, 0, Math.PI * 2)
-    context.fill()
-    context.restore()
-  }
-
-  const stopDrawing = () => {
+  const stopDrawing = useCallback(() => {
     setIsDrawing(false)
     setLastPosition(null)
-  }
+  }, [])
+
+  const startDrawing = useCallback(
+    (event: ReactMouseEvent | ReactTouchEvent) => {
+      // 터치 이벤트일 경우 기본 동작 방지
+      if ('touches' in event) {
+        event.preventDefault()
+      }
+      setIsDrawing(true)
+      const position = getCanvasCoordinates(event)
+      setLastPosition(position)
+
+      if (activeTool === 'eraser') {
+        erase(position)
+      }
+    },
+    [activeTool, getCanvasCoordinates, erase],
+  )
+
+  const draw = useCallback(
+    (event: ReactMouseEvent | ReactTouchEvent) => {
+      // 터치 이벤트일 경우 기본 동작 방지
+      if ('touches' in event) {
+        event.preventDefault()
+      }
+      if (!isDrawing || !canvasRefToUse.current) return
+
+      const context = canvasRefToUse.current.getContext('2d')
+      if (!context || !lastPosition) return
+
+      const currentPosition = getCanvasCoordinates(event)
+
+      if (activeTool === 'pen') {
+        context.beginPath()
+        context.moveTo(lastPosition.x, lastPosition.y)
+        context.lineTo(currentPosition.x, currentPosition.y)
+        context.stroke()
+      } else if (activeTool === 'eraser') {
+        erase(currentPosition)
+      }
+
+      setLastPosition(currentPosition)
+    },
+    [isDrawing, activeTool, lastPosition, getCanvasCoordinates, erase, canvasRefToUse],
+  )
 
   const clearCanvas = () => {
     const canvas = canvasRefToUse.current
@@ -255,6 +274,39 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
     }
   }, [updateEraserCursor, hideEraserCursor, canvasRefToUse])
 
+  // 터치 이벤트 리스너 등록
+  useEffect(() => {
+    const canvas = canvasRefToUse.current
+    if (!canvas) return
+
+    const handleTouchStart = (e: TouchEvent) => {
+      e.preventDefault()
+      startDrawing(e as unknown as ReactTouchEvent)
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault()
+      draw(e as unknown as ReactTouchEvent)
+    }
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      e.preventDefault()
+      stopDrawing()
+    }
+
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false })
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false })
+    canvas.addEventListener('touchend', handleTouchEnd, { passive: false })
+    canvas.addEventListener('touchcancel', handleTouchEnd, { passive: false })
+
+    return () => {
+      canvas.removeEventListener('touchstart', handleTouchStart)
+      canvas.removeEventListener('touchmove', handleTouchMove)
+      canvas.removeEventListener('touchend', handleTouchEnd)
+      canvas.removeEventListener('touchcancel', handleTouchEnd)
+    }
+  }, [canvasRefToUse, draw, startDrawing, stopDrawing])
+
   return (
     <div className="mt-4 flex flex-col gap-2">
       <span className="text-sm">캐릭터 그림</span>
@@ -266,15 +318,12 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
             style={{
               width: `${canvasWidth}px`,
               height: `${canvasHeight}px`,
+              touchAction: 'none',
             }}
             onMouseDown={startDrawing}
             onMouseMove={draw}
             onMouseUp={stopDrawing}
             onMouseLeave={stopDrawing}
-            onTouchStart={startDrawing}
-            onTouchMove={draw}
-            onTouchEnd={stopDrawing}
-            onTouchCancel={stopDrawing}
             aria-label="그림 캔버스"
           />
           <div
