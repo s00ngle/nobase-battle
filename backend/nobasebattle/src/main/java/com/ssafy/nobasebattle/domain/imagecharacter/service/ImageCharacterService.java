@@ -1,5 +1,7 @@
 package com.ssafy.nobasebattle.domain.imagecharacter.service;
 
+import com.ssafy.nobasebattle.domain.badge.presentation.dto.BadgeInfo;
+import com.ssafy.nobasebattle.domain.badge.service.BadgeService;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.repository.ImageCharacterRepository;
 import com.ssafy.nobasebattle.domain.imagecharacter.exception.ImageCharacterNotFoundException;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,7 @@ public class ImageCharacterService {
 
     private final S3Service s3Service;
     private final ImageCharacterRepository imageCharacterRepository;
+    private final BadgeService badgeService;
     private final RankSearchUtils rankSearchUtils;
 
     private static final String IMAGE_DIRECTORY = "character-images";
@@ -48,7 +52,8 @@ public class ImageCharacterService {
         imageCharacterRepository.save(imageCharacter);
         insertRanking(imageCharacter);
         Long ranking = getRanking(imageCharacter);
-        return getImageCharacterResponse(imageCharacter,ranking);
+        List<BadgeInfo> badges = badgeService.getBadgeInfos(imageCharacter.getBadges());
+        return getImageCharacterResponse(imageCharacter,ranking,badges);
     }
 
     public void deleteImageCharacter(String imageCharacterId){
@@ -89,7 +94,8 @@ public class ImageCharacterService {
         imageCharacterRepository.save(imageCharacter);
         insertRanking(imageCharacter);
         Long ranking = getRanking(imageCharacter);
-        return getImageCharacterResponse(imageCharacter, ranking);
+        List<BadgeInfo> badges = badgeService.getBadgeInfos(imageCharacter.getBadges());
+        return getImageCharacterResponse(imageCharacter, ranking, badges);
     }
 
     public ImageCharacterResponse getImageCharacterDetail(String imageCharacterId) {
@@ -99,7 +105,8 @@ public class ImageCharacterService {
         imageCharacter.validUserIsHost(currentUserId);
         insertRanking(imageCharacter);
         Long ranking = getRanking(imageCharacter);
-        return getImageCharacterResponse(imageCharacter,ranking);
+        List<BadgeInfo> badges = badgeService.getBadgeInfos(imageCharacter.getBadges());
+        return getImageCharacterResponse(imageCharacter, ranking, badges);
     }
 
     public List<ImageCharacterResponse> findAllUsersImageCharacter() {
@@ -107,7 +114,7 @@ public class ImageCharacterService {
         String currentUserId = SecurityUtils.getCurrentUserId();
         List<ImageCharacter> characters = imageCharacterRepository.findByUserId(currentUserId);
         return characters.stream()
-                .map(character -> new ImageCharacterResponse(character, getRanking(character)))
+                .map(character -> new ImageCharacterResponse(character, getRanking(character), badgeService.getBadgeInfos(character.getBadges())))
                 .collect(Collectors.toList());
     }
 
@@ -127,12 +134,13 @@ public class ImageCharacterService {
                 .losses(0)
                 .draws(0)
                 .eloScore(1000)
+                .badges(new ArrayList<>())
                 .lastBattleTime(LocalDateTime.now().minusMinutes(2))
                 .build();
     }
 
-    private ImageCharacterResponse getImageCharacterResponse(ImageCharacter imageCharacter, Long ranking) {
-        return new ImageCharacterResponse(imageCharacter, ranking);
+    private ImageCharacterResponse getImageCharacterResponse(ImageCharacter imageCharacter, Long ranking, List<BadgeInfo> badges) {
+        return new ImageCharacterResponse(imageCharacter, ranking, badges);
     }
 
     private void insertRanking(ImageCharacter imageCharacter) {
