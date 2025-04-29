@@ -6,4 +6,4 @@ docker image remove nobase
 
 docker build -t nobase .
 
-docker run -d --name nbb -e TZ=Asia/Seoul -p 8080:8080 nobase
+docker run -d --name nbb --env-file .env -e TZ=Asia/Seoul --network host nobase
