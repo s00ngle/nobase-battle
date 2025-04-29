@@ -1,0 +1,40 @@
+spring:
+  config:
+    import: "optional:configserver:"
+  application:
+    name: nobasebattle
+
+  data:
+    mongodb:
+      uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}/${MONGO_CONNECT_NAME}?authSource=${MONGO_AUTH}
+      database: ${MONGO_DATABASE}
+      auto-index-creation: true
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+logging.level:
+  org.hibernate.SQL: debug
+
+auth:
+  jwt:
+    secretKey: asdwdasdawdasdasdasdqwdasdgretqwfsdfgsdfsefgwegweg
+    accessExp: 111111
+    refreshExp: 111111
+    header: Authorization
+    prefix: Bearer
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKETNAME}
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${S3_ACCESSKEY}
+      secretKey: ${S3_SECRETKEY}
+
+openai:
+  api:
+    key: ${OPENAI_KEY}
+    url: https://api.openai.com/v1/chat/completions
