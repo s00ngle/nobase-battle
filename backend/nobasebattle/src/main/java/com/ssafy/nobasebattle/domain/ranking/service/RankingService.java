@@ -6,6 +6,8 @@ import com.ssafy.nobasebattle.domain.imagecharacter.domain.repository.ImageChara
 import com.ssafy.nobasebattle.domain.ranking.presentation.response.RankingCharacterResponse;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.repository.TextCharacterRepository;
+import com.ssafy.nobasebattle.domain.user.domain.User;
+import com.ssafy.nobasebattle.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 public class RankingService {
     private final TextCharacterRepository textCharacterRepository;
     private final ImageCharacterRepository imageCharacterRepository;
+    private final UserRepository userRepository;
+
     private final RedisTemplate<String, Object> redisTemplate;
     private final BadgeService badgeService;
 
@@ -128,7 +132,10 @@ public class RankingService {
                 Object obj = redisTemplate.opsForValue().get(key);
 
                 if ("TEXT".equals(type) && obj instanceof TextCharacter text) {
+                    User user = userRepository.findById(((TextCharacter) obj).getUserId()).orElse(null);
+
                     return RankingCharacterResponse.builder()
+                        .username(user.getNickname())
                         .rank(rankCounter.getAndIncrement())
                         .characterId(text.getId())
                         .name(text.getName())
@@ -143,8 +150,11 @@ public class RankingService {
                         .build();
 
                 } else if ("IMAGE".equals(type) && obj instanceof ImageCharacter image) {
+                    User user = userRepository.findById(((ImageCharacter) obj).getUserId()).orElse(null);
+
                     return RankingCharacterResponse.builder()
                         .rank(rankCounter.getAndIncrement())
+                        .username(user.getNickname())
                         .characterId(image.getId())
                         .name(image.getName())
                         .imageUrl(image.getImageUrl())
