@@ -15,10 +15,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: '무근본 배틀 - 나만의 캐릭터를 만들어서 승리해 보세요.',
     description: '세계 최강! 프롬프팅 배틀',
-    url: 'http://43.201.97.202/',
+    url: 'https://nobasebattle.com/',
     images: [
       {
-        url: 'http://43.201.97.202/openGraphThumbnail.png',
+        url: 'https://nobasebattle.com/nobase_opengraph.png',
         width: 1200,
         height: 630,
         alt: '무근본 배틀',
