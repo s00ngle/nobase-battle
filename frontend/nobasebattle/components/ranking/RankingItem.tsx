@@ -22,7 +22,7 @@ const RankingItems = ({
       className={`flex justify-between px-4 py-4 rounded-xl ${transparentForm} ${hover}`}
     >
       <div className="flex gap-7 items-center">
-        <span className="text-3xl">{rank}</span>
+        <span className="text-3xl w-9 text-center">{rank}</span>
         <div className="flex flex-col gap-1">
           <span className="text-xl max-sm:truncate max-sm:max-w-30">
             {characterName}

@@ -26,3 +26,30 @@ export const fetchInfTextRankings = async () => {
     throw error
   }
 }
+
+export const fetchDailyImageRankings = async () => {
+  try {
+    const response = await lux.get<CharacterRankingApiResponse>(
+      '/api/v1/rankings/image/daily',
+    )
+    if (!response) throw new Error('일일 이미지 랭킹 조회에 실패했습니다.')
+    return response
+  } catch (error) {
+    console.error('API 호출 중 에러 발생:', error)
+    throw error
+  }
+}
+
+export const fetchInfImageRankings = async () => {
+  try {
+    const response = await lux.get<CharacterRankingApiResponse>(
+      '/api/v1/rankings/image/inf',
+    )
+    if (!response) throw new Error('무기한 이미지 랭킹 조회에 실패했습니다.')
+    return response
+  } catch (error) {
+    console.error('API 호출 중 에러 발생:', error)
+    throw error
+  }
+}
+
