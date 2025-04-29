@@ -11,7 +11,7 @@ import lombok.Setter;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RankingCharacterResponse {
-
+    private String username;
     private Integer rank;
     private String characterId;
     private String name;
