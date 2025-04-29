@@ -1,6 +1,9 @@
 package com.ssafy.nobasebattle.domain.user.presentation;
 
-import com.ssafy.nobasebattle.domain.user.presentation.dto.request.*;
+import com.ssafy.nobasebattle.domain.user.presentation.dto.request.AnonymousUserUpgradeRequest;
+import com.ssafy.nobasebattle.domain.user.presentation.dto.request.LoginRequest;
+import com.ssafy.nobasebattle.domain.user.presentation.dto.request.RegisterRequest;
+import com.ssafy.nobasebattle.domain.user.presentation.dto.request.UpdateProfileRequest;
 import com.ssafy.nobasebattle.domain.user.presentation.dto.response.AuthTokensResponse;
 import com.ssafy.nobasebattle.domain.user.presentation.dto.response.TestSignup;
 import com.ssafy.nobasebattle.domain.user.presentation.dto.response.UserResponse;
@@ -64,8 +67,8 @@ public class UserController {
     }
 
     @GetMapping("/check-nickname")
-    public UsernameCheckResponse checkUsername(@RequestBody UsernameCheckRequest usernameCheckRequest) {
-        return userService.checkUsername(usernameCheckRequest);
+    public UsernameCheckResponse checkUsername(@RequestParam("nickname") String nickname) {
+        return userService.checkUsername(nickname);
     }
 
 }
