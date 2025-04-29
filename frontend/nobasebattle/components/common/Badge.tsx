@@ -24,7 +24,9 @@ const Badge = ({ text, imageUrl = '/favicon.png', size = 40 }: BadgeProps) => {
         {text}
         <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800" />
       </div>
-      <Image src={imageUrl} alt={text} width={size} height={size} />
+      <div className="relative" style={{ width: size, height: size }}>
+        <Image src={imageUrl} alt={text} fill style={{ objectFit: 'contain' }} />
+      </div>
     </div>
   )
 }
