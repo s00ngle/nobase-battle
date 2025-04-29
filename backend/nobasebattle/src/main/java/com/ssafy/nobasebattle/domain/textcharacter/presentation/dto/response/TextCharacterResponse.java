@@ -1,5 +1,6 @@
 package com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.response;
 
+import com.ssafy.nobasebattle.domain.badge.presentation.dto.response.BadgeResponse;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import lombok.Getter;
 

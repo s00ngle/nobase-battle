@@ -1,5 +1,6 @@
 package com.ssafy.nobasebattle.domain.battle.service;
 
+import com.ssafy.nobasebattle.domain.badge.service.BadgeService;
 import com.ssafy.nobasebattle.domain.battle.domain.Battle;
 import com.ssafy.nobasebattle.domain.battle.domain.repository.BattleRepository;
 import com.ssafy.nobasebattle.domain.battle.exception.BattleAgainstSelfException;
@@ -35,6 +36,7 @@ public class BattleService {
     private final TextCharacterRepository textCharacterRepository;
     private final OpenAIService openAIService;
     private final EloRatingService eloRatingService;
+    private final BadgeService badgeService;
     private final Random random = new Random();
 
 //    @Transactional
@@ -343,8 +345,6 @@ public class BattleService {
         }
     }
 
-
-
     private void updateWinLossDraws(ImageCharacter character, boolean isWin, boolean isLoss, boolean isDraw) {
 
         int wins = character.getWins() != null ? character.getWins() : 0;
@@ -353,6 +353,8 @@ public class BattleService {
 
         if (isWin) {
             character.updateWins(wins + 1);
+
+            badgeService.checkAndAwardWinBadges(character, character.getWins());
         } else if (isLoss) {
             character.updateLosses(losses + 1);
         } else if (isDraw) {

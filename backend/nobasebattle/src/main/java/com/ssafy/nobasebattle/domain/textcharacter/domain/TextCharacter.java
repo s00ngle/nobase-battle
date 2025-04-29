@@ -1,8 +1,9 @@
 package com.ssafy.nobasebattle.domain.textcharacter.domain;
 
+import com.ssafy.nobasebattle.domain.badge.domain.Badge;
+import com.ssafy.nobasebattle.domain.badge.presentation.dto.response.BadgeResponse;
 import com.ssafy.nobasebattle.domain.textcharacter.exception.NotTextCharacterHostException;
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.request.UpdateTextCharacterRequest;
-import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.response.BadgeResponse;
 import com.ssafy.nobasebattle.global.common.BaseEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -91,7 +92,19 @@ public class TextCharacter extends BaseEntity {
         this.eloScore = eloScore;
     }
 
-    public void insertBadge(BadgeResponse badge) {
-       badges.add(badge);
+    public void addBadge(Badge badge) {
+        // 중복 체크
+        boolean hasBadge = this.badges.stream()
+                .anyMatch(b -> b.getText().equals(badge.getText()));
+
+        if (!hasBadge) {
+            this.badges.add(new BadgeResponse(badge));
+        }
+    }
+
+    // 특정 뱃지 보유 여부 확인
+    public boolean hasBadge(String text) {
+        return this.badges.stream()
+                .anyMatch(b -> b.getText().equals(text));
     }
 }
