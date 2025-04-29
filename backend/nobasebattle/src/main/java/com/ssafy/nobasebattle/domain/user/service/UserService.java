@@ -6,7 +6,10 @@ import com.ssafy.nobasebattle.domain.user.domain.repository.UserRepository;
 import com.ssafy.nobasebattle.domain.user.exception.EmailAlreadyExistsException;
 import com.ssafy.nobasebattle.domain.user.exception.UserLoginFailedException;
 import com.ssafy.nobasebattle.domain.user.exception.UsernameAlreadyExistsException;
-import com.ssafy.nobasebattle.domain.user.presentation.dto.request.*;
+import com.ssafy.nobasebattle.domain.user.presentation.dto.request.AnonymousUserUpgradeRequest;
+import com.ssafy.nobasebattle.domain.user.presentation.dto.request.LoginRequest;
+import com.ssafy.nobasebattle.domain.user.presentation.dto.request.RegisterRequest;
+import com.ssafy.nobasebattle.domain.user.presentation.dto.request.UpdateProfileRequest;
 import com.ssafy.nobasebattle.domain.user.presentation.dto.response.AuthTokensResponse;
 import com.ssafy.nobasebattle.domain.user.presentation.dto.response.TestSignup;
 import com.ssafy.nobasebattle.domain.user.presentation.dto.response.UserResponse;
@@ -135,9 +138,9 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public UsernameCheckResponse checkUsername(UsernameCheckRequest usernameCheckRequest) {
+    public UsernameCheckResponse checkUsername(String nickname) {
 
-        if (userRepository.existsByNickname(usernameCheckRequest.getNickname())) {
+        if (userRepository.existsByNickname(nickname)) {
             return new UsernameCheckResponse(true);
         }
         return new UsernameCheckResponse(false);

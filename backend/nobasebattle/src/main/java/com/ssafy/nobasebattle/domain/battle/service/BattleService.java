@@ -16,6 +16,7 @@ import com.ssafy.nobasebattle.domain.imagecharacter.exception.NotImageChracterHo
 import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.repository.TextCharacterRepository;
 import com.ssafy.nobasebattle.domain.textcharacter.service.TextCharacterServiceUtils;
+import com.ssafy.nobasebattle.global.utils.ranking.RankSearchUtils;
 import com.ssafy.nobasebattle.global.utils.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class BattleService {
     private final EloRatingService eloRatingService;
     private final BadgeService badgeService;
     private final Random random = new Random();
+    private final RankSearchUtils rankSearchUtils;
 
 //    @Transactional
     public BattleResponse performImageBattle(BattleRequest battleRequest) {
@@ -51,7 +53,10 @@ public class BattleService {
 
         Battle battle = calculateImageBattleResult(myCharacter, opponentCharacter);
 
-        updateCharactersStats(myCharacter, opponentCharacter, battle.getResult());
+        if(("RANDOM").equals(battleRequest.getMode())) {
+            updateCharactersStats(myCharacter, opponentCharacter, battle.getResult());
+            rankSearchUtils.addImageCharacterToRank(myCharacter);
+        }
 
         return new BattleResponse(battle, myCharacter, opponentCharacter);
     }
@@ -67,7 +72,10 @@ public class BattleService {
 
         Battle battle = calculateTextBattleResult(myCharacter, opponentCharacter);
 
-        updateTextCharactersStats(myCharacter, opponentCharacter, battle.getResult());
+        if(("RANDOM").equals(battleRequest.getMode())) {
+            updateTextCharactersStats(myCharacter, opponentCharacter, battle.getResult());
+            rankSearchUtils.addTextCharacterToRank(myCharacter);
+        }
 
         return new BattleResponse(battle, myCharacter, opponentCharacter);
     }

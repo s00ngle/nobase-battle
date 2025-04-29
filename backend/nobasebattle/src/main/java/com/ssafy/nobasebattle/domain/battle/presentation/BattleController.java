@@ -20,11 +20,13 @@ public class BattleController {
 
     @PostMapping("/image")
     public BattleResponse performImageBattle(@RequestBody BattleRequest battleRequest) {
+        battleRequest.validate();
         return battleService.performImageBattle(battleRequest);
     }
 
     @PostMapping("/text")
     public BattleResponse performTextBattle(@RequestBody BattleRequest battleRequest) {
+        battleRequest.validate();
         return battleService.performTextBattle(battleRequest);
     }
 }
