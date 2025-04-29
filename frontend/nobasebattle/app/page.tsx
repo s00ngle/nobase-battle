@@ -5,6 +5,7 @@ import type { ImageCharacter, TextCharacter } from '@/app/types/character'
 import CharacterList from '@/components/character/CharacterList'
 import CharacterTypeToggle from '@/components/character/CharacterTypeToggle'
 import Button from '@/components/common/Button'
+import { useCharacterStore } from '@/store/characterStore'
 import { fetchImageCharacters, fetchTextCharacters } from '@/utils/characters'
 import { useRouter } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
@@ -12,7 +13,7 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 type CharacterType = 'text' | 'image'
 
 const MainPage = () => {
-  const [selectedType, setSelectedType] = useState<CharacterType>('text')
+  const { selectedType, setSelectedType } = useCharacterStore()
   const [textCharacters, setTextCharacters] = useState<TextCharacter[]>([])
   const [imageCharacters, setImageCharacters] = useState<ImageCharacter[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -46,11 +47,11 @@ const MainPage = () => {
 
   const handleClickText = useCallback(() => {
     setSelectedType('text')
-  }, [])
+  }, [setSelectedType])
 
   const handleClickImage = useCallback(() => {
     setSelectedType('image')
-  }, [])
+  }, [setSelectedType])
 
   const currentCharacters = useMemo(() => {
     return selectedType === 'text' ? textCharacters : imageCharacters
@@ -86,9 +87,10 @@ const MainPage = () => {
         alert('캐릭터는 최대 5개까지만 생성할 수 있습니다.')
         return
       }
+      setSelectedType(type)
       router.push(`/create/${type}`)
     },
-    [router, textCharacters.length, imageCharacters.length],
+    [router, textCharacters.length, imageCharacters.length, setSelectedType],
   )
 
   return (
