@@ -1,17 +1,11 @@
 package com.ssafy.nobasebattle.domain.ranking.service;
 
+import com.ssafy.nobasebattle.domain.badge.service.BadgeService;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.repository.ImageCharacterRepository;
 import com.ssafy.nobasebattle.domain.ranking.presentation.response.RankingCharacterResponse;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.repository.TextCharacterRepository;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -21,6 +15,14 @@ import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -29,6 +31,7 @@ public class RankingService {
     private final TextCharacterRepository textCharacterRepository;
     private final ImageCharacterRepository imageCharacterRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final BadgeService badgeService;
 
     private static final String TEXT_RANKING_KEY = "text_character_ranking";
     private static final String TEXT_RANKING_PREFIX = "text_character:";
@@ -136,6 +139,7 @@ public class RankingService {
                         .eloScore(text.getEloScore())
                         .createdAt(text.getCreatedAt())
                         .updatedAt(text.getUpdatedAt())
+                        .badges(badgeService.getBadgeInfos(text.getBadges()))
                         .build();
 
                 } else if ("IMAGE".equals(type) && obj instanceof ImageCharacter image) {
@@ -150,6 +154,7 @@ public class RankingService {
                         .eloScore(image.getEloScore())
                         .createdAt(image.getCreatedAt())
                         .updatedAt(image.getUpdatedAt())
+                        .badges(badgeService.getBadgeInfos(image.getBadges()))
                         .build();
                 } else {
                     return null;
