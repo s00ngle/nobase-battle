@@ -88,13 +88,15 @@ public class OpenAIService {
      */
     private String buildImageBattlePrompt(String firstCharacterName, String secondCharacterName) {
         return String.format(
-                "image 1 this character name is %s. image 2 this character name is %s. 이미지를 보고 두 캐릭터에 대한 특징과 전투력을 분석해." +
-                        " 특징에 맞춰서 스킬을 만들어. 배틀 결과를 작성해. ### 지시문 ### \\n 예시를 참고해서 유사한 어조와 문체로 내용을 작성해. " +
+                "두 캐릭터의 이름은 각각 %s와 %s이다. 이미지를 보고 두 캐릭터에 대한 특징과 전투력을 분석해." +
+                        " 특징에 맞춰서 스킬을 만들어. 배틀 결과를 작성해. 대결은 철저히 공정하게 진행하며, 무조건 더 강력하거나 전략적으로 우위인 캐릭터가 승리해야 한다. \n" +
+                        "+ 만약 실력이 비슷하면 무승부를 선택할 수 있다. ### 지시문 ### \\n 예시를 참고해서 유사한 어조와 문체로 내용을 작성해. " +
                         "battlelog를 string으로 채워야 해. 두 캐릭터에 대한 배틀 결과를 매우 창의적이고 엉뚱하고 재미있게 줄글로 작성해. 어린 아이들도 재미있게 느끼도록 엉뚱하게 작성해야해. 두 캐릭터가 맞붙어서 서로의 스킬을 활용하여 대결을 진행하고 마지막에는 승패가 결정되는 내용까지 작성해. " +
                         "두 캐릭터가 만나는 과정은 작성하지 마. 두 캐릭터의 특성이 잘 드러나도록 대결 과정을 작성해. 절대 대화체로 작성하지 마. 독백체로 작성해. " +
                         "마지막 줄에는 어떤 캐릭터가 승리했는지도 알려줘. 한글로 4문장 안에 모든 내용을 마무리 해." +
                         " \\n ### 예시 ### 프롬프트 엔지니어는 붕괴맨의 '설정 붕괴' 시도를 역이용하여, '붕괴' 자체를 프롬프트의 일부로 포함시켰다. 붕괴맨은 자신의 '설정의 틀'이 흔들리는 것을 감지했지만, 이미 프롬프트 엔지니어의 전략 안에 갇혀 있었다. 결국, 붕괴의 파편 속에서 프롬프트 엔지니어는 승리했다.\\n" +
-                        "### 제공된 가이드라인을 따르지 않으면 페널티가 부과될 것입니다. 모든 지침을 주의깊게 읽고 반드시 지켜야 해. 반드시 창의적으로 작성해. charater 1의 승패에 따라 result는 int로 채워. 1 (승리) -1 (패배) 0 (무승부)" +
+                        "### 제공된 가이드라인을 따르지 않으면 페널티가 부과될 것입니다. 모든 지침을 주의깊게 읽고 반드시 지켜야 해. 반드시 창의적으로 작성해. " +
+                        "반드시 다음 JSON 형식으로 응답해주세요:\n" +
                         "{\n" +
                         "  \"result\": 1 또는 -1 또는 0, (1: 첫 번째 캐릭터 승리, -1: 두 번째 캐릭터 승리, 0: 무승부)\n" +
                         "  \"battle_log\": \"배틀 이야기\"\n" +
@@ -169,7 +171,7 @@ public class OpenAIService {
         // 시스템 메시지
         ObjectNode systemMessage = objectMapper.createObjectNode();
         systemMessage.put("role", "system");
-        systemMessage.put("content", "당신은 창의적인 배틀 게임 마스터입니다. 캐릭터 이미지를 분석하고 흥미로운 배틀 결과를 판정합니다. 항상 JSON 형식으로 응답하세요.");
+        systemMessage.put("content", "You are a creative judgment who thinks outside the box.");
 
         // 유저 메시지
         ObjectNode userMessage = objectMapper.createObjectNode();
