@@ -60,12 +60,26 @@ public class UserService {
 
     public AuthTokensResponse registerUser(RegisterRequest registerRequest) {
 
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw EmailAlreadyExistsException.EXCEPTION;
+        User user = userRepository.findByEmail(registerRequest.getEmail()).orElse(null);
+
+        if (user != null) {
+
+            if (!userRepository.existsByEmailAndPassword(registerRequest.getEmail(), registerRequest.getPassword())) {
+                throw UserLoginFailedException.EXCEPTION;
+            }
+
+        } else {
+
+            if (userRepository.existsByEmail(registerRequest.getEmail())) {
+                throw EmailAlreadyExistsException.EXCEPTION;
+            }
+
+            User newUser = createUser(registerRequest);
+            userRepository.save(newUser);
+            String accessToken = jwtTokenProvider.generateAccessToken(newUser.getId(), newUser.getAccountRole());
+            return getUserToken(accessToken,newUser);
         }
 
-        User user = createUser(registerRequest);
-        userRepository.save(user);
         String accessToken = jwtTokenProvider.generateAccessToken(user.getId(), user.getAccountRole());
         return getUserToken(accessToken,user);
     }

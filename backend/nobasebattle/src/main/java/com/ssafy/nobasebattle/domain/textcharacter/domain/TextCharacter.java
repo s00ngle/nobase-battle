@@ -1,5 +1,7 @@
 package com.ssafy.nobasebattle.domain.textcharacter.domain;
 
+import com.ssafy.nobasebattle.domain.badge.domain.Badge;
+import com.ssafy.nobasebattle.domain.badge.presentation.dto.response.BadgeResponse;
 import com.ssafy.nobasebattle.domain.textcharacter.exception.NotTextCharacterHostException;
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.request.UpdateTextCharacterRequest;
 import com.ssafy.nobasebattle.global.common.BaseEntity;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Document(collection = "text_characters")
 @NoArgsConstructor
@@ -23,10 +26,10 @@ public class TextCharacter extends BaseEntity {
     private Integer draws;
     private Integer eloScore;
     private LocalDateTime lastBattleTime;
-//    private String colorRank;
+    private List<BadgeResponse> badges;
 
     @Builder
-    public TextCharacter(String userId, String name, String prompt, Integer wins, Integer losses, Integer draws, Integer eloScore, LocalDateTime lastBattleTime) {
+    public TextCharacter(String userId, String name, String prompt, Integer wins, Integer losses, Integer draws, Integer eloScore, LocalDateTime lastBattleTime, List<BadgeResponse> badges) {
         this.userId = userId;
         this.name = name;
         this.prompt = prompt;
@@ -35,6 +38,7 @@ public class TextCharacter extends BaseEntity {
         this.draws = draws;
         this.eloScore = eloScore;
         this.lastBattleTime = lastBattleTime;
+        this.badges = badges;
     }
 
     public void validUserIsHost(String id) {
@@ -70,5 +74,35 @@ public class TextCharacter extends BaseEntity {
 
     public void updateLastBattleTime() {
         this.lastBattleTime = LocalDateTime.now();
+    }
+
+    public void updateWins(Integer wins) {
+        this.wins = wins;
+    }
+
+    public void updateLosses(Integer losses) {
+        this.losses = losses;
+    }
+
+    public void updateDraws(Integer draws) {
+        this.draws = draws;
+    }
+
+    public void updateEloScore(Integer eloScore) {
+        this.eloScore = eloScore;
+    }
+
+    public void addBadge(Badge badge) {
+        boolean hasBadge = this.badges.stream()
+                .anyMatch(b -> b.getText().equals(badge.getText()));
+
+        if (!hasBadge) {
+            this.badges.add(new BadgeResponse(badge));
+        }
+    }
+
+    public boolean hasBadge(String text) {
+        return this.badges.stream()
+                .anyMatch(b -> b.getText().equals(text));
     }
 }

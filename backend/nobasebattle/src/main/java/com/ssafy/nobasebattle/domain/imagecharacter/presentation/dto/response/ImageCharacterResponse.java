@@ -1,9 +1,11 @@
 package com.ssafy.nobasebattle.domain.imagecharacter.presentation.dto.response;
 
+import com.ssafy.nobasebattle.domain.badge.presentation.dto.BadgeInfo;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 public class ImageCharacterResponse {
@@ -20,10 +22,10 @@ public class ImageCharacterResponse {
     private LocalDateTime lastBattleTime;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
-    // private HostInfoDto hostInfo;
-    // private Boolean isOwner;
+    private Long rank;
+    private List<BadgeInfo> badges;
 
-    public ImageCharacterResponse(ImageCharacter character) {
+    public ImageCharacterResponse(ImageCharacter character, Long rank, List<BadgeInfo> badges) {
         this.imageCharacterId = character.getId();
         this.name = character.getName();
         this.imageUrl = character.getImageUrl();
@@ -36,5 +38,7 @@ public class ImageCharacterResponse {
         this.lastBattleTime = character.getLastBattleTime();
         this.createAt = character.getCreatedAt();
         this.updateAt = character.getUpdatedAt();
+        this.rank = rank;
+        this.badges = badges;
     }
 }

@@ -1,5 +1,7 @@
 package com.ssafy.nobasebattle.domain.imagecharacter.domain;
 
+import com.ssafy.nobasebattle.domain.badge.domain.Badge;
+import com.ssafy.nobasebattle.domain.badge.presentation.dto.response.BadgeResponse;
 import com.ssafy.nobasebattle.domain.imagecharacter.presentation.dto.request.UpdateImageCharacterRequest;
 import com.ssafy.nobasebattle.domain.textcharacter.exception.NotTextCharacterHostException;
 import com.ssafy.nobasebattle.global.common.BaseEntity;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Document(collection = "image_characters")
 @Getter
@@ -23,10 +26,10 @@ public class ImageCharacter extends BaseEntity {
     private Integer draws;
     private Integer eloScore;
     private LocalDateTime lastBattleTime;
-//    private String colorRank;
+    private List<BadgeResponse> badges;
 
     @Builder
-    public ImageCharacter(String userId, String name, String imageUrl, Integer wins, Integer losses, Integer draws, Integer eloScore, LocalDateTime lastBattleTime) {
+    public ImageCharacter(String userId, String name, String imageUrl, Integer wins, Integer losses, Integer draws, Integer eloScore, LocalDateTime lastBattleTime, List<BadgeResponse> badges) {
         this.userId = userId;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -35,6 +38,7 @@ public class ImageCharacter extends BaseEntity {
         this.draws = draws;
         this.eloScore = eloScore;
         this.lastBattleTime = lastBattleTime;
+        this.badges = badges;
     }
 
     public void validUserIsHost(String id) {
@@ -90,4 +94,19 @@ public class ImageCharacter extends BaseEntity {
     public Integer calculateTotalBattles() {
         return wins + losses + draws;
     }
+
+    public void addBadge(Badge badge) {
+        boolean hasBadge = this.badges.stream()
+                .anyMatch(b -> b.getText().equals(badge.getText()));
+
+        if (!hasBadge) {
+            this.badges.add(new BadgeResponse(badge));
+        }
+    }
+
+    public boolean hasBadge(String text) {
+        return this.badges.stream()
+                .anyMatch(b -> b.getText().equals(text));
+    }
+
 }

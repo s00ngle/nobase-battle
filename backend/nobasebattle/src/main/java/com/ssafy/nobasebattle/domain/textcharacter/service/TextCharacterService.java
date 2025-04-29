@@ -1,5 +1,7 @@
 package com.ssafy.nobasebattle.domain.textcharacter.service;
 
+import com.ssafy.nobasebattle.domain.badge.presentation.dto.BadgeInfo;
+import com.ssafy.nobasebattle.domain.badge.service.BadgeService;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.repository.TextCharacterRepository;
 import com.ssafy.nobasebattle.domain.textcharacter.exception.CharacterLimitExceededException;
@@ -7,21 +9,26 @@ import com.ssafy.nobasebattle.domain.textcharacter.exception.TextCharacterNotFou
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.request.CreateTextCharacterRequest;
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.request.UpdateTextCharacterRequest;
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.response.TextCharacterResponse;
+import com.ssafy.nobasebattle.global.utils.ranking.RankSearchUtils;
 import com.ssafy.nobasebattle.global.utils.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class TextCharacterService {
+public class TextCharacterService implements TextCharacterServiceUtils {
 
     private final TextCharacterRepository textCharacterRepository;
+    private final RankSearchUtils rankSearchUtils;
+    private final BadgeService badgeService;
 
     public TextCharacterResponse createTextCharacter(CreateTextCharacterRequest createTextCharacterRequest){
 
@@ -34,7 +41,10 @@ public class TextCharacterService {
 
         TextCharacter textCharacter = makeTextCharacter(createTextCharacterRequest, userId);
         textCharacterRepository.save(textCharacter);
-        return getTextCharacterResponse(textCharacter);
+        insertRanking(textCharacter);
+        Long ranking = getRanking(textCharacter);
+        List<BadgeInfo> badges = badgeService.getBadgeInfos(textCharacter.getBadges());
+        return getTextCharacterResponse(textCharacter,ranking,badges);
     }
 
     public void deleteTextCharacter(String textCharacterId){
@@ -42,6 +52,7 @@ public class TextCharacterService {
         String userId = SecurityUtils.getCurrentUserId();
         TextCharacter textCharacter = queryTextCharacter(textCharacterId);
         textCharacter.validUserIsHost(userId);
+        rankSearchUtils.deleteTextCharacterFromRank(textCharacter);
         textCharacterRepository.delete(textCharacter);
     }
 
@@ -52,7 +63,9 @@ public class TextCharacterService {
         textCharacter.validUserIsHost(currentUserId);
         textCharacter.updateCharacter(updateTextCharacterRequest);
         textCharacterRepository.save(textCharacter);
-        return getTextCharacterResponse(textCharacter);
+        Long ranking = getRanking(textCharacter);
+        List<BadgeInfo> badges = badgeService.getBadgeInfos(textCharacter.getBadges());
+        return getTextCharacterResponse(textCharacter,ranking,badges);
     }
 
     public TextCharacterResponse getTextCharacterDetail(String textCharacterId) {
@@ -60,17 +73,20 @@ public class TextCharacterService {
         String currentUserId = SecurityUtils.getCurrentUserId();
         TextCharacter textCharacter = queryTextCharacter(textCharacterId);
         textCharacter.validUserIsHost(currentUserId);
-        return getTextCharacterResponse(textCharacter);
+        Long ranking = getRanking(textCharacter);
+        List<BadgeInfo> badges = badgeService.getBadgeInfos(textCharacter.getBadges());
+        return getTextCharacterResponse(textCharacter,ranking,badges);
     }
 
     public List<TextCharacterResponse> findAllUsersTextCharacter() {
-
         String currentUserId = SecurityUtils.getCurrentUserId();
         List<TextCharacter> characters = textCharacterRepository.findByUserId(currentUserId);
-        return characters.stream().map(this::getTextCharacterResponse).collect(Collectors.toList());
+        return characters.stream()
+                .map(character -> new TextCharacterResponse(character, getRanking(character), badgeService.getBadgeInfos(character.getBadges())))
+                .collect(Collectors.toList());
     }
 
-    private TextCharacter queryTextCharacter(String id) {
+    public TextCharacter queryTextCharacter(String id) {
         return textCharacterRepository
                 .findById(id)
                 .orElseThrow(()-> TextCharacterNotFoundException.EXCEPTION);
@@ -85,13 +101,29 @@ public class TextCharacterService {
                 .wins(0)
                 .losses(0)
                 .draws(0)
-                .eloScore(0)
+                .eloScore(1000)
+                .badges(new ArrayList<>())
                 .lastBattleTime(LocalDateTime.now().minusMinutes(2))
                 .build();
     }
 
-    private TextCharacterResponse getTextCharacterResponse(TextCharacter textCharacter) {
-        return new TextCharacterResponse(textCharacter);
+    private TextCharacterResponse getTextCharacterResponse(TextCharacter textCharacter, Long ranking, List<BadgeInfo> badges) {
+        return new TextCharacterResponse(textCharacter, ranking, badges);
+    }
+
+    private void insertRanking(TextCharacter textCharacter) {
+        rankSearchUtils.addTextCharacterToRank(textCharacter);
+    }
+
+    private Long getRanking(TextCharacter textCharacter) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate createdDate = textCharacter.getCreatedAt().toLocalDate();
+
+        if (today.equals(createdDate)) {
+             return rankSearchUtils.getTodayTextCharacterRank(textCharacter.getId());
+        }
+        return rankSearchUtils.getTextCharacterRank(textCharacter.getId());
     }
 
 }

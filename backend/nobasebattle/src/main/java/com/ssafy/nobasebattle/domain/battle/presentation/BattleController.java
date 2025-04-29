@@ -22,4 +22,9 @@ public class BattleController {
     public BattleResponse performImageBattle(@RequestBody BattleRequest battleRequest) {
         return battleService.performImageBattle(battleRequest);
     }
+
+    @PostMapping("/text")
+    public BattleResponse performTextBattle(@RequestBody BattleRequest battleRequest) {
+        return battleService.performTextBattle(battleRequest);
+    }
 }

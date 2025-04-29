@@ -1,9 +1,11 @@
 package com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.response;
 
+import com.ssafy.nobasebattle.domain.badge.presentation.dto.BadgeInfo;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 public class TextCharacterResponse {
@@ -20,8 +22,10 @@ public class TextCharacterResponse {
     private LocalDateTime updateAt;
     private LocalDateTime lastBattleTime;
     private Double winRate;
+    private Long rank;
+    private List<BadgeInfo> badges;
 
-    public TextCharacterResponse(TextCharacter character) {
+    public TextCharacterResponse(TextCharacter character, Long rank, List<BadgeInfo> badges) {
         this.TextCharacterId = character.getId();
         this.name = character.getName();
         this.prompt = character.getPrompt();
@@ -34,6 +38,8 @@ public class TextCharacterResponse {
         this.updateAt = character.getUpdatedAt();
         this.winRate = character.calculateWinRate();
         this.lastBattleTime = character.getLastBattleTime();
+        this.rank = rank;
+        this.badges = badges;
     }
 }
 
