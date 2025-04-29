@@ -97,8 +97,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
 
   const startDrawing = useCallback(
     (event: ReactMouseEvent | ReactTouchEvent) => {
-      // 터치 이벤트일 경우 기본 동작 방지
-      if ('touches' in event) {
+      if ('touches' in event && event.cancelable) {
         event.preventDefault()
       }
       setIsDrawing(true)
@@ -114,8 +113,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
 
   const draw = useCallback(
     (event: ReactMouseEvent | ReactTouchEvent) => {
-      // 터치 이벤트일 경우 기본 동작 방지
-      if ('touches' in event) {
+      if ('touches' in event && event.cancelable) {
         event.preventDefault()
       }
       if (!isDrawing || !canvasRefToUse.current) return
@@ -280,17 +278,23 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
     if (!canvas) return
 
     const handleTouchStart = (e: TouchEvent) => {
-      e.preventDefault()
+      if (e.cancelable) {
+        e.preventDefault()
+      }
       startDrawing(e as unknown as ReactTouchEvent)
     }
 
     const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault()
+      if (e.cancelable) {
+        e.preventDefault()
+      }
       draw(e as unknown as ReactTouchEvent)
     }
 
     const handleTouchEnd = (e: TouchEvent) => {
-      e.preventDefault()
+      if (e.cancelable) {
+        e.preventDefault()
+      }
       stopDrawing()
     }
 
@@ -311,7 +315,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
     <div className="mt-4 flex flex-col gap-2">
       <span className="text-sm">캐릭터 그림</span>
       <div className={`w-full rounded-xl p-4 ${transparentForm}`}>
-        <div className="relative">
+        <div className="relative" style={{ touchAction: 'none' }}>
           <canvas
             ref={canvasRefToUse}
             className="bg-white rounded-xl touch-none"
@@ -319,6 +323,8 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
               width: `${canvasWidth}px`,
               height: `${canvasHeight}px`,
               touchAction: 'none',
+              position: 'relative',
+              zIndex: 1,
             }}
             onMouseDown={startDrawing}
             onMouseMove={draw}
@@ -332,6 +338,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
             style={{
               display: 'none',
               transform: 'translate(-50%, -50%)',
+              zIndex: 2,
             }}
           />
         </div>
