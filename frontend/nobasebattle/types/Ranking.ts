@@ -3,6 +3,7 @@ import type { BadgeType } from "./Badge"
 export interface Character {
   characterId: string
   name: string
+  username: string
   prompt: string
   rank: number
   wins: number

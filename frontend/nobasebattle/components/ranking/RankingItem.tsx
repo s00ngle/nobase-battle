@@ -27,7 +27,7 @@ const RankingItems = ({
           <span className="text-xl max-sm:truncate max-sm:max-w-30">
             {characterName}
           </span>
-          <span className="text-sm">({username})</span>
+          <span className="text-sm">{username}</span>
         </div>
       </div>
       <div className="flex flex-col justify-center items-end gap-1">

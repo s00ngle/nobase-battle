@@ -11,12 +11,14 @@ const RankingList = ({ rankingData }: IRankingList) => {
     <div
       className={`flex flex-col gap-3 p-4 rounded-2xl ${transparentForm} w-full max-w-150`}
     >
+        
       {data.map((item) => {
         return (
           <RankingItems
             key={item.characterId}
             rank={item.rank}
             characterName={item.name}
+            username={item.username}
             eloScore={item.eloScore}
             badgeList={item.badges}
           />
