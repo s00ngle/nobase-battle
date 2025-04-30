@@ -3,14 +3,14 @@
 import type { ImageCharacter, TextCharacter } from '@/app/types/character'
 import BattleResult from '@/components/battle/BattleResult'
 import Button from '@/components/common/Button'
-import { transparentForm } from '@/styles/form'
+import { hover, transparentForm } from '@/styles/form'
 import type { IBattleResponse, TBattleResponse } from '@/types/Battle'
 import type {} from '@/types/Character'
 import { fetchChallengeImageBattle, fetchChallengeTextBattle } from '@/utils/api/battle'
 import { fetchImageCharacters, fetchTextCharacters } from '@/utils/characters'
 import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
 const isTextCharacter = (character: TextCharacter | ImageCharacter): character is TextCharacter => {
   return 'textCharacterId' in character
@@ -22,7 +22,7 @@ const isImageCharacter = (
   return 'imageCharacterId' in character
 }
 
-const PracticePage = () => {
+const PracticeContent = () => {
   const searchParams = useSearchParams()
   const opponentId = searchParams.get('opponentId')
   const opponentName = searchParams.get('name')
@@ -169,7 +169,8 @@ const PracticePage = () => {
                   selectedCharacter === characterId
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                     : 'hover:border-gray-300'
-                }`}
+                }
+                ${transparentForm} ${hover}`}
                 onClick={() => setSelectedCharacter(characterId)}
               >
                 <div className="font-semibold">{character.name}</div>
@@ -195,6 +196,14 @@ const PracticePage = () => {
         disabled={!selectedCharacter || isLoading}
       />
     </div>
+  )
+}
+
+const PracticePage = () => {
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <PracticeContent />
+    </Suspense>
   )
 }
 
