@@ -38,3 +38,9 @@ openai:
   api:
     key: ${OPENAI_KEY}
     url: https://api.openai.com/v1/chat/completions
+
+logging:
+  file:
+    name: ${LOGGING_DIR}
+  level:
+    root: INFO
