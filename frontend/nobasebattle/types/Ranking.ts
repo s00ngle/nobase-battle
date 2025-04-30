@@ -5,6 +5,7 @@ export interface Character {
   name: string
   username: string
   imgUrl?: string
+  imageUrl?: string
   prompt: string
   rank: number
   wins: number
