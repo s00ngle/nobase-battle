@@ -49,13 +49,15 @@ public class BattleService {
 
         ImageCharacter opponentCharacter = selectImageOpponent(battleRequest, myCharacter, currentUserId);
 
-        myCharacter.updateLastBattleTime();
-
         Battle battle = calculateImageBattleResult(myCharacter, opponentCharacter);
+
+        myCharacter.updateLastBattleTime();
 
         if(("RANDOM").equals(battleRequest.getMode())) {
             updateCharactersStats(myCharacter, opponentCharacter, battle.getResult());
             rankSearchUtils.addImageCharacterToRank(myCharacter);
+        } else {
+            updateImageCharacterBattleTime(myCharacter);
         }
 
         return new BattleResponse(battle, myCharacter, opponentCharacter);
@@ -68,13 +70,15 @@ public class BattleService {
 
         TextCharacter opponentCharacter = selectTextOpponent(battleRequest, myCharacter, currentUserId);
 
-        myCharacter.updateLastBattleTime();
-
         Battle battle = calculateTextBattleResult(myCharacter, opponentCharacter);
+
+        myCharacter.updateLastBattleTime();
 
         if(("RANDOM").equals(battleRequest.getMode())) {
             updateTextCharactersStats(myCharacter, opponentCharacter, battle.getResult());
             rankSearchUtils.addTextCharacterToRank(myCharacter);
+        } else {
+            updateTextCharacterBattleTime(myCharacter);
         }
 
         return new BattleResponse(battle, myCharacter, opponentCharacter);
@@ -336,6 +340,14 @@ public class BattleService {
 
         textCharacterRepository.save(myCharacter);
 //        imageCharacterRepository.save(opponentCharacter);
+    }
+
+    private void updateImageCharacterBattleTime(ImageCharacter character){
+        imageCharacterRepository.save(character);
+    }
+
+    private void updateTextCharacterBattleTime(TextCharacter character){
+        textCharacterRepository.save(character);
     }
 
     private void updateTextWinLossDraws(TextCharacter character, boolean isWin, boolean isLoss, boolean isDraw) {
