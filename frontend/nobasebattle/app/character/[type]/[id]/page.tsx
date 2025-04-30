@@ -19,6 +19,16 @@ import {
 import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+interface ApiError {
+  response: {
+    status: number
+    reason: string
+    path: string
+    success: boolean
+    timeStamp: string
+  }
+}
+
 const Character = () => {
   const [result, setResult] = useState<boolean>(false)
   const [characterData, setCharacterData] = useState<
@@ -79,8 +89,14 @@ const Character = () => {
         setLastBattleTime(response.data.createdAt)
         await fetchCharacter()
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('배틀 결과를 불러오는데 실패했습니다:', error)
+      const apiError = error as ApiError
+      if (apiError.response?.reason) {
+        alert(apiError.response.reason)
+      } else {
+        alert('배틀 시작에 실패했습니다.')
+      }
     } finally {
       setIsBattleLoading(false)
     }

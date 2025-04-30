@@ -12,6 +12,16 @@ import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 
+interface ApiError {
+  response: {
+    status: number
+    reason: string
+    path: string
+    success: boolean
+    timeStamp: string
+  }
+}
+
 const isTextCharacter = (character: TextCharacter | ImageCharacter): character is TextCharacter => {
   return 'textCharacterId' in character
 }
@@ -55,7 +65,12 @@ const PracticeContent = () => {
       battleId: '',
       firstCharacter: {
         characterId: selectedCharacter,
-        name: '',
+        name:
+          characters.find((char) =>
+            isTextCharacter(char)
+              ? char.textCharacterId === selectedCharacter
+              : char.imageCharacterId === selectedCharacter,
+          )?.name || '로딩 중...',
         prompt: '',
         record: {
           eloScore: 0,
@@ -68,7 +83,7 @@ const PracticeContent = () => {
       },
       secondCharacter: {
         characterId: opponentId,
-        name: '',
+        name: opponentName || '로딩 중...',
         prompt: '',
         record: {
           eloScore: 0,
@@ -80,7 +95,7 @@ const PracticeContent = () => {
         },
       },
       result: 0,
-      battleLog: '',
+      battleLog: '배틀이 진행 중입니다...',
       createdAt: new Date().toISOString(),
     } as TBattleResponse | IBattleResponse
 
@@ -95,8 +110,14 @@ const PracticeContent = () => {
         const response = await fetchChallengeImageBattle(selectedCharacter, opponentId)
         setBattleResult(response.data)
       }
-    } catch (error) {
-      console.error('배틀 시작에 실패했습니다:', error)
+    } catch (error: unknown) {
+      console.error('에러 발생:', error)
+      const apiError = error as ApiError
+      if (apiError.response?.reason) {
+        alert(apiError.response.reason)
+      } else {
+        alert('배틀 시작에 실패했습니다.')
+      }
       setBattleResult(null)
     } finally {
       setIsLoading(false)
