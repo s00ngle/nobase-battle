@@ -3,7 +3,7 @@
 import type { ImageCharacter, TextCharacter } from '@/app/types/character'
 import BattleResult from '@/components/battle/BattleResult'
 import Button from '@/components/common/Button'
-import { transparentForm } from '@/styles/form'
+import { hover, transparentForm } from '@/styles/form'
 import type { IBattleResponse, TBattleResponse } from '@/types/Battle'
 import type {} from '@/types/Character'
 import { fetchChallengeImageBattle, fetchChallengeTextBattle } from '@/utils/api/battle'
@@ -169,7 +169,8 @@ const PracticeContent = () => {
                   selectedCharacter === characterId
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                     : 'hover:border-gray-300'
-                }`}
+                }
+                ${transparentForm} ${hover}`}
                 onClick={() => setSelectedCharacter(characterId)}
               >
                 <div className="font-semibold">{character.name}</div>
