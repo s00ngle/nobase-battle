@@ -10,7 +10,7 @@ import { fetchChallengeImageBattle, fetchChallengeTextBattle } from '@/utils/api
 import { fetchImageCharacters, fetchTextCharacters } from '@/utils/characters'
 import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 
 const isTextCharacter = (character: TextCharacter | ImageCharacter): character is TextCharacter => {
   return 'textCharacterId' in character
@@ -22,7 +22,7 @@ const isImageCharacter = (
   return 'imageCharacterId' in character
 }
 
-const PracticePage = () => {
+const PracticeContent = () => {
   const searchParams = useSearchParams()
   const opponentId = searchParams.get('opponentId')
   const opponentName = searchParams.get('name')
@@ -195,6 +195,14 @@ const PracticePage = () => {
         disabled={!selectedCharacter || isLoading}
       />
     </div>
+  )
+}
+
+const PracticePage = () => {
+  return (
+    <Suspense fallback={<div>로딩 중...</div>}>
+      <PracticeContent />
+    </Suspense>
   )
 }
 
