@@ -8,6 +8,13 @@ import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.repository.TextCharacterRepository;
 import com.ssafy.nobasebattle.domain.user.domain.User;
 import com.ssafy.nobasebattle.domain.user.domain.repository.UserRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -16,14 +23,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -48,9 +47,14 @@ public class RankingService {
 
         LocalDateTime start = LocalDate.now().atStartOfDay();
         LocalDateTime end = start.plusDays(1);
+
+        String yesterdayTextKey = TEXT_RANKING_KEY + ":" + LocalDate.now().minusDays(1);
+        String yesterdayImageKey = IMAGE_RANKING_KEY + ":" + LocalDate.now().minusDays(1);
         String todayTextKey = TEXT_RANKING_KEY + ":" + LocalDate.now();
         String todayImageKey = IMAGE_RANKING_KEY + ":" + LocalDate.now();
 
+        redisTemplate.delete(yesterdayTextKey);
+        redisTemplate.delete(yesterdayImageKey);
         redisTemplate.delete(todayTextKey);
         redisTemplate.delete(todayImageKey);
 
