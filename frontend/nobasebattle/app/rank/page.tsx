@@ -1,56 +1,53 @@
-"use client";
+'use client'
 
-import Button from "@/components/common/Button";
-import RankingList from "@/components/ranking/RankingList";
-import { transparentForm } from "@/styles/form";
-import type { CharacterRankingApiResponse } from "@/types/Ranking";
+import Button from '@/components/common/Button'
+import RankingList from '@/components/ranking/RankingList'
+import { transparentForm } from '@/styles/form'
+import type { CharacterRankingApiResponse } from '@/types/Ranking'
 import {
   fetchDailyImageRankings,
   fetchDailyTextRankings,
   fetchInfImageRankings,
   fetchInfTextRankings,
-} from "@/utils/api/rankings";
-import { useCallback, useEffect, useState } from "react";
+} from '@/utils/api/rankings'
+import { useCallback, useEffect, useState } from 'react'
+
+type RankingType = 'text' | 'image'
 
 const RankPage = () => {
-  const [textailyRanking, setTextailyRanking] =
-    useState<CharacterRankingApiResponse | null>(null);
-  const [rankType, setRankType] = useState<"daily" | "infinite">("daily");
-  const [isTextRanking, setIsTextRanking] = useState(true);
+  const [textailyRanking, setTextailyRanking] = useState<CharacterRankingApiResponse | null>(null)
+  const [rankType, setRankType] = useState<'daily' | 'infinite'>('daily')
+  const [rankingType, setRankingType] = useState<RankingType>('text')
 
   const fetchRankings = useCallback(
-    async (type: "daily" | "infinite", isText: boolean) => {
+    async (type: 'daily' | 'infinite', rankingType: RankingType) => {
       try {
-        let response: CharacterRankingApiResponse | null = null;
-        if (isText) {
+        let response: CharacterRankingApiResponse | null = null
+        if (rankingType === 'text') {
           response =
-            type === "daily"
-              ? await fetchDailyTextRankings()
-              : await fetchInfTextRankings();
+            type === 'daily' ? await fetchDailyTextRankings() : await fetchInfTextRankings()
         } else {
           response =
-            type === "daily"
-              ? await fetchDailyImageRankings()
-              : await fetchInfImageRankings();
+            type === 'daily' ? await fetchDailyImageRankings() : await fetchInfImageRankings()
         }
 
         if (response?.data) {
-          setTextailyRanking(response);
+          setTextailyRanking(response)
         }
       } catch (error) {
-        console.error("랭킹 데이터를 불러오는데 실패했습니다:", error);
+        console.error('랭킹 데이터를 불러오는데 실패했습니다:', error)
       }
     },
-    []
-  );
+    [],
+  )
 
   useEffect(() => {
-    fetchRankings(rankType, isTextRanking);
-  }, [rankType, isTextRanking, fetchRankings]);
+    fetchRankings(rankType, rankingType)
+  }, [rankType, rankingType, fetchRankings])
 
   const handleRankingTypeChange = () => {
-    setIsTextRanking(!isTextRanking);
-  };
+    setRankingType(rankingType === 'text' ? 'image' : 'text')
+  }
 
   return (
     <div className="text-2xl w-full flex flex-col items-center gap-4">
@@ -59,45 +56,37 @@ const RankPage = () => {
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center gap-2">
             <span className="text-xl">랭킹</span>
-            <span className="text-lg">
-              ({isTextRanking ? "텍스트" : "그림"})
-            </span>
+            <span className="text-lg">({rankingType === 'text' ? '텍스트' : '그림'})</span>
           </div>
           <div className="flex rounded-lg overflow-hidden border">
             <button
               type="button"
-              onClick={() => setRankType("daily")}
+              onClick={() => setRankType('daily')}
               className={`px-3 py-1 text-base ${
-                rankType === "daily"
-                  ? "bg-gray-500/20 dark:bg-white/20"
-                  : transparentForm
+                rankType === 'daily' ? 'bg-gray-500/20 dark:bg-white/20' : transparentForm
               }`}
             >
               일간
             </button>
             <button
               type="button"
-              onClick={() => setRankType("infinite")}
+              onClick={() => setRankType('infinite')}
               className={`px-3 py-1 text-base ${
-                rankType === "infinite"
-                  ? "bg-gray-500/20 dark:bg-white/20"
-                  : transparentForm
+                rankType === 'infinite' ? 'bg-gray-500/20 dark:bg-white/20' : transparentForm
               }`}
             >
               무기한
             </button>
           </div>
         </div>
-        {textailyRanking && <RankingList rankingData={textailyRanking} />}
+        {textailyRanking && <RankingList rankingData={textailyRanking} rankingType={rankingType} />}
       </div>
       <Button
-        text={
-          isTextRanking ? "그림 캐릭터 랭킹 보기" : "텍스트 캐릭터 랭킹 보기"
-        }
+        text={rankingType === 'text' ? '그림 캐릭터 랭킹 보기' : '텍스트 캐릭터 랭킹 보기'}
         onClick={handleRankingTypeChange}
       />
     </div>
-  );
-};
+  )
+}
 
-export default RankPage;
+export default RankPage
