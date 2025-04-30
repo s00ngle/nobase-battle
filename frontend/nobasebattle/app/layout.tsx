@@ -46,7 +46,7 @@ export default function RootLayout({
           'flex flex-col items-center bg-white transition-colors duration-300 px-6 py-20 min-w-[330px] min-h-svh dark:bg-gray-700 text-gray-800 dark:text-gray-200 antialiased'
         }
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <Header />
           {children}
           <Footer />
