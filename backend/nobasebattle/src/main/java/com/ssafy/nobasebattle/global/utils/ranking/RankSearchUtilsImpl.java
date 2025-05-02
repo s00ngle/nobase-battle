@@ -52,7 +52,9 @@ public class RankSearchUtilsImpl implements RankSearchUtils {
 
         redisTemplate.opsForZSet().add(TEXT_RANKING_KEY, redisKey, character.getEloScore());
         redisTemplate.opsForValue().set(redisKey, character);
-        redisTemplate.opsForZSet().add(todayTextKey, redisKey, character.getEloScore());
+        if (LocalDate.now().equals(character.getCreatedAt().toLocalDate())) {
+            redisTemplate.opsForZSet().add(todayTextKey, redisKey, character.getEloScore());
+        }
     }
 
     @Override
@@ -62,7 +64,9 @@ public class RankSearchUtilsImpl implements RankSearchUtils {
 
         redisTemplate.opsForZSet().add(IMAGE_RANKING_KEY, redisKey, character.getEloScore());
         redisTemplate.opsForValue().set(redisKey, character);
-        redisTemplate.opsForZSet().add(todayImageKey, redisKey, character.getEloScore());
+        if (LocalDate.now().equals(character.getCreatedAt().toLocalDate())) {
+            redisTemplate.opsForZSet().add(todayImageKey, redisKey, character.getEloScore());
+        }
     }
 
     @Override

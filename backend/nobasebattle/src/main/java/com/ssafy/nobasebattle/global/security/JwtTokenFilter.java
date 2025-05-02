@@ -45,20 +45,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String method = request.getMethod();
 
         List<String> excludePaths = Arrays.asList(
-                "/api/v1/credentials/test-login",
-                "/api/v1/credentials/sign-up-test",
-                "/api/v1/credentials/oauth/link/kakao",
-                "/api/v1/credentials/oauth/kakao",
-                "/api/v1/credentials/oauth/link/google",
-                "/api/v1/credentials/oauth/google",
-                "/api/v1/credentials/oauth/valid/register",
-                "/api/v1/credentials/login",
-                "/api/v1/credentials/refresh",
-                "/api/v1/user-preference/random",
                 "/api/v1/users/signup"
         );
 
         if (path.equals("/api/v1/users/signup") && "POST".equalsIgnoreCase(method)) {
+            return true;
+        }
+
+        if (path.equals("/api/v1/users/anonymous") && "POST".equalsIgnoreCase(method)) {
             return true;
         }
 

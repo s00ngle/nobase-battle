@@ -12,7 +12,6 @@ import com.ssafy.nobasebattle.domain.battle.presentation.dto.response.BattleResp
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.repository.ImageCharacterRepository;
 import com.ssafy.nobasebattle.domain.imagecharacter.exception.ImageCharacterNotFoundException;
-import com.ssafy.nobasebattle.domain.imagecharacter.exception.NotImageChracterHostException;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.TextCharacter;
 import com.ssafy.nobasebattle.domain.textcharacter.domain.repository.TextCharacterRepository;
 import com.ssafy.nobasebattle.domain.textcharacter.service.TextCharacterServiceUtils;
@@ -108,13 +107,13 @@ public class BattleService {
 
         TextCharacter character = textCharacterServiceUtils.queryTextCharacter(characterId);
 
-        if (character.getLastBattleTime().plusSeconds(10).isAfter(LocalDateTime.now())) {
-            throw BattleCooldownException.EXCEPTION;
-        }
-
-        if (!character.getUserId().equals(userId)) {
-            throw NotImageChracterHostException.EXCEPTION;
-        }
+//        if (character.getLastBattleTime().plusSeconds(10).isAfter(LocalDateTime.now())) {
+//            throw BattleCooldownException.EXCEPTION;
+//        }
+//
+//        if (!character.getUserId().equals(userId)) {
+//            throw NotImageChracterHostException.EXCEPTION;
+//        }
         return character;
     }
     
