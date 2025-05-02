@@ -18,6 +18,7 @@ const BadgeList = ({
   isRightAligned = false,
 }: BadgeListProps) => {
   const isSingleBadge = badges?.length === 1
+  const displayBadges = isRightAligned ? badges?.slice(-3) : badges
 
   return (
     <div
@@ -25,7 +26,7 @@ const BadgeList = ({
         isSingleBadge ? 'justify-end' : 'w-full max-w-150'
       } ${isRightAligned ? 'justify-end' : 'justify-start'} ${isTransparent ? transparentForm : ''}`}
     >
-      {badges?.map((badge) => {
+      {displayBadges?.map((badge) => {
         return <Badge text={badge.text} imageUrl={badge.imageUrl} key={badge.text} size={size} />
       })}
     </div>
