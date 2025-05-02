@@ -6,7 +6,12 @@ import CharacterList from '@/components/character/CharacterList'
 import CharacterTypeToggle from '@/components/character/CharacterTypeToggle'
 import Button from '@/components/common/Button'
 import { useCharacterStore } from '@/store/characterStore'
-import { fetchImageCharacters, fetchTextCharacters } from '@/utils/characters'
+import {
+  fetchImageCharacters,
+  fetchTextCharacters,
+  updateImageCharacter,
+  updateTextCharacter,
+} from '@/utils/characters'
 import { useRouter } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -57,6 +62,29 @@ const MainPage = () => {
     return selectedType === 'text' ? textCharacters : imageCharacters
   }, [selectedType, textCharacters, imageCharacters])
 
+  const handleUpdate = useCallback(
+    async (id: string, data: { name: string; prompt?: string; image?: Blob }) => {
+      try {
+        if (selectedType === 'text' && data.prompt) {
+          await updateTextCharacter(id, {
+            name: data.name,
+            prompt: data.prompt,
+          })
+        } else if (selectedType === 'image' && data.image) {
+          await updateImageCharacter(id, {
+            name: data.name,
+            image: data.image,
+          })
+        }
+        await fetchCharacters()
+      } catch (error) {
+        console.error('캐릭터 수정 중 오류 발생:', error)
+        throw error
+      }
+    },
+    [selectedType, fetchCharacters],
+  )
+
   const characterList = useMemo(
     () => (
       <CharacterList
@@ -64,9 +92,10 @@ const MainPage = () => {
         type={selectedType}
         isLoading={isLoading && !loadedTypes.has(selectedType)}
         onDelete={fetchCharacters}
+        onUpdate={handleUpdate}
       />
     ),
-    [currentCharacters, selectedType, isLoading, loadedTypes, fetchCharacters],
+    [currentCharacters, selectedType, isLoading, loadedTypes, fetchCharacters, handleUpdate],
   )
 
   const characterTypeToggle = useMemo(
