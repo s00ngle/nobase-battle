@@ -202,6 +202,57 @@ export const lux = {
       throw { response: errorData }
     }
 
+    // 204 No Content 응답 처리
+    if (response.status === 204) {
+      return null
+    }
+
+    return response.json()
+  },
+
+  async putForm<T>(endpoint: string, formData: FormData): Promise<T | null> {
+    const accessToken = useAuthStore.getState().accessToken
+    const headers: Record<string, string> = {
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    }
+
+    const response = await fetch(getUrl(endpoint).toString(), {
+      method: 'PUT',
+      headers,
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const errorData = (await response.json()) as ErrorResponse
+      throw { response: errorData }
+    }
+
+    // 204 No Content 응답 처리
+    if (response.status === 204) {
+      return null
+    }
+
+    return response.json()
+  },
+
+  async patchForm<T>(endpoint: string, formData: FormData): Promise<T | null> {
+    const accessToken = useAuthStore.getState().accessToken
+    const headers: Record<string, string> = {
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    }
+
+    const response = await fetch(getUrl(endpoint).toString(), {
+      method: 'PATCH',
+      headers,
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const errorData = (await response.json()) as ErrorResponse
+      throw { response: errorData }
+    }
+
+    // 204 No Content 응답 처리
     if (response.status === 204) {
       return null
     }
