@@ -52,7 +52,7 @@ public class OpenAIService {
 
         } catch (Exception e) {
             log.error("OpenAI API 호출 중 오류 발생: {}", e.getMessage());
-            return new BattleResult(0, "API 오류로 인해 배틀 결과를 생성할 수 없습니다. 두 캐릭터는 비겼습니다.");
+            return new BattleResult(0, "우루루쾅쾅쾅 낙뢰 발생!! 두 캐릭터 모두 죽었다. 무승부");
         }
     }
 
@@ -78,7 +78,7 @@ public class OpenAIService {
 
         } catch (Exception e) {
             log.error("OpenAI API 호출 중 오류 발생: {}", e.getMessage());
-            return new BattleResult(0, "API 오류로 인해 배틀 결과를 생성할 수 없습니다. 두 캐릭터는 비겼습니다.");
+            return new BattleResult(0, "우루루쾅쾅쾅 낙뢰 발생!! 두 캐릭터 모두 죽었다. 무승부");
         }
     }
 
