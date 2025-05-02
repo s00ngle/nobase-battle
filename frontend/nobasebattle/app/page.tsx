@@ -24,6 +24,7 @@ const MainPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [loadedTypes, setLoadedTypes] = useState<Set<CharacterType>>(new Set())
+  const [editingId, setEditingId] = useState<string | null>(null)
   const router = useRouter()
 
   const fetchCharacters = useCallback(async () => {
@@ -51,10 +52,12 @@ const MainPage = () => {
   }, [fetchCharacters])
 
   const handleClickText = useCallback(() => {
+    setEditingId(null)
     setSelectedType('text')
   }, [setSelectedType])
 
   const handleClickImage = useCallback(() => {
+    setEditingId(null)
     setSelectedType('image')
   }, [setSelectedType])
 
@@ -93,9 +96,19 @@ const MainPage = () => {
         isLoading={isLoading && !loadedTypes.has(selectedType)}
         onDelete={fetchCharacters}
         onUpdate={handleUpdate}
+        editingId={editingId}
+        setEditingId={setEditingId}
       />
     ),
-    [currentCharacters, selectedType, isLoading, loadedTypes, fetchCharacters, handleUpdate],
+    [
+      currentCharacters,
+      selectedType,
+      isLoading,
+      loadedTypes,
+      fetchCharacters,
+      handleUpdate,
+      editingId,
+    ],
   )
 
   const characterTypeToggle = useMemo(
