@@ -16,9 +16,13 @@ type Tool = 'pen' | 'eraser'
 
 interface PaintingCanvasProps {
   canvasRef?: React.RefObject<HTMLCanvasElement | null>
+  initialImage?: string
 }
 
-const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanvasRef }) => {
+const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
+  canvasRef: externalCanvasRef,
+  initialImage,
+}) => {
   const internalCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const canvasRefToUse = externalCanvasRef || internalCanvasRef
   const [isDrawing, setIsDrawing] = useState(false)
@@ -310,6 +314,42 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
       canvas.removeEventListener('touchcancel', handleTouchEnd)
     }
   }, [canvasRefToUse, draw, startDrawing, stopDrawing])
+
+  // 초기 이미지 로드
+  useEffect(() => {
+    if (!initialImage || !canvasRefToUse.current) return
+
+    const canvas = canvasRefToUse.current
+    const context = canvas.getContext('2d')
+    if (!context) return
+
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.src = initialImage
+
+    img.onload = () => {
+      // 이미지 크기에 맞게 캔버스 크기 조정
+      const aspectRatio = img.width / img.height
+      let newWidth = canvasWidth
+      let newHeight = canvasHeight
+
+      if (aspectRatio > 1) {
+        newHeight = canvasWidth / aspectRatio
+      } else {
+        newWidth = canvasHeight * aspectRatio
+      }
+
+      canvas.width = newWidth
+      canvas.height = newHeight
+
+      // 이미지 그리기
+      context.drawImage(img, 0, 0, newWidth, newHeight)
+    }
+
+    img.onerror = () => {
+      console.error('이미지 로드 실패:', initialImage)
+    }
+  }, [initialImage, canvasRefToUse, canvasWidth, canvasHeight])
 
   return (
     <div className="mt-4 flex flex-col gap-2">
