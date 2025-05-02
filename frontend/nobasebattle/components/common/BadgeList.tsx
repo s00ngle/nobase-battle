@@ -18,7 +18,7 @@ const BadgeList = ({
   isRightAligned = false,
 }: BadgeListProps) => {
   const isSingleBadge = badges?.length === 1
-  const displayBadges = isRightAligned ? badges?.slice(-4) : badges
+  const displayBadges = isRightAligned ? badges?.slice(-3) : badges
 
   return (
     <div
