@@ -315,7 +315,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
     <div className="mt-4 flex flex-col gap-2">
       <span className="text-sm">캐릭터 그림</span>
       <div className={`w-full rounded-xl p-4 ${transparentForm}`}>
-        <div className="relative" style={{ touchAction: 'none' }}>
+        <div className="relative" style={{ touchAction: 'none', zIndex: 0 }}>
           <canvas
             ref={canvasRefToUse}
             className="bg-white rounded-xl touch-none"
@@ -324,7 +324,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
               height: `${canvasHeight}px`,
               touchAction: 'none',
               position: 'relative',
-              zIndex: 1,
+              zIndex: 0,
             }}
             onMouseDown={startDrawing}
             onMouseMove={draw}
@@ -338,7 +338,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
             style={{
               display: 'none',
               transform: 'translate(-50%, -50%)',
-              zIndex: 2,
+              zIndex: 1,
             }}
           />
         </div>

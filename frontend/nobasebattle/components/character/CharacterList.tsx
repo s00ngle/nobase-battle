@@ -33,6 +33,8 @@ interface CharacterListProps {
   maxCount?: number
   onDelete?: () => void
   onUpdate?: (id: string, data: UpdateCharacter) => Promise<void>
+  editingId: string | null
+  setEditingId: (id: string | null) => void
 }
 
 const CharacterList = ({
@@ -42,9 +44,10 @@ const CharacterList = ({
   maxCount = 5,
   onDelete,
   onUpdate,
+  editingId,
+  setEditingId,
 }: CharacterListProps) => {
   const router = useRouter()
-  const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({
     name: '',
     prompt: '',
@@ -53,7 +56,10 @@ const CharacterList = ({
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const handleCharacterClick = (id: string) => {
-    if (editingId) return
+    if (editingId) {
+      handleCancelEdit()
+      return
+    }
     router.push(`/character/${type}/${id}`)
   }
 
