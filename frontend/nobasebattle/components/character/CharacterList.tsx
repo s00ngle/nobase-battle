@@ -111,8 +111,17 @@ const CharacterList = ({
     try {
       if (!onUpdate) return
 
+      if (editForm.name.trim() === '') {
+        alert('캐릭터 이름을 입력해주세요.')
+        return
+      }
+
       if (type === 'text') {
-        await onUpdate(id, { name: editForm.name, prompt: editForm.prompt })
+        if (editForm.prompt.trim() === '') {
+          alert('캐릭터 설명을 입력해주세요.')
+          return
+        }
+        await onUpdate(id, { name: editForm.name.trim(), prompt: editForm.prompt.trim() })
       } else {
         if (!canvasRef.current) {
           alert('그림을 그려주세요.')
