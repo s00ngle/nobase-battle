@@ -43,3 +43,12 @@ logging:
     name: ${LOGGING_DIR}
   level:
     root: INFO
+
+server:
+  tomcat:
+    accesslog:
+      enabled: true
+      directory: logs
+      prefix: access_log
+      suffix: .log
+      pattern: '%h %l %u %t "%r" %s %b %D'
