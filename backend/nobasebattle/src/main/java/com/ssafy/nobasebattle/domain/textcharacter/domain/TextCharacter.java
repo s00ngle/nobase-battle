@@ -25,11 +25,13 @@ public class TextCharacter extends BaseEntity {
     private Integer losses;
     private Integer draws;
     private Integer eloScore;
+    private Integer winStreak;
+    private Integer loseStreak;
     private LocalDateTime lastBattleTime;
     private List<BadgeResponse> badges;
 
     @Builder
-    public TextCharacter(String userId, String name, String prompt, Integer wins, Integer losses, Integer draws, Integer eloScore, LocalDateTime lastBattleTime, List<BadgeResponse> badges) {
+    public TextCharacter(String userId, String name, String prompt, Integer wins, Integer losses, Integer draws, Integer eloScore, Integer winStreak, Integer loseStreak, LocalDateTime lastBattleTime, List<BadgeResponse> badges) {
         this.userId = userId;
         this.name = name;
         this.prompt = prompt;
@@ -37,6 +39,8 @@ public class TextCharacter extends BaseEntity {
         this.losses = losses;
         this.draws = draws;
         this.eloScore = eloScore;
+        this.winStreak = winStreak;
+        this.loseStreak = loseStreak;
         this.lastBattleTime = lastBattleTime;
         this.badges = badges;
     }
@@ -91,6 +95,14 @@ public class TextCharacter extends BaseEntity {
     public void updateEloScore(Integer eloScore) {
         this.eloScore = eloScore;
     }
+
+    public void updateWinStreak(Integer winStreak) { this.winStreak = winStreak; }
+
+    public void updateLoseStreak(Integer loseStreak) { this.loseStreak = loseStreak; }
+
+    public void resetLoseStreak() { this.loseStreak = 0; }
+
+    public void resetWinStreak() { this.winStreak = 0; }
 
     public void addBadge(Badge badge) {
         boolean hasBadge = this.badges.stream()

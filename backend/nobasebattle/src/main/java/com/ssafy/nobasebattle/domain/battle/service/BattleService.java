@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Random;
 
 @Slf4j
@@ -96,6 +95,9 @@ public class BattleService {
             throw BattleCooldownException.EXCEPTION;
         }
 
+        character.updateLastBattleTime();
+        imageCharacterRepository.save(character);
+
         character.validUserIsHost(userId);
 
         return character;
@@ -111,6 +113,9 @@ public class BattleService {
         if (character.getLastBattleTime().plusSeconds(10).isAfter(LocalDateTime.now())) {
             throw BattleCooldownException.EXCEPTION;
         }
+
+        character.updateLastBattleTime();
+        textCharacterRepository.save(character);
 
         if (!character.getUserId().equals(userId)) {
             throw NotImageChracterHostException.EXCEPTION;
@@ -141,20 +146,23 @@ public class BattleService {
             return opponent;
         }
         else {
-            List<ImageCharacter> potentialOpponents = imageCharacterRepository.findByUserIdNot(currentUserId);
+//            List<ImageCharacter> potentialOpponents = imageCharacterRepository.findByUserIdNot(currentUserId);
+//
+//            if (potentialOpponents.isEmpty()) {
+//                List<ImageCharacter> myOtherCharacters = imageCharacterRepository.findByUserIdAndIdNot(
+//                        currentUserId, myCharacter.getId());
+//
+//                if (myOtherCharacters.isEmpty()) {
+//                    throw ImageCharacterNotFoundException.EXCEPTION;
+//                }
+//
+//                return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
+//            }
+//
+//            return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
+            String myId = myCharacter.getId();
 
-            if (potentialOpponents.isEmpty()) {
-                List<ImageCharacter> myOtherCharacters = imageCharacterRepository.findByUserIdAndIdNot(
-                        currentUserId, myCharacter.getId());
-
-                if (myOtherCharacters.isEmpty()) {
-                    throw ImageCharacterNotFoundException.EXCEPTION;
-                }
-
-                return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
-            }
-
-            return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
+            return rankSearchUtils.matchImageCharacter(myId).orElseThrow(() -> OpponentRequiredException.EXCEPTION);
         }
     }
 
@@ -179,20 +187,23 @@ public class BattleService {
             return opponent;
         }
         else {
-            List<TextCharacter> potentialOpponents = textCharacterRepository.findByUserIdNot(currentUserId);
+//            List<TextCharacter> potentialOpponents = textCharacterRepository.findByUserIdNot(currentUserId);
+//
+//            if (potentialOpponents.isEmpty()) {
+//                List<TextCharacter> myOtherCharacters = textCharacterRepository.findByUserIdAndIdNot(
+//                        currentUserId, myCharacter.getId());
+//
+//                if (myOtherCharacters.isEmpty()) {
+//                    throw ImageCharacterNotFoundException.EXCEPTION;
+//                }
+//
+//                return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
+//            }
+//
+//            return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
+            String myId = myCharacter.getId();
 
-            if (potentialOpponents.isEmpty()) {
-                List<TextCharacter> myOtherCharacters = textCharacterRepository.findByUserIdAndIdNot(
-                        currentUserId, myCharacter.getId());
-
-                if (myOtherCharacters.isEmpty()) {
-                    throw ImageCharacterNotFoundException.EXCEPTION;
-                }
-
-                return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
-            }
-
-            return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
+            return rankSearchUtils.matchTextCharacter(myId).orElseThrow(() -> OpponentRequiredException.EXCEPTION);
         }
     }
 
@@ -355,13 +366,21 @@ public class BattleService {
         int wins = character.getWins() != null ? character.getWins() : 0;
         int losses = character.getLosses() != null ? character.getLosses() : 0;
         int draws = character.getDraws() != null ? character.getDraws() : 0;
+        int winStreak = character.getWinStreak() != null ? character.getWinStreak() : 0;
+        int loseStreak = character.getLoseStreak() != null ? character.getLoseStreak() : 0;
 
         if (isWin) {
             character.updateWins(wins + 1);
 
+            character.updateWinStreak(winStreak + 1);
+            character.resetLoseStreak();
+
             badgeService.checkAndAwardWinBadgesText(character, character.getWins());
         } else if (isLoss) {
             character.updateLosses(losses + 1);
+
+            character.updateLoseStreak(loseStreak + 1);
+            character.resetWinStreak();
         } else if (isDraw) {
             character.updateDraws(draws + 1);
         }
@@ -372,13 +391,21 @@ public class BattleService {
         int wins = character.getWins() != null ? character.getWins() : 0;
         int losses = character.getLosses() != null ? character.getLosses() : 0;
         int draws = character.getDraws() != null ? character.getDraws() : 0;
+        int winStreak = character.getWinStreak() != null ? character.getWinStreak() : 0;
+        int loseStreak = character.getLoseStreak() != null ? character.getLoseStreak() : 0;
 
         if (isWin) {
             character.updateWins(wins + 1);
 
+            character.updateWinStreak(winStreak + 1);
+            character.resetLoseStreak();
+
             badgeService.checkAndAwardWinBadges(character, character.getWins());
         } else if (isLoss) {
             character.updateLosses(losses + 1);
+
+            character.updateLoseStreak(loseStreak + 1);
+            character.resetWinStreak();
         } else if (isDraw) {
             character.updateDraws(draws + 1);
         }

@@ -18,6 +18,8 @@ public class TextCharacterResponse {
     private Integer losses;
     private Integer draws;
     private Integer eloScore;
+    private Integer winStreak;
+    private Integer loseStreak;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private LocalDateTime lastBattleTime;
@@ -34,6 +36,8 @@ public class TextCharacterResponse {
         this.losses = character.getLosses();
         this.draws =  character.getDraws();
         this.eloScore = character.getEloScore();
+        this.winStreak = character.getWinStreak();
+        this.loseStreak = character.getLoseStreak();
         this.createAt = character.getCreatedAt();
         this.updateAt = character.getUpdatedAt();
         this.winRate = character.calculateWinRate();
