@@ -11,6 +11,8 @@ export interface TCharacterResponse {
   winRate: number
   eloScore: number
   rank: number
+  winStreak?: number | null
+  loseStreak?: number | null
   badges: BadgeType[]
   createdAt?: string
   updatedAt?: string
@@ -27,6 +29,8 @@ export interface ICharacterResponse {
   winRate: number
   eloScore: number
   rank: number
+  winStreak?: number | null
+  loseStreak?: number | null
   badges: BadgeType[]
   createdAt: string
   updatedAt: string

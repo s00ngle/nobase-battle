@@ -231,6 +231,8 @@ const CharacterList = ({
                   onClick={() => handleCharacterClick(textChar.textCharacterId)}
                   onDelete={() => handleDelete(textChar.textCharacterId)}
                   onEdit={() => handleEdit(textChar)}
+                  winStreak={textChar.winStreak ?? undefined}
+                  loseStreak={textChar.loseStreak ?? undefined}
                 />
               )
             }
@@ -246,6 +248,8 @@ const CharacterList = ({
                 imageSize="sm"
                 onDelete={() => handleDelete(imageChar.imageCharacterId)}
                 onEdit={() => handleEdit(imageChar)}
+                winStreak={imageChar.winStreak ?? undefined}
+                loseStreak={imageChar.loseStreak ?? undefined}
               />
             )
           })}
