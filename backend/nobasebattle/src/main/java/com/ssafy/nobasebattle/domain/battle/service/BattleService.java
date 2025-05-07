@@ -355,13 +355,21 @@ public class BattleService {
         int wins = character.getWins() != null ? character.getWins() : 0;
         int losses = character.getLosses() != null ? character.getLosses() : 0;
         int draws = character.getDraws() != null ? character.getDraws() : 0;
+        int winStreak = character.getWinStreak() != null ? character.getWinStreak() : 0;
+        int loseStreak = character.getLoseStreak() != null ? character.getLoseStreak() : 0;
 
         if (isWin) {
             character.updateWins(wins + 1);
 
+            character.updateWinStreak(winStreak + 1);
+            character.resetLoseStreak();
+
             badgeService.checkAndAwardWinBadgesText(character, character.getWins());
         } else if (isLoss) {
             character.updateLosses(losses + 1);
+
+            character.updateLoseStreak(loseStreak + 1);
+            character.resetWinStreak();
         } else if (isDraw) {
             character.updateDraws(draws + 1);
         }
@@ -372,13 +380,21 @@ public class BattleService {
         int wins = character.getWins() != null ? character.getWins() : 0;
         int losses = character.getLosses() != null ? character.getLosses() : 0;
         int draws = character.getDraws() != null ? character.getDraws() : 0;
+        int winStreak = character.getWinStreak() != null ? character.getWinStreak() : 0;
+        int loseStreak = character.getLoseStreak() != null ? character.getLoseStreak() : 0;
 
         if (isWin) {
             character.updateWins(wins + 1);
 
+            character.updateWinStreak(winStreak + 1);
+            character.resetLoseStreak();
+
             badgeService.checkAndAwardWinBadges(character, character.getWins());
         } else if (isLoss) {
             character.updateLosses(losses + 1);
+
+            character.updateLoseStreak(loseStreak + 1);
+            character.resetWinStreak();
         } else if (isDraw) {
             character.updateDraws(draws + 1);
         }

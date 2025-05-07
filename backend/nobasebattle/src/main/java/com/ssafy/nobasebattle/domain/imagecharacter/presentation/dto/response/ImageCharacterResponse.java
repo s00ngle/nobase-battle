@@ -19,6 +19,8 @@ public class ImageCharacterResponse {
     private Integer totalBattles;
     private Double winRate;
     private Integer eloScore;
+    private Integer winStreak;
+    private Integer loseStreak;
     private LocalDateTime lastBattleTime;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
@@ -35,6 +37,8 @@ public class ImageCharacterResponse {
         this.totalBattles = character.calculateTotalBattles();
         this.winRate = character.calculateWinRate();
         this.eloScore = character.getEloScore();
+        this.winStreak = character.getWinStreak();
+        this.loseStreak = character.getLoseStreak();
         this.lastBattleTime = character.getLastBattleTime();
         this.createAt = character.getCreatedAt();
         this.updateAt = character.getUpdatedAt();
