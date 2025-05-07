@@ -25,11 +25,13 @@ public class ImageCharacter extends BaseEntity {
     private Integer losses;
     private Integer draws;
     private Integer eloScore;
+    private Integer winStreak;
+    private Integer loseStreak;
     private LocalDateTime lastBattleTime;
     private List<BadgeResponse> badges;
 
     @Builder
-    public ImageCharacter(String userId, String name, String imageUrl, Integer wins, Integer losses, Integer draws, Integer eloScore, LocalDateTime lastBattleTime, List<BadgeResponse> badges) {
+    public ImageCharacter(String userId, String name, String imageUrl, Integer wins, Integer losses, Integer draws, Integer eloScore, Integer winStreak, Integer loseStreak, LocalDateTime lastBattleTime, List<BadgeResponse> badges) {
         this.userId = userId;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -37,6 +39,8 @@ public class ImageCharacter extends BaseEntity {
         this.losses = losses;
         this.draws = draws;
         this.eloScore = eloScore;
+        this.winStreak = winStreak;
+        this.loseStreak = loseStreak;
         this.lastBattleTime = lastBattleTime;
         this.badges = badges;
     }
@@ -71,13 +75,19 @@ public class ImageCharacter extends BaseEntity {
         this.lastBattleTime = LocalDateTime.now();
     }
 
-    public void updateName(UpdateImageCharacterRequest updateImageCharacterRequest) {
-        this.name = updateImageCharacterRequest.getName();
-    }
+    public void updateName(UpdateImageCharacterRequest updateImageCharacterRequest) { this.name = updateImageCharacterRequest.getName(); }
 
     public void updateImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public void updateWinStreak(Integer winStreak) { this.winStreak = winStreak; }
+
+    public void updateLoseStreak(Integer loseStreak) { this.loseStreak = loseStreak; }
+
+    public void resetLoseStreak() { this.loseStreak = 0; }
+
+    public void resetWinStreak() { this.winStreak = 0; }
 
     public double calculateWinRate() {
         int w = wins != null ? wins : 0;
