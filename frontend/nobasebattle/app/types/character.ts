@@ -11,6 +11,8 @@ export interface TextCharacter {
   updateAt: string
   winRate: number
   textCharacterId: string
+  winStreak?: number | null
+  loseStreak?: number | null
 }
 
 export interface ImageCharacter {
@@ -27,6 +29,8 @@ export interface ImageCharacter {
   badges: BadgeType[]
   createdAt: string
   updatedAt: string
+  winStreak?: number | null
+  loseStreak?: number | null
 }
 
 export interface ApiResponse<T> {

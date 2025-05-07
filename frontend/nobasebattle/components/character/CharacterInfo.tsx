@@ -16,7 +16,19 @@ interface InfoProps {
 const CharacterInfo = ({ character, data, isLoading = false }: InfoProps) => {
   return (
     <div className={`flex flex-col gap-4 rounded-2xl p-4 ${transparentForm}`}>
-      <p className="text-xl">캐릭터 정보</p>
+      <div className="flex justify-between items-center h-10">
+        <p className="text-xl">캐릭터 정보</p>
+        {data.winStreak !== null && data.winStreak !== undefined && data.winStreak > 0 && (
+          <div className="bg-red-500 text-white px-3 py-1 rounded-full text-base font-bold animate-pulse">
+            👑{data.winStreak}
+          </div>
+        )}
+        {data.loseStreak !== null && data.loseStreak !== undefined && data.loseStreak > 0 && (
+          <div className="bg-purple-500 text-white px-3 py-1 rounded-full text-base font-bold animate-pulse">
+            💀{data.loseStreak}
+          </div>
+        )}
+      </div>
       <p className="text-xl">전적</p>
       <CharacterRecord
         totalBattles={data.totalBattles}

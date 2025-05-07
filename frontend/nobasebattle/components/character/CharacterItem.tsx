@@ -14,6 +14,8 @@ export interface CharacterItemProps {
   imageSize?: 'sm' | 'lg'
   onDelete?: () => void
   onEdit?: () => void
+  winStreak?: number
+  loseStreak?: number
 }
 
 const CharacterItem = ({
@@ -25,6 +27,8 @@ const CharacterItem = ({
   imageSize = 'lg',
   onDelete,
   onEdit,
+  winStreak,
+  loseStreak,
 }: CharacterItemProps) => {
   const handleEdit = (event: React.MouseEvent) => {
     event.stopPropagation()
@@ -40,11 +44,23 @@ const CharacterItem = ({
       className={`flex flex-col gap-3 w-full p-3 rounded-2xl cursor-pointer hover:scale-98 transition-transform duration-200 ${transparentForm} ${hover}`}
       onClick={onClick}
     >
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         {isLoading ? (
           <SkeletonLoading width="8rem" height="1.5rem" className="rounded-md" />
         ) : (
-          <div className="text-xl">{nickname}</div>
+          <div className="flex items-center gap-2">
+            <div className="text-xl">{nickname}</div>
+            {winStreak !== undefined && winStreak > 0 && (
+              <div className="bg-red-500 text-white px-2 py-0.5 rounded-full text-sm font-bold animate-pulse">
+                👑{winStreak}
+              </div>
+            )}
+            {loseStreak !== undefined && loseStreak > 0 && (
+              <div className="bg-purple-500 text-white px-2 py-0.5 rounded-full text-sm font-bold animate-pulse">
+                💀{loseStreak}
+              </div>
+            )}
+          </div>
         )}
         <div className="flex gap-2">
           <IconButton icon="pen.svg" onClick={handleEdit} />
