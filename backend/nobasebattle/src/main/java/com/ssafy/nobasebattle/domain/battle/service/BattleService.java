@@ -96,6 +96,9 @@ public class BattleService {
             throw BattleCooldownException.EXCEPTION;
         }
 
+        character.updateLastBattleTime();
+        imageCharacterRepository.save(character);
+
         character.validUserIsHost(userId);
 
         return character;
@@ -111,6 +114,9 @@ public class BattleService {
         if (character.getLastBattleTime().plusSeconds(10).isAfter(LocalDateTime.now())) {
             throw BattleCooldownException.EXCEPTION;
         }
+
+        character.updateLastBattleTime();
+        textCharacterRepository.save(character);
 
         if (!character.getUserId().equals(userId)) {
             throw NotImageChracterHostException.EXCEPTION;
