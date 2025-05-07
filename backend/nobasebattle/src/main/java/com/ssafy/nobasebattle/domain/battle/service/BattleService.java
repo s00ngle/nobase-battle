@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Random;
 
 @Slf4j
@@ -147,20 +146,23 @@ public class BattleService {
             return opponent;
         }
         else {
-            List<ImageCharacter> potentialOpponents = imageCharacterRepository.findByUserIdNot(currentUserId);
+//            List<ImageCharacter> potentialOpponents = imageCharacterRepository.findByUserIdNot(currentUserId);
+//
+//            if (potentialOpponents.isEmpty()) {
+//                List<ImageCharacter> myOtherCharacters = imageCharacterRepository.findByUserIdAndIdNot(
+//                        currentUserId, myCharacter.getId());
+//
+//                if (myOtherCharacters.isEmpty()) {
+//                    throw ImageCharacterNotFoundException.EXCEPTION;
+//                }
+//
+//                return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
+//            }
+//
+//            return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
+            String myId = myCharacter.getId();
 
-            if (potentialOpponents.isEmpty()) {
-                List<ImageCharacter> myOtherCharacters = imageCharacterRepository.findByUserIdAndIdNot(
-                        currentUserId, myCharacter.getId());
-
-                if (myOtherCharacters.isEmpty()) {
-                    throw ImageCharacterNotFoundException.EXCEPTION;
-                }
-
-                return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
-            }
-
-            return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
+            return rankSearchUtils.matchImageCharacter(myId).orElseThrow(() -> OpponentRequiredException.EXCEPTION);
         }
     }
 
@@ -185,20 +187,23 @@ public class BattleService {
             return opponent;
         }
         else {
-            List<TextCharacter> potentialOpponents = textCharacterRepository.findByUserIdNot(currentUserId);
+//            List<TextCharacter> potentialOpponents = textCharacterRepository.findByUserIdNot(currentUserId);
+//
+//            if (potentialOpponents.isEmpty()) {
+//                List<TextCharacter> myOtherCharacters = textCharacterRepository.findByUserIdAndIdNot(
+//                        currentUserId, myCharacter.getId());
+//
+//                if (myOtherCharacters.isEmpty()) {
+//                    throw ImageCharacterNotFoundException.EXCEPTION;
+//                }
+//
+//                return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
+//            }
+//
+//            return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
+            String myId = myCharacter.getId();
 
-            if (potentialOpponents.isEmpty()) {
-                List<TextCharacter> myOtherCharacters = textCharacterRepository.findByUserIdAndIdNot(
-                        currentUserId, myCharacter.getId());
-
-                if (myOtherCharacters.isEmpty()) {
-                    throw ImageCharacterNotFoundException.EXCEPTION;
-                }
-
-                return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
-            }
-
-            return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
+            return rankSearchUtils.matchTextCharacter(myId).orElseThrow(() -> OpponentRequiredException.EXCEPTION);
         }
     }
 
