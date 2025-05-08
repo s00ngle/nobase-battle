@@ -11,7 +11,12 @@ export async function GET(request: NextRequest) {
 
     // S3 URL인 경우 직접 가져오기
     if (url.includes('nobasebattle-s3.s3.ap-northeast-2.amazonaws.com')) {
-      const response = await fetch(url)
+      const response = await fetch(url, {
+        headers: {
+          Accept: 'image/*',
+          Origin: 'https://nobasebattle.com',
+        },
+      })
       if (!response.ok) {
         console.error('Failed to fetch S3 image:', response.status, response.statusText)
         return NextResponse.json(
@@ -29,16 +34,21 @@ export async function GET(request: NextRequest) {
         headers: {
           'Content-Type': response.headers.get('Content-Type') || 'image/png',
           'Cache-Control': 'public, max-age=31536000',
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': 'https://nobasebattle.com',
           'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
+          'Access-Control-Allow-Headers': 'Content-Type, Accept',
+          'Access-Control-Allow-Credentials': 'true',
         },
       })
     }
 
     // 다른 URL의 경우 백엔드 API를 통해 가져오기
     const backendUrl = `http://13.125.105.148:8080/api/v1/characters/image/proxy?url=${encodeURIComponent(url)}`
-    const response = await fetch(backendUrl)
+    const response = await fetch(backendUrl, {
+      headers: {
+        Accept: 'image/*',
+      },
+    })
 
     if (!response.ok) {
       console.error('Failed to fetch image:', response.status, response.statusText)
