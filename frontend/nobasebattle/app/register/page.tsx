@@ -34,7 +34,10 @@ const RegisterForm = ({ isLoading, error, onSubmit, onAnonymousSignIn }: Registe
 
   const handleInputChange = useCallback(
     (field: 'email' | 'password') => (e: React.ChangeEvent<HTMLInputElement>) => {
-      setFormData((prev) => ({ ...prev, [field]: e.target.value }))
+      const value = e.target.value
+      if (value.length <= 30) {
+        setFormData((prev) => ({ ...prev, [field]: value }))
+      }
     },
     [],
   )
@@ -59,13 +62,25 @@ const RegisterForm = ({ isLoading, error, onSubmit, onAnonymousSignIn }: Registe
       <>
         <Button text="빠른 시작" onClick={onAnonymousSignIn} disabled={isLoading} />
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <InputBox label="이메일" value={formData.email} onChange={handleInputChange('email')} />
-          <InputBox
-            label="비밀번호"
-            type="password"
-            value={formData.password}
-            onChange={handleInputChange('password')}
-          />
+          <div className="flex flex-col gap-1">
+            <InputBox
+              label="이메일"
+              value={formData.email}
+              onChange={handleInputChange('email')}
+              maxLength={30}
+            />
+            <span className="text-sm text-gray-500 text-right">{formData.email.length}/30</span>
+          </div>
+          <div className="flex flex-col gap-1">
+            <InputBox
+              label="비밀번호"
+              type="password"
+              value={formData.password}
+              onChange={handleInputChange('password')}
+              maxLength={30}
+            />
+            <span className="text-sm text-gray-500 text-right">{formData.password.length}/30</span>
+          </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <Button
             text={isLoading ? '처리 중...' : '등록 및 시작'}
