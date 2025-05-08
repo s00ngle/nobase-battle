@@ -80,6 +80,17 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
       const context = canvas.getContext('2d', { willReadFrequently: true })
       if (!context) return
 
+      const container = canvas.parentElement
+      if (!container) return
+
+      // 기본 캔버스 크기 설정 (16:9 비율)
+      const containerWidth = container.clientWidth
+      const defaultHeight = Math.floor((containerWidth * 9) / 16)
+      canvas.width = containerWidth
+      canvas.height = defaultHeight
+      setCanvasWidth(containerWidth)
+      setCanvasHeight(defaultHeight)
+
       // 이미지를 Blob으로 가져오기
       fetch(`/api/v1/characters/image/proxy?url=${encodeURIComponent(initialImage)}`)
         .then((response) => {
@@ -94,38 +105,34 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
 
           img.onload = () => {
             try {
-              const container = canvas.parentElement
-              if (container) {
-                // 컨테이너 크기에 맞게 캔버스 크기 설정
-                const containerWidth = container.clientWidth
-                const scale = containerWidth / img.width
-                const newWidth = containerWidth
-                const newHeight = img.height * scale
+              // 컨테이너 크기에 맞게 캔버스 크기 설정
+              const scale = containerWidth / img.width
+              const newWidth = containerWidth
+              const newHeight = img.height * scale
 
-                // 캔버스 크기 설정
-                canvas.width = newWidth
-                canvas.height = newHeight
-                setCanvasWidth(newWidth)
-                setCanvasHeight(newHeight)
+              // 캔버스 크기 설정
+              canvas.width = newWidth
+              canvas.height = newHeight
+              setCanvasWidth(newWidth)
+              setCanvasHeight(newHeight)
 
-                // 이미지 그리기
-                context.clearRect(0, 0, canvas.width, canvas.height)
-                context.drawImage(img, 0, 0, newWidth, newHeight)
+              // 이미지 그리기
+              context.clearRect(0, 0, canvas.width, canvas.height)
+              context.drawImage(img, 0, 0, newWidth, newHeight)
 
-                // 원본 이미지 상태 저장
-                const originalImageData = canvas.toDataURL('image/png')
-                // 빈 캔버스 상태 추가 (첫 번째 그리기를 위한 상태)
-                context.clearRect(0, 0, canvas.width, canvas.height)
-                context.drawImage(img, 0, 0, newWidth, newHeight)
-                const firstStateData = canvas.toDataURL('image/png')
+              // 원본 이미지 상태 저장
+              const originalImageData = canvas.toDataURL('image/png')
+              // 빈 캔버스 상태 추가 (첫 번째 그리기를 위한 상태)
+              context.clearRect(0, 0, canvas.width, canvas.height)
+              context.drawImage(img, 0, 0, newWidth, newHeight)
+              const firstStateData = canvas.toDataURL('image/png')
 
-                // 두 상태를 모두 히스토리에 저장
-                historyRef.current = [originalImageData, firstStateData]
-                setCurrentHistoryIndex(1)
-              }
+              // 두 상태를 모두 히스토리에 저장
+              historyRef.current = [originalImageData, firstStateData]
+              setCurrentHistoryIndex(1)
             } catch (error) {
               console.error('이미지 로드 중 오류 발생:', error)
-              // 이미지 로드 실패 시 빈 캔버스로 초기화
+              // 이미지 로드 실패 시 기본 크기 유지
               context.clearRect(0, 0, canvas.width, canvas.height)
               const dataURL = canvas.toDataURL('image/png')
               historyRef.current = [dataURL]
@@ -135,7 +142,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
 
           img.onerror = () => {
             console.error('이미지 로드 실패')
-            // 이미지 로드 실패 시 빈 캔버스로 초기화
+            // 이미지 로드 실패 시 기본 크기 유지
             context.clearRect(0, 0, canvas.width, canvas.height)
             const dataURL = canvas.toDataURL('image/png')
             historyRef.current = [dataURL]
@@ -150,7 +157,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
         })
         .catch((error) => {
           console.error('이미지 가져오기 실패:', error)
-          // 이미지 로드 실패 시 빈 캔버스로 초기화
+          // 이미지 로드 실패 시 기본 크기 유지
           context.clearRect(0, 0, canvas.width, canvas.height)
           const dataURL = canvas.toDataURL('image/png')
           historyRef.current = [dataURL]
