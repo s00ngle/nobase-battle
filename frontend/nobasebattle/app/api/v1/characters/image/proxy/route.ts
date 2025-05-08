@@ -10,12 +10,14 @@ export async function GET(request: NextRequest) {
 
     // 쿠키에서 토큰 가져오기
     const cookieStore = await cookies()
-    const token = cookieStore.get('accessToken')?.value
+    const token = cookieStore.get('token')?.value
 
     if (!token) {
+      console.error('No token found in cookies')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    console.log('Fetching image from:', url)
     const response = await fetch(url, {
       headers: {
         Accept: 'image/*',
@@ -25,7 +27,14 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       console.error('Failed to fetch image:', response.status, response.statusText)
-      return NextResponse.json({ error: 'Failed to fetch image' }, { status: response.status })
+      return NextResponse.json(
+        {
+          error: 'Failed to fetch image',
+          status: response.status,
+          statusText: response.statusText,
+        },
+        { status: response.status },
+      )
     }
 
     const blob = await response.blob()
