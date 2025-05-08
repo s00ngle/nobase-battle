@@ -15,9 +15,13 @@ type Tool = 'pen' | 'eraser'
 
 interface PaintingCanvasProps {
   canvasRef?: React.RefObject<HTMLCanvasElement | null>
+  initialImageUrl?: string
 }
 
-const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanvasRef }) => {
+const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
+  canvasRef: externalCanvasRef,
+  initialImageUrl,
+}) => {
   const internalCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const canvasRefToUse = externalCanvasRef || internalCanvasRef
   const [isDrawing, setIsDrawing] = useState(false)
@@ -54,6 +58,9 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
   // 그리기 시작할 때도 히스토리 저장 여부 확인
   const [shouldSaveOnStop, setShouldSaveOnStop] = useState(false)
 
+  // 이미지 로드 추적을 위한 상태 추가
+  const [isImageLoaded, setIsImageLoaded] = useState(false)
+
   // 현재 캔버스 상태 저장
   const saveToHistory = useCallback(() => {
     const canvas = canvasRefToUse.current
@@ -69,7 +76,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
 
   // 실행 취소 (Undo)
   const undo = useCallback(() => {
-    if (currentHistoryIndex <= 0 || historyRef.current.length <= 1) {
+    if (currentHistoryIndex <= 0) {
       return // 더 이상 실행 취소할 수 없음
     }
 
@@ -81,12 +88,6 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
 
     const newIndex = currentHistoryIndex - 1
     setCurrentHistoryIndex(newIndex)
-
-    if (newIndex === 0) {
-      // 첫 상태로 되돌아가면 캔버스 초기화
-      context.clearRect(0, 0, canvas.width, canvas.height)
-      return
-    }
 
     // 이전 상태 불러오기
     const img = new Image()
@@ -438,6 +439,94 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
 
     return () => clearTimeout(timeoutId)
   }, [canvasRefToUse, saveToHistory])
+
+  // 초기 이미지 URL이 변경될 때 이미지 로드
+  useEffect(() => {
+    if (!initialImageUrl || isImageLoaded) return // 이미 이미지가 로드된 경우 다시 로드하지 않음
+
+    const loadImage = async () => {
+      try {
+        const canvas = canvasRefToUse.current
+        if (!canvas) return
+
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })
+        if (!ctx) return
+
+        // 프록시 URL 생성
+        const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(initialImageUrl)}`
+
+        // 새 이미지 객체 생성
+        const img = new Image()
+
+        // 이미지 로드 이벤트
+        img.onload = () => {
+          try {
+            // 캔버스 초기화
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+            // 이미지 크기 계산 (캔버스에 맞게 조정)
+            const scale = Math.min(canvas.width / img.width, canvas.height / img.height)
+
+            // 이미지 중앙 배치
+            const x = (canvas.width - img.width * scale) / 2
+            const y = (canvas.height - img.height * scale) / 2
+
+            // 이미지 그리기
+            ctx.drawImage(
+              img,
+              0,
+              0,
+              img.width,
+              img.height,
+              x,
+              y,
+              img.width * scale,
+              img.height * scale,
+            )
+
+            // 이미지 로드 후 현재 상태를 초기 상태로 히스토리에 저장
+            // 히스토리 초기화
+            historyRef.current = []
+
+            // 현재 상태(이미지가 로드된 상태)를 히스토리의 시작점으로 저장
+            saveToHistory()
+            setCurrentHistoryIndex(0) // 첫 번째 항목으로 설정
+
+            // 이미지 로드 완료 표시
+            setIsImageLoaded(true)
+          } catch (err) {
+            console.error('이미지 그리기 실패:', err)
+          }
+        }
+
+        // 이미지 로드 오류 처리
+        img.onerror = () => {
+          console.error('이미지 로드 실패')
+          setIsImageLoaded(true) // 오류가 발생해도 로드 시도가 완료된 것으로 표시
+        }
+
+        // 이미지 로드 시작 (프록시 URL 사용)
+        img.src = proxyUrl
+      } catch (err) {
+        console.error('이미지 로드 중 오류:', err)
+        setIsImageLoaded(true) // 오류가 발생해도 로드 시도가 완료된 것으로 표시
+      }
+    }
+
+    // 캔버스 초기화 후 이미지 로드 시작
+    const timer = setTimeout(() => {
+      loadImage()
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [initialImageUrl, canvasRefToUse, saveToHistory, isImageLoaded]) // isImageLoaded 의존성 추가
+
+  // 컴포넌트가 언마운트될 때 상태 초기화
+  useEffect(() => {
+    return () => {
+      setIsImageLoaded(false) // 컴포넌트가 제거될 때 이미지 로드 상태 초기화
+    }
+  }, [])
 
   return (
     <div className="mt-4 flex flex-col gap-2">
