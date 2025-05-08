@@ -18,6 +18,8 @@ public enum ErrorCode {
     INVALID_BATTLE_MODE(400, "유효하지 않은 배틀 모드입니다."),
     OPPONENT_REQUIRED(400, "CHALLENGE 모드에서는 상대 캐릭터 ID가 필요합니다."),
     BATTLE_AGAINST_SELF(400, "자신의 캐릭터끼리 배틀할 수 없습니다."),
+    METHOD_NOT_ALLOWED(400, "http method가 올바르지 않습니다 확인해주세요"),
+    URL_INPUT_ERROR(400, "url이 올바르지 않습니다 확인해주세요"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_TOKEN(401, "토큰이 유효하지 않습니다."),

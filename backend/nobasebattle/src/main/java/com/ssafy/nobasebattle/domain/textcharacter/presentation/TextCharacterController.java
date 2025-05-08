@@ -5,6 +5,7 @@ import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.request.Upda
 import com.ssafy.nobasebattle.domain.textcharacter.presentation.dto.response.TextCharacterResponse;
 import com.ssafy.nobasebattle.domain.textcharacter.service.TextCharacterService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class TextCharacterController {
     private final TextCharacterService textCharacterService;
 
     @PostMapping
-    public TextCharacterResponse createTextCharacter(@RequestBody CreateTextCharacterRequest characterRequest) {
+    public TextCharacterResponse createTextCharacter(@RequestBody @Validated CreateTextCharacterRequest characterRequest) {
         return textCharacterService.createTextCharacter(characterRequest);
     }
 
@@ -29,7 +30,7 @@ public class TextCharacterController {
     @PatchMapping("/{id}")
     public TextCharacterResponse updateTextCharacter(
             @PathVariable("id") String textCharacterId,
-            @RequestBody UpdateTextCharacterRequest updateTextCharacterRequest) {
+            @RequestBody @Validated UpdateTextCharacterRequest updateTextCharacterRequest) {
 
         return textCharacterService.updateEssay(textCharacterId, updateTextCharacterRequest);
     }

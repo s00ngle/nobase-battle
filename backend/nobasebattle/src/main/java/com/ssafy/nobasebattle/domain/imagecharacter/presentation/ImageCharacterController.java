@@ -7,6 +7,7 @@ import com.ssafy.nobasebattle.domain.imagecharacter.service.ImageCharacterServic
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +23,7 @@ public class ImageCharacterController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ImageCharacterResponse createImageCharacter(
-            @RequestPart("data") CreateImageCharacterRequest characterRequest,
+            @RequestPart("data") @Validated CreateImageCharacterRequest characterRequest,
             @RequestPart("image") MultipartFile imageFile) {
         return imageCharacterService.createImageCharacter(characterRequest, imageFile);
     }
@@ -35,7 +36,7 @@ public class ImageCharacterController {
     @PatchMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ImageCharacterResponse updateImageCharacter(
             @PathVariable("id") String imageCharacterId,
-            @RequestPart("data") UpdateImageCharacterRequest updateImageCharacterRequest,
+            @RequestPart("data") @Validated UpdateImageCharacterRequest updateImageCharacterRequest,
             @RequestPart(value = "image", required = false) MultipartFile imageFile) {
         return imageCharacterService.updateImageCharacter(imageCharacterId, updateImageCharacterRequest, imageFile);
     }
