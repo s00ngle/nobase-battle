@@ -40,6 +40,7 @@ public class RankingService {
     private static final String TEXT_RANKING_PREFIX = "text_character:";
     private static final String IMAGE_RANKING_KEY = "image_character_ranking";
     private static final String IMAGE_RANKING_PREFIX = "image_character:";
+    private static final String EVENT_RANKING_KEY = "event_character_ranking";
 
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(cron = "0 0 0 * * *")
@@ -121,6 +122,10 @@ public class RankingService {
 
     public List<RankingCharacterResponse> getTodayImageTopRankers(int count) {
         return getFromRedisZSet(IMAGE_RANKING_KEY + ":" + LocalDate.now(), "IMAGE", count);
+    }
+
+    public List<RankingCharacterResponse> getEventTopCharacters(int count) {
+        return getFromRedisZSet(EVENT_RANKING_KEY, "IMAGE", count);
     }
 
     private List<RankingCharacterResponse> getFromRedisZSet(String zsetKey, String type, int count) {

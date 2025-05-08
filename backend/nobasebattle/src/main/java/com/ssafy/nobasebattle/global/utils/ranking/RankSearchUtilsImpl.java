@@ -21,6 +21,8 @@ public class RankSearchUtilsImpl implements RankSearchUtils {
     private static final String TEXT_RANKING_PREFIX = "text_character:";
     private static final String IMAGE_RANKING_KEY = "image_character_ranking";
     private static final String IMAGE_RANKING_PREFIX = "image_character:";
+    private static final String EVENT_RANKING_KEY = "event_character_ranking";
+    private static final String EVENT_RANKING_PREFIX = "event_character:";
 
     @Override
     public Long getTextCharacterRank(String characterId) {
@@ -132,5 +134,47 @@ public class RankSearchUtilsImpl implements RankSearchUtils {
         String selectedKey = (String) filteredKeys.get(new Random().nextInt(filteredKeys.size()));
         ImageCharacter selected = (ImageCharacter) redisTemplate.opsForValue().get(selectedKey);
 
-        return Optional.ofNullable(selected);    }
+        return Optional.ofNullable(selected);
+    }
+
+    @Override
+    public Long getEventCharacterRank(String characterId) {
+        Long rank = redisTemplate.opsForZSet().reverseRank(EVENT_RANKING_KEY, EVENT_RANKING_PREFIX + characterId);
+        return rank == null ? null : rank + 1;
+    }
+
+    @Override
+    public void addEventCharacterToRank(ImageCharacter character) {
+        String redisKey = EVENT_RANKING_PREFIX + character.getId();
+        redisTemplate.opsForZSet().add(EVENT_RANKING_KEY, redisKey, character.getEventInfo().getEloScore());
+        redisTemplate.opsForValue().set(redisKey, character);
+    }
+
+    @Override
+    public void deleteEventCharacterFromRank(ImageCharacter character) {
+        String redisKey = EVENT_RANKING_PREFIX + character.getId();
+        redisTemplate.opsForZSet().remove(EVENT_RANKING_KEY, redisKey);
+        redisTemplate.delete(redisKey);
+    }
+
+    @Override
+    public Optional<ImageCharacter> matchEventCharacter(String characterId) {
+        String redisKey = EVENT_RANKING_PREFIX + characterId;
+        Long rank = redisTemplate.opsForZSet().reverseRank(EVENT_RANKING_KEY, redisKey);
+        long start = Math.max(rank - 15, 0);
+        long end = rank + 15;
+
+        Set<Object> candidateKeys = redisTemplate.opsForZSet().reverseRange(EVENT_RANKING_KEY, start, end);
+        if (candidateKeys == null || candidateKeys.size() <= 1) return Optional.empty();
+
+        List<Object> filteredKeys = candidateKeys.stream()
+            .filter(key -> !key.equals(redisKey))
+            .toList();
+
+        if (filteredKeys.isEmpty()) return Optional.empty();
+        String selectedKey = (String) filteredKeys.get(new Random().nextInt(filteredKeys.size()));
+        ImageCharacter selected = (ImageCharacter) redisTemplate.opsForValue().get(selectedKey);
+
+        return Optional.ofNullable(selected);
+    }
 }
