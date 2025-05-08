@@ -23,42 +23,46 @@ function useTimer(startTime: string | null, waitSeconds = 10): TimerResult {
       return
     }
 
-    // 시작 시간과 만료 시간 계산
-    const startDate = new Date(startTime)
-    const expiryTime = new Date(startDate.getTime() + waitSeconds * 1000)
-    const now = new Date()
+    const calculateTimeLeft = () => {
+      const startDate = new Date(startTime)
+      const expiryTime = new Date(startDate.getTime() + waitSeconds * 1000)
+      const now = new Date()
 
-    // 이미 만료된 경우 즉시 활성화
-    if (expiryTime <= now) {
-      setIsActive(true)
-      setSecondsLeft(0)
-      return
-    }
-
-    // 남은 시간 계산
-    const initialSecondsLeft = Math.floor((expiryTime.getTime() - now.getTime()) / 1000)
-    setSecondsLeft(initialSecondsLeft)
-    setIsActive(false)
-
-    // 타이머 설정
-    const timer = setInterval(() => {
-      const currentTime = new Date()
-      const remaining = Math.floor((expiryTime.getTime() - currentTime.getTime()) / 1000)
+      // 밀리초 단위까지 계산하여 올림
+      const remainingMs = expiryTime.getTime() - now.getTime()
+      const remaining = Math.ceil(remainingMs / 1000)
 
       if (remaining <= 0) {
         setIsActive(true)
         setSecondsLeft(0)
-        clearInterval(timer)
-      } else {
-        setSecondsLeft(remaining)
+        return true // 타이머 종료 여부 반환
       }
-    }, 1000)
 
-    // 컴포넌트 언마운트 시 타이머 정리
-    return () => clearInterval(timer)
+      setIsActive(false)
+      setSecondsLeft(remaining)
+      return false
+    }
+
+    // 초기 계산
+    const isExpired = calculateTimeLeft()
+
+    // 만료되지 않은 경우에만 타이머 설정
+    if (!isExpired) {
+      const timer = setInterval(() => {
+        const shouldClearTimer = calculateTimeLeft()
+        if (shouldClearTimer) {
+          clearInterval(timer)
+        }
+      }, 100) // 100ms 마다 업데이트
+
+      return () => clearInterval(timer)
+    }
   }, [startTime, waitSeconds])
 
-  return { isActive, secondsLeft }
+  return {
+    isActive,
+    secondsLeft: Math.max(0, secondsLeft), // 음수 방지
+  }
 }
 
 export default useTimer

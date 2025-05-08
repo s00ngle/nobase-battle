@@ -12,6 +12,16 @@ interface CreateImageCharacterRequest {
   image: File | Blob
 }
 
+interface UpdateTextCharacterRequest {
+  name: string
+  prompt: string
+}
+
+interface UpdateImageCharacterRequest {
+  name: string
+  image: File | Blob
+}
+
 interface ApiError {
   response: {
     status: number
@@ -144,6 +154,62 @@ export const deleteImageCharacter = async (id: string): Promise<void> => {
     await lux.delete(`/api/v1/characters/image/${id}`)
   } catch (error) {
     console.error('이미지 캐릭터 삭제 중 에러 발생:', error)
+    throw error
+  }
+}
+
+export const updateTextCharacter = async (
+  id: string,
+  data: UpdateTextCharacterRequest,
+): Promise<TCharacterResponse> => {
+  try {
+    const response = await lux.patch<ApiResponse<TCharacterResponse>>(
+      `/api/v1/characters/text/${id}`,
+      data,
+    )
+    if (!response?.data) {
+      throw new Error('텍스트 캐릭터 수정에 실패했습니다')
+    }
+    return response.data
+  } catch (error) {
+    if ((error as ApiError).response?.reason) {
+      throw new Error((error as ApiError).response.reason)
+    }
+    console.error('텍스트 캐릭터 수정 중 에러 발생:', error)
+    throw error
+  }
+}
+
+export const updateImageCharacter = async (
+  id: string,
+  data: UpdateImageCharacterRequest,
+): Promise<ICharacterResponse> => {
+  try {
+    const formData = new FormData()
+    const jsonData = new Blob([JSON.stringify({ name: data.name })], {
+      type: 'application/json',
+    })
+    formData.append('data', jsonData)
+
+    if (data.image instanceof File) {
+      formData.append('image', data.image, data.image.name)
+    } else {
+      formData.append('image', data.image, 'image.png')
+    }
+
+    const response = await lux.patchForm<ApiResponse<ICharacterResponse>>(
+      `/api/v1/characters/image/${id}`,
+      formData,
+    )
+    if (!response?.data) {
+      throw new Error('이미지 캐릭터 수정에 실패했습니다')
+    }
+    return response.data
+  } catch (error) {
+    if ((error as ApiError).response?.reason) {
+      throw new Error((error as ApiError).response.reason)
+    }
+    console.error('이미지 캐릭터 수정 중 에러 발생:', error)
     throw error
   }
 }

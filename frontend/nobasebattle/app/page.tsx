@@ -1,28 +1,31 @@
 "use client";
 
-import { ErrorBoundary } from "@/app/components/common/ErrorBoundary";
-import type { ImageCharacter, TextCharacter } from "@/app/types/character";
-import CharacterList from "@/components/character/CharacterList";
-import CharacterTypeToggle from "@/components/character/CharacterTypeToggle";
-import Button from "@/components/common/Button";
-import Invitation from "@/components/event/Invitation";
-import { useCharacterStore } from "@/store/characterStore";
-import { fetchImageCharacters, fetchTextCharacters } from "@/utils/characters";
-import { useRouter } from "next/navigation";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { ErrorBoundary } from '@/app/components/common/ErrorBoundary'
+import type { ImageCharacter, TextCharacter } from '@/app/types/character'
+import CharacterList from '@/components/character/CharacterList'
+import CharacterTypeToggle from '@/components/character/CharacterTypeToggle'
+import Button from '@/components/common/Button'
+import { useCharacterStore } from '@/store/characterStore'
+import {
+  fetchImageCharacters,
+  fetchTextCharacters,
+  updateImageCharacter,
+  updateTextCharacter,
+} from '@/utils/characters'
+import { useRouter } from 'next/navigation'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 
 type CharacterType = "text" | "image";
 
 const MainPage = () => {
-  const { selectedType, setSelectedType } = useCharacterStore();
-  const [textCharacters, setTextCharacters] = useState<TextCharacter[]>([]);
-  const [imageCharacters, setImageCharacters] = useState<ImageCharacter[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [loadedTypes, setLoadedTypes] = useState<Set<CharacterType>>(new Set());
-  const [isInvitationOpen, setIsInvitationOpen] = useState(true);
-  const [mounted, setMounted] = useState(false);
-  const router = useRouter();
+  const { selectedType, setSelectedType } = useCharacterStore()
+  const [textCharacters, setTextCharacters] = useState<TextCharacter[]>([])
+  const [imageCharacters, setImageCharacters] = useState<ImageCharacter[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [loadedTypes, setLoadedTypes] = useState<Set<CharacterType>>(new Set())
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const router = useRouter()
 
   const fetchCharacters = useCallback(async () => {
     try {
@@ -49,16 +52,41 @@ const MainPage = () => {
   }, [fetchCharacters]);
 
   const handleClickText = useCallback(() => {
-    setSelectedType("text");
-  }, [setSelectedType]);
+    setEditingId(null)
+    setSelectedType('text')
+  }, [setSelectedType])
 
   const handleClickImage = useCallback(() => {
-    setSelectedType("image");
-  }, [setSelectedType]);
+    setEditingId(null)
+    setSelectedType('image')
+  }, [setSelectedType])
 
   const currentCharacters = useMemo(() => {
     return selectedType === "text" ? textCharacters : imageCharacters;
   }, [selectedType, textCharacters, imageCharacters]);
+
+  const handleUpdate = useCallback(
+    async (id: string, data: { name: string; prompt?: string; image?: Blob }) => {
+      try {
+        if (selectedType === 'text' && data.prompt) {
+          await updateTextCharacter(id, {
+            name: data.name,
+            prompt: data.prompt,
+          })
+        } else if (selectedType === 'image' && data.image) {
+          await updateImageCharacter(id, {
+            name: data.name,
+            image: data.image,
+          })
+        }
+        await fetchCharacters()
+      } catch (error) {
+        console.error('캐릭터 수정 중 오류 발생:', error)
+        throw error
+      }
+    },
+    [selectedType, fetchCharacters],
+  )
 
   const characterList = useMemo(
     () => (
@@ -67,10 +95,21 @@ const MainPage = () => {
         type={selectedType}
         isLoading={isLoading && !loadedTypes.has(selectedType)}
         onDelete={fetchCharacters}
+        onUpdate={handleUpdate}
+        editingId={editingId}
+        setEditingId={setEditingId}
       />
     ),
-    [currentCharacters, selectedType, isLoading, loadedTypes, fetchCharacters]
-  );
+    [
+      currentCharacters,
+      selectedType,
+      isLoading,
+      loadedTypes,
+      fetchCharacters,
+      handleUpdate,
+      editingId,
+    ],
+  )
 
   const characterTypeToggle = useMemo(
     () => (
