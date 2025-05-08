@@ -36,6 +36,7 @@ public enum ErrorCode {
     FILE_OVER_SIZE(404,  "FILE 크기가 10mb를 초과 하였습니다"),
     TEXT_CHARACTER_NOT_FOUND(404, "캐릭터를 찾을 수 없습니다"),
     IMAGE_CHARACTER_NOT_FOUND(404, "캐릭터를 찾을 수 없습니다"),
+    EVENT_NOT_FOUND(404, "이벤트가 없습니다"),
 
     /* 429 Too Many Requests : 시간 제한 내 중복 요청 */
     BATTLE_COOLDOWN(429, "10초 내에는 다시 배틀을 신청할 수 없습니다."),
