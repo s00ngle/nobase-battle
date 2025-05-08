@@ -125,7 +125,7 @@ public class RankingService {
     }
 
     public List<RankingCharacterResponse> getEventTopCharacters(int count) {
-        return getFromRedisZSet(EVENT_RANKING_KEY, "IMAGE", count);
+        return getFromRedisZSet(EVENT_RANKING_KEY, "EVENT", count);
     }
 
     private List<RankingCharacterResponse> getFromRedisZSet(String zsetKey, String type, int count) {
@@ -174,6 +174,23 @@ public class RankingService {
                         .createdAt(image.getCreatedAt())
                         .updatedAt(image.getUpdatedAt())
                         .badges(badgeService.getBadgeInfos(image.getBadges()))
+                        .build();
+                } else if ("EVENT".equals(type) && obj instanceof ImageCharacter event) {
+                    User user = userRepository.findById(((ImageCharacter) obj).getUserId()).orElse(null);
+
+                    return RankingCharacterResponse.builder()
+                        .rank(rankCounter.getAndIncrement())
+                        .username(user.getNickname())
+                        .characterId(event.getId())
+                        .name(event.getName())
+                        .imageUrl(event.getImageUrl())
+                        .wins(event.getEventInfo().getWins())
+                        .losses(event.getEventInfo().getLosses())
+                        .draws(event.getEventInfo().getDraws())
+                        .eloScore(event.getEventInfo().getEloScore())
+                        .createdAt(event.getCreatedAt())
+                        .updatedAt(event.getUpdatedAt())
+                        .badges(badgeService.getBadgeInfos(event.getBadges()))
                         .build();
                 } else {
                     return null;
