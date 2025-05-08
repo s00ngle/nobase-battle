@@ -92,7 +92,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
       setCanvasHeight(defaultHeight)
 
       // 이미지를 Blob으로 가져오기
-      fetch(`/api/v1/characters/image/proxy?url=${encodeURIComponent(initialImage)}`)
+      fetch(`/api/next/characters/image/proxy?url=${encodeURIComponent(initialImage)}`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('이미지 로드 실패')
