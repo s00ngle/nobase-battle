@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers'
 import { type NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -7,9 +8,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'URL is required' }, { status: 400 })
     }
 
+    // 쿠키에서 토큰 가져오기
+    const cookieStore = await cookies()
+    const token = cookieStore.get('accessToken')?.value
+
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const response = await fetch(url, {
       headers: {
         Accept: 'image/*',
+        Authorization: `Bearer ${token}`,
       },
     })
 
@@ -24,7 +34,7 @@ export async function GET(request: NextRequest) {
     headers.set('Cache-Control', 'public, max-age=31536000')
     headers.set('Access-Control-Allow-Origin', '*')
     headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS')
-    headers.set('Access-Control-Allow-Headers', 'Content-Type')
+    headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
     return new NextResponse(blob, {
       status: 200,
@@ -42,7 +52,7 @@ export async function OPTIONS() {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
   })
 }
