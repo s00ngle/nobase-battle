@@ -146,7 +146,7 @@ public class RankSearchUtilsImpl implements RankSearchUtils {
     @Override
     public void addEventCharacterToRank(ImageCharacter character) {
         String redisKey = EVENT_RANKING_PREFIX + character.getId();
-        redisTemplate.opsForZSet().add(EVENT_RANKING_KEY, redisKey, character.getEloScore());
+        redisTemplate.opsForZSet().add(EVENT_RANKING_KEY, redisKey, character.getEventInfo().getEloScore());
         redisTemplate.opsForValue().set(redisKey, character);
     }
 
