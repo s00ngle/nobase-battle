@@ -73,6 +73,10 @@ public class ImageCharacter extends BaseEntity {
         this.eloScore = eloScore;
     }
 
+//    public void updateEventEloScore(Integer eloScore) {
+//        this.EventInfo = EventInfo.;
+//    }
+
     public void updateLastBattleTime() {
         this.lastBattleTime = LocalDateTime.now();
     }
@@ -90,6 +94,8 @@ public class ImageCharacter extends BaseEntity {
     public void resetLoseStreak() { this.loseStreak = 0; }
 
     public void resetWinStreak() { this.winStreak = 0; }
+
+    public void updateEventInfo(EventInfo eventInfo) { this.eventInfo = eventInfo; }
 
     public double calculateWinRate() {
         int w = wins != null ? wins : 0;

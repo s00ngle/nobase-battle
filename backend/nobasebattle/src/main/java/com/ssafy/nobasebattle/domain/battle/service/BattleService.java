@@ -7,6 +7,7 @@ import com.ssafy.nobasebattle.domain.battle.exception.BattleAgainstSelfException
 import com.ssafy.nobasebattle.domain.battle.exception.BattleCooldownException;
 import com.ssafy.nobasebattle.domain.battle.exception.InvalidBattleModeException;
 import com.ssafy.nobasebattle.domain.battle.exception.OpponentRequiredException;
+import com.ssafy.nobasebattle.domain.battle.presentation.dto.EventInfo;
 import com.ssafy.nobasebattle.domain.battle.presentation.dto.request.BattleRequest;
 import com.ssafy.nobasebattle.domain.battle.presentation.dto.response.BattleResponse;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 @Slf4j
@@ -39,6 +41,7 @@ public class BattleService {
     private final BadgeService badgeService;
     private final Random random = new Random();
     private final RankSearchUtils rankSearchUtils;
+    private final EventService eventService;
 
 //    @Transactional
     public BattleResponse performImageBattle(BattleRequest battleRequest) {
@@ -79,6 +82,23 @@ public class BattleService {
         } else {
             updateTextCharacterBattleTime(myCharacter);
         }
+
+        return new BattleResponse(battle, myCharacter, opponentCharacter);
+    }
+
+    public BattleResponse performEventBattle(BattleRequest battleRequest) {
+        String currentUserId = SecurityUtils.getCurrentUserId();
+
+        ImageCharacter myCharacter = findAndValidateImageCharacter(battleRequest.getCharacterId(), currentUserId);
+
+        ImageCharacter opponentCharacter = selectEventOpponent(battleRequest, myCharacter, currentUserId);
+
+        Battle battle = calculateEventBattleResult(myCharacter, opponentCharacter);
+
+        myCharacter.updateLastBattleTime();
+
+        updateEventCharactersStats(myCharacter, opponentCharacter, battle.getResult());
+//        rankSearchUtils.addImageCharacterToRank(myCharacter);
 
         return new BattleResponse(battle, myCharacter, opponentCharacter);
     }
@@ -207,6 +227,33 @@ public class BattleService {
         }
     }
 
+    private ImageCharacter selectEventOpponent(BattleRequest battleRequest, ImageCharacter myCharacter, String currentUserId) {
+        String mode = battleRequest.getMode();
+
+        if (mode != null && !mode.equals("EVENT")) {
+            throw InvalidBattleModeException.EXCEPTION;
+        }
+
+        List<ImageCharacter> potentialOpponents = imageCharacterRepository.findByUserIdNot(currentUserId);
+
+        if (potentialOpponents.isEmpty()) {
+            List<ImageCharacter> myOtherCharacters = imageCharacterRepository.findByUserIdAndIdNot(
+                    currentUserId, myCharacter.getId());
+
+            if (myOtherCharacters.isEmpty()) {
+                throw ImageCharacterNotFoundException.EXCEPTION;
+            }
+
+            return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
+        }
+
+        return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
+//        String myId = myCharacter.getId();
+//
+//        return rankSearchUtils.matchImageCharacter(myId).orElseThrow(() -> OpponentRequiredException.EXCEPTION);
+
+    }
+
     private Battle calculateTextBattleResult(TextCharacter myCharacter, TextCharacter opponentCharacter) {
 
 //        int myElo = myCharacter.getEloScore() != null ? myCharacter.getEloScore() : 1000;
@@ -293,6 +340,48 @@ public class BattleService {
 //        return createAndSaveImageBattle(myCharacter, opponentCharacter, battleResult, battleLog);
     }
 
+    private Battle calculateEventBattleResult(ImageCharacter myCharacter, ImageCharacter opponentCharacter) {
+
+//        int myElo = myCharacter.getEloScore() != null ? myCharacter.getEloScore() : 1000;
+//        int opponentElo = opponentCharacter.getEloScore() != null ? opponentCharacter.getEloScore() : 1000;
+//        int battleResult;
+//
+//        double expectedWinRate = 1.0 / (1.0 + Math.pow(10.0, (opponentElo - myElo) / 400.0));
+//
+//        double randomValue = random.nextDouble();
+//
+//        if (randomValue < expectedWinRate * 0.8) {
+//            battleResult = 1;  // 승리
+//        } else if (randomValue < expectedWinRate * 1.2) {
+//            battleResult = 0;  // 무승부
+//        } else {
+//            battleResult = -1; // 패배
+//        }
+//
+//        String battleLog = "Batte Log";
+
+        log.info("OpenAI API를 통해 이미지 배틀 결과 판정 시작");
+
+        OpenAIService.BattleResult battleResult = openAIService.analyzeImagesAndDetermineBattle(
+                myCharacter.getName(),
+                myCharacter.getImageUrl(),
+                opponentCharacter.getName(),
+                opponentCharacter.getImageUrl()
+        );
+
+        log.info("OpenAI API 배틀 결과: {}, 배틀 로그 길이: {}",
+                battleResult.getResult(),
+                battleResult.getBattleLog().length());
+
+        return createAndSaveEventBattle(
+                myCharacter,
+                opponentCharacter,
+                battleResult.getResult(),
+                battleResult.getBattleLog()
+        );
+
+//        return createAndSaveImageBattle(myCharacter, opponentCharacter, battleResult, battleLog);
+    }
 
     private Battle calculateTextBattleResult(ImageCharacter myCharacter, ImageCharacter opponentCharacter) {
 
@@ -353,9 +442,26 @@ public class BattleService {
 //        imageCharacterRepository.save(opponentCharacter);
     }
 
-    private void updateImageCharacterBattleTime(ImageCharacter character){
-        imageCharacterRepository.save(character);
+    private void updateEventCharactersStats(ImageCharacter myCharacter, ImageCharacter opponentCharacter, int result) {
+        EventInfo eventInfo = myCharacter.getEventInfo() != null ? myCharacter.getEventInfo() : new EventInfo(eventService.getLatestEventEntity());
+        int myElo = eventInfo.getEloScore() != null ? eventInfo.getEloScore() : 1000;
+        int opponentElo = opponentCharacter.getEloScore() != null ? opponentCharacter.getEloScore() : 1000;
+
+        int[] newRatings = eloRatingService.calculateNewRatings(myElo, opponentElo, result);
+
+        updateEventWinLossDraws(eventInfo, result == 1, result == -1, result == 0);
+//        updateWinLossDraws(opponentCharacter, result == -1, result == 1, result == 0);
+
+        eventInfo.updateEventEloScore(newRatings[0]);
+//        opponentCharacter.updateEloScore(newRatings[1]);
+
+        myCharacter.updateEventInfo(eventInfo);
+
+        imageCharacterRepository.save(myCharacter);
+//        imageCharacterRepository.save(opponentCharacter);
     }
+
+    private void updateImageCharacterBattleTime(ImageCharacter character){ imageCharacterRepository.save(character); }
 
     private void updateTextCharacterBattleTime(TextCharacter character){
         textCharacterRepository.save(character);
@@ -410,6 +516,29 @@ public class BattleService {
             character.updateDraws(draws + 1);
         }
     }
+    private void updateEventWinLossDraws(EventInfo eventInfo, boolean isWin, boolean isLoss, boolean isDraw) {
+
+        int wins = eventInfo.getWins() != null ? eventInfo.getWins() : 0;
+        int losses = eventInfo.getLosses() != null ? eventInfo.getLosses() : 0;
+        int draws = eventInfo.getDraws() != null ? eventInfo.getDraws() : 0;
+        int winStreak = eventInfo.getWinStreak() != null ? eventInfo.getWinStreak() : 0;
+        int loseStreak = eventInfo.getLoseStreak() != null ? eventInfo.getLoseStreak() : 0;
+
+        if (isWin) {
+            eventInfo.updateWins(wins + 1);
+
+            eventInfo.updateWinStreak(winStreak + 1);
+            eventInfo.resetLoseStreak();
+
+        } else if (isLoss) {
+            eventInfo.updateLosses(losses + 1);
+
+            eventInfo.updateLoseStreak(loseStreak + 1);
+            eventInfo.resetWinStreak();
+        } else if (isDraw) {
+            eventInfo.updateDraws(draws + 1);
+        }
+    }
 
     private Battle createAndSaveImageBattle(ImageCharacter myCharacter, ImageCharacter opponentCharacter, int result, String battleLog) {
 
@@ -431,6 +560,19 @@ public class BattleService {
                 .secondCharacterId(opponentCharacter.getId())
                 .result(result)
                 .battleType("TEXT")
+                .battleLog(battleLog)
+                .build();
+
+        return battleRepository.save(battle);
+    }
+
+    private Battle createAndSaveEventBattle(ImageCharacter myCharacter, ImageCharacter opponentCharacter, int result, String battleLog) {
+
+        Battle battle = Battle.builder()
+                .firstCharacterId(myCharacter.getId())
+                .secondCharacterId(opponentCharacter.getId())
+                .result(result)
+                .battleType("EVENT")
                 .battleLog(battleLog)
                 .build();
 

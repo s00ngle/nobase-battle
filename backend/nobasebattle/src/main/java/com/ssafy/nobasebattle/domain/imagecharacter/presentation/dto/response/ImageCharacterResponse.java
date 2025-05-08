@@ -1,6 +1,7 @@
 package com.ssafy.nobasebattle.domain.imagecharacter.presentation.dto.response;
 
 import com.ssafy.nobasebattle.domain.badge.presentation.dto.BadgeInfo;
+import com.ssafy.nobasebattle.domain.battle.presentation.dto.EventInfo;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
 import lombok.Getter;
 
@@ -39,6 +40,25 @@ public class ImageCharacterResponse {
         this.eloScore = character.getEloScore();
         this.winStreak = character.getWinStreak();
         this.loseStreak = character.getLoseStreak();
+        this.lastBattleTime = character.getLastBattleTime();
+        this.createAt = character.getCreatedAt();
+        this.updateAt = character.getUpdatedAt();
+        this.rank = rank;
+        this.badges = badges;
+    }
+
+    public ImageCharacterResponse(ImageCharacter character, EventInfo eventinfo, Long rank, List<BadgeInfo> badges) {
+        this.imageCharacterId = character.getId();
+        this.name = character.getName();
+        this.imageUrl = character.getImageUrl();
+        this.wins = eventinfo.getWins();
+        this.losses = eventinfo.getLosses();
+        this.draws =  eventinfo.getDraws();
+        this.totalBattles = eventinfo.calculateTotalBattles();
+        this.winRate = eventinfo.calculateWinRate();
+        this.eloScore = eventinfo.getEloScore();
+        this.winStreak = eventinfo.getWinStreak();
+        this.loseStreak = eventinfo.getLoseStreak();
         this.lastBattleTime = character.getLastBattleTime();
         this.createAt = character.getCreatedAt();
         this.updateAt = character.getUpdatedAt();

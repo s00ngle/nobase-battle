@@ -23,6 +23,12 @@ public class EventService {
         return new EventResponse(event);
     }
 
+    public Event getLatestEventEntity() {
+
+        return eventRepository.findTopByOrderByCreatedAtDesc()
+                .orElseThrow(() -> EventNotFoundException.EXCEPTION);
+    }
+
     public EventResponse createEvent(CreateEventRequest eventRequest) {
 
         validateEventRequest(eventRequest);
