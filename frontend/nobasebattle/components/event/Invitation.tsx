@@ -11,33 +11,36 @@ interface InvitationProps {
 
 const Invitation = ({ onClose, onJoin, onHide }: InvitationProps) => {
   return (
-    <div className="flex flex-col absolute top-10 z-1 gap-2 w-[90%] max-w-[400px] left-1/2 -translate-x-1/2">
-      <Image
-        src="/close.svg"
-        alt="close"
-        width={24}
-        height={24}
-        className="absolute top-4 right-4 cursor-pointer"
-        onClick={onClose}
-      />
-      <Image
-        src="/invitation.svg"
-        alt="invitation"
-        width={400}
-        height={100}
-        className="w-full h-auto"
-      />
-      <Button
-        text="투기장 참가하기"
-        className={`absolute bottom-4 left-1/2 -translate-x-1/2 border-1 text-black cursor-pointer ${hover} ${transparentForm}`}
-        onClick={onJoin}
-      />
-      <span
-        className={`absolute -bottom-10 right-2 cursor-pointer ${transparentForm} ${hover}`}
-        onClick={onHide}
-      >
-        오늘 하루 보지 않기
-      </span>
+    <div className="flex flex-col absolute top-10 z-1 gap-4 w-[90%] max-w-[400px] left-1/2 -translate-x-1/2">
+      <div className="relative w-full aspect-[2/3]">
+        <Image
+          src="/close.svg"
+          alt="close"
+          width={24}
+          height={24}
+          className="absolute top-4 right-4 cursor-pointer z-10"
+          onClick={onClose}
+        />
+        <Image
+          src="/invitation.svg"
+          alt="invitation"
+          fill
+          priority
+          style={{ objectFit: 'contain' }}
+        />
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%]">
+          <Button
+            text="투기장 참가하기"
+            className={`w-full border-1 text-black cursor-pointer ${hover} ${transparentForm}`}
+            onClick={onJoin}
+          />
+        </div>
+      </div>
+      <div className="flex justify-end -mt-4">
+        <span className={`cursor-pointer ${transparentForm} ${hover}`} onClick={onHide}>
+          오늘 하루 보지 않기
+        </span>
+      </div>
     </div>
   )
 }
