@@ -1,17 +1,17 @@
-import { transparentForm } from "@/styles/form";
-import { hover } from "@/styles/form";
-import Image from "next/image";
-import Button from "../common/Button";
+import { transparentForm } from '@/styles/form'
+import { hover } from '@/styles/form'
+import Image from 'next/image'
+import Button from '../common/Button'
 
 interface InvitationProps {
-  onClose: () => void;
-  onJoin: () => void;
-  onHide: () => void;
+  onClose: () => void
+  onJoin: () => void
+  onHide: () => void
 }
 
 const Invitation = ({ onClose, onJoin, onHide }: InvitationProps) => {
   return (
-    <div className="flex flex-col absolute z-1 gap-2 min-w-100">
+    <div className="flex flex-col absolute top-10 z-1 gap-2 w-[90%] max-w-[400px] left-1/2 -translate-x-1/2">
       <Image
         src="/close.svg"
         alt="close"
@@ -20,10 +20,16 @@ const Invitation = ({ onClose, onJoin, onHide }: InvitationProps) => {
         className="absolute top-4 right-4 cursor-pointer"
         onClick={onClose}
       />
-      <Image src="/invitation.svg" alt="invitation" width={400} height={100} />
+      <Image
+        src="/invitation.svg"
+        alt="invitation"
+        width={400}
+        height={100}
+        className="w-full h-auto"
+      />
       <Button
         text="투기장 참가하기"
-        className={`absolute bottom-4 left-30 border-1 text-black cursor-pointer ${hover} ${transparentForm}`}
+        className={`absolute bottom-4 left-1/2 -translate-x-1/2 border-1 text-black cursor-pointer ${hover} ${transparentForm}`}
         onClick={onJoin}
       />
       <span
@@ -33,7 +39,7 @@ const Invitation = ({ onClose, onJoin, onHide }: InvitationProps) => {
         오늘 하루 보지 않기
       </span>
     </div>
-  );
-};
+  )
+}
 
-export default Invitation;
+export default Invitation
