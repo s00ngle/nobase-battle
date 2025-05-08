@@ -29,4 +29,10 @@ public class BattleController {
         battleRequest.validate();
         return battleService.performTextBattle(battleRequest);
     }
+
+    @PostMapping("/event")
+    public BattleResponse performEventBattle(@RequestBody BattleRequest battleRequest) {
+        battleRequest.validate();
+        return battleService.performEventBattle(battleRequest);
+    }
 }

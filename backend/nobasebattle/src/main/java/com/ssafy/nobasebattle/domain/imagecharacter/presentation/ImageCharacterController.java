@@ -46,6 +46,11 @@ public class ImageCharacterController {
         return imageCharacterService.getImageCharacterDetail(imageCharacterId);
     }
 
+    @GetMapping("event/{id}")
+    public ImageCharacterResponse getEventImageCharacterDetail(@PathVariable("id") String imageCharacterId) {
+        return imageCharacterService.getEventImageCharacterDetail(imageCharacterId);
+    }
+
     @GetMapping
     public List<ImageCharacterResponse> findUserImageCharacter() {
         return imageCharacterService.findAllUsersImageCharacter();

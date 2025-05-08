@@ -2,6 +2,8 @@ package com.ssafy.nobasebattle.domain.imagecharacter.service;
 
 import com.ssafy.nobasebattle.domain.badge.presentation.dto.BadgeInfo;
 import com.ssafy.nobasebattle.domain.badge.service.BadgeService;
+import com.ssafy.nobasebattle.domain.battle.presentation.dto.EventInfo;
+import com.ssafy.nobasebattle.domain.battle.service.EventService;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.repository.ImageCharacterRepository;
 import com.ssafy.nobasebattle.domain.imagecharacter.exception.ImageCharacterNotFoundException;
@@ -34,6 +36,7 @@ public class ImageCharacterService {
     private final ImageCharacterRepository imageCharacterRepository;
     private final BadgeService badgeService;
     private final RankSearchUtils rankSearchUtils;
+    private final EventService eventService;
 
     private static final String IMAGE_DIRECTORY = "character-images";
 
@@ -109,6 +112,17 @@ public class ImageCharacterService {
         return getImageCharacterResponse(imageCharacter, ranking, badges);
     }
 
+    public ImageCharacterResponse getEventImageCharacterDetail(String imageCharacterId) {
+
+        String currentUserId = SecurityUtils.getCurrentUserId();
+        ImageCharacter imageCharacter = queryImageCharacter(imageCharacterId);
+        imageCharacter.validUserIsHost(currentUserId);
+        insertEventRanking(imageCharacter);
+        Long ranking = getEventRanking(imageCharacter);
+        List<BadgeInfo> badges = badgeService.getBadgeInfos(imageCharacter.getBadges());
+        return getEventImageCharacterResponse(imageCharacter, ranking, badges);
+    }
+
     public List<ImageCharacterResponse> findAllUsersImageCharacter() {
 
         String currentUserId = SecurityUtils.getCurrentUserId();
@@ -143,11 +157,35 @@ public class ImageCharacterService {
         return new ImageCharacterResponse(imageCharacter, ranking, badges);
     }
 
+    private ImageCharacterResponse getEventImageCharacterResponse(ImageCharacter imageCharacter, Long ranking, List<BadgeInfo> badges) {
+        if(imageCharacter.getEventInfo() == null) {
+            EventInfo eventinfo = new EventInfo(eventService.getLatestEventEntity());
+            imageCharacter.updateEventInfo(eventinfo);
+        }
+
+        return new ImageCharacterResponse(imageCharacter, imageCharacter.getEventInfo(), ranking, badges);
+    }
+
     private void insertRanking(ImageCharacter imageCharacter) {
         rankSearchUtils.addImageCharacterToRank(imageCharacter);
     }
 
+    private void insertEventRanking(ImageCharacter imageCharacter) {
+        rankSearchUtils.addImageCharacterToRank(imageCharacter);
+    }
+
     private Long getRanking(ImageCharacter imageCharacter) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate createdDate = imageCharacter.getCreatedAt().toLocalDate();
+
+        if (today.equals(createdDate)) {
+            return rankSearchUtils.getTodayImageCharacterRank(imageCharacter.getId());
+        }
+        return rankSearchUtils.getImageCharacterRank(imageCharacter.getId());
+    }
+
+    private Long getEventRanking(ImageCharacter imageCharacter) {
 
         LocalDate today = LocalDate.now();
         LocalDate createdDate = imageCharacter.getCreatedAt().toLocalDate();
