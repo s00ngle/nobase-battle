@@ -54,6 +54,7 @@ const CharacterList = ({
     imageUrl: '',
   })
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [canvasKey, setCanvasKey] = useState(0)
 
   const handleCharacterClick = (id: string) => {
     if (editingId) {
@@ -98,6 +99,7 @@ const CharacterList = ({
         prompt: '',
         imageUrl: imageChar.imageUrl,
       })
+      setCanvasKey((prevKey) => prevKey + 1)
       setEditingId(imageChar.imageCharacterId)
     }
   }
@@ -105,6 +107,7 @@ const CharacterList = ({
   const handleCancelEdit = () => {
     setEditingId(null)
     setEditForm({ name: '', prompt: '', imageUrl: '' })
+    setCanvasKey((prevKey) => prevKey + 1)
   }
 
   const handleSaveEdit = async (id: string) => {
@@ -144,6 +147,7 @@ const CharacterList = ({
 
       setEditingId(null)
       setEditForm({ name: '', prompt: '', imageUrl: '' })
+      setCanvasKey((prevKey) => prevKey + 1)
       alert('수정되었습니다.')
     } catch (error) {
       console.error('캐릭터 수정 중 오류 발생:', error)
@@ -173,7 +177,7 @@ const CharacterList = ({
               onChange={(e) => setEditForm({ ...editForm, prompt: e.target.value })}
             />
           ) : (
-            <PaintingCanvas canvasRef={canvasRef} />
+            <PaintingCanvas key={canvasKey} canvasRef={canvasRef} />
           )}
         </div>
         <div className="flex justify-end gap-2">
