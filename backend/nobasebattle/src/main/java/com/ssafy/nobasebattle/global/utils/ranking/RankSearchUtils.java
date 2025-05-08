@@ -9,13 +9,17 @@ public interface RankSearchUtils {
     Long getTodayTextCharacterRank(String characterId);
     Long getImageCharacterRank(String characterId);
     Long getTodayImageCharacterRank(String characterId);
+    Long getEventCharacterRank(String characterId);
 
     void addTextCharacterToRank(TextCharacter character);
     void addImageCharacterToRank(ImageCharacter character);
+    void addEventCharacterToRank(ImageCharacter character);
 
     void deleteTextCharacterFromRank(TextCharacter character);
     void deleteImageCharacterFromRank(ImageCharacter character);
+    void deleteEventCharacterFromRank(ImageCharacter character);
 
     Optional<TextCharacter> matchTextCharacter(String characterId);
     Optional<ImageCharacter> matchImageCharacter(String characterId);
+    Optional<ImageCharacter> matchEventCharacter(String characterId);
 }
