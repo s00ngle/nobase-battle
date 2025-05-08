@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 다른 URL의 경우 백엔드 API를 통해 가져오기
-    const backendUrl = `http://13.125.105.148:8080/api/v1/characters/image/proxy?url=${encodeURIComponent(url)}`
+    const backendUrl = `https://nobasebattle.com/api/v1/characters/image/proxy?url=${encodeURIComponent(url)}`
     const response = await fetch(backendUrl)
 
     if (!response.ok) {
