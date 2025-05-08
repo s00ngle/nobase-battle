@@ -177,11 +177,7 @@ const CharacterList = ({
               onChange={(e) => setEditForm({ ...editForm, prompt: e.target.value })}
             />
           ) : (
-            <PaintingCanvas
-              key={canvasKey}
-              canvasRef={canvasRef}
-              initialImageUrl={editForm.imageUrl}
-            />
+            <PaintingCanvas key={canvasKey} canvasRef={canvasRef} />
           )}
         </div>
         <div className="flex justify-end gap-2">
