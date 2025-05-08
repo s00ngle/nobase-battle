@@ -10,10 +10,10 @@ import lombok.Getter;
 public class RegisterRequest {
 
     @NotBlank(message = "email은 null이거나 빈 문자열일 수 없습니다.")
-    @Size(max = 10, message = "email은 1자 이상 10자 이하여야 합니다.")
+    @Size(max = 30, message = "email은 1자 이상 30자 이하여야 합니다.")
     private String email;
 
     @NotBlank(message = "비밀번호는 null이거나 빈 문자열일 수 없습니다.")
-    @Size(max = 10, message = "비밀번호는 1자 이상 10자 이하여야 합니다.")
+    @Size(max = 30, message = "비밀번호는 1자 이상 30자 이하여야 합니다.")
     private String password;
 }
