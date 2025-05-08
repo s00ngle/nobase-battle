@@ -38,4 +38,9 @@ public class RankingController {
     public List<RankingCharacterResponse> getTodayImageRankers() {
         return rankingService.getTodayImageTopRankers(count);
     }
+
+    @GetMapping("/event")
+    public List<RankingCharacterResponse> getEventRankers() {
+        return rankingService.getEventTopCharacters(count);
+    }
 }
