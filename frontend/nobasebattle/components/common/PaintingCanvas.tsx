@@ -15,9 +15,13 @@ type Tool = 'pen' | 'eraser'
 
 interface PaintingCanvasProps {
   canvasRef?: React.RefObject<HTMLCanvasElement | null>
+  initialImage?: string
 }
 
-const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanvasRef }) => {
+const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
+  canvasRef: externalCanvasRef,
+  initialImage,
+}) => {
   const internalCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const canvasRefToUse = externalCanvasRef || internalCanvasRef
   const [isDrawing, setIsDrawing] = useState(false)
@@ -66,6 +70,94 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
 
     setCurrentHistoryIndex(currentHistoryIndex + 1)
   }, [canvasRefToUse, currentHistoryIndex])
+
+  // 초기 이미지 로드
+  useEffect(() => {
+    if (initialImage) {
+      const canvas = canvasRefToUse.current
+      if (!canvas) return
+
+      const context = canvas.getContext('2d', { willReadFrequently: true })
+      if (!context) return
+
+      // 이미지를 Blob으로 가져오기
+      fetch(`/api/v1/characters/image/proxy?url=${encodeURIComponent(initialImage)}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('이미지 로드 실패')
+          }
+          return response.blob()
+        })
+        .then((blob) => {
+          const img = new Image()
+          img.crossOrigin = 'anonymous'
+
+          img.onload = () => {
+            try {
+              const container = canvas.parentElement
+              if (container) {
+                // 컨테이너 크기에 맞게 캔버스 크기 설정
+                const containerWidth = container.clientWidth
+                const scale = containerWidth / img.width
+                const newWidth = containerWidth
+                const newHeight = img.height * scale
+
+                // 캔버스 크기 설정
+                canvas.width = newWidth
+                canvas.height = newHeight
+                setCanvasWidth(newWidth)
+                setCanvasHeight(newHeight)
+
+                // 이미지 그리기
+                context.clearRect(0, 0, canvas.width, canvas.height)
+                context.drawImage(img, 0, 0, newWidth, newHeight)
+
+                // 원본 이미지 상태 저장
+                const originalImageData = canvas.toDataURL('image/png')
+                // 빈 캔버스 상태 추가 (첫 번째 그리기를 위한 상태)
+                context.clearRect(0, 0, canvas.width, canvas.height)
+                context.drawImage(img, 0, 0, newWidth, newHeight)
+                const firstStateData = canvas.toDataURL('image/png')
+
+                // 두 상태를 모두 히스토리에 저장
+                historyRef.current = [originalImageData, firstStateData]
+                setCurrentHistoryIndex(1)
+              }
+            } catch (error) {
+              console.error('이미지 로드 중 오류 발생:', error)
+              // 이미지 로드 실패 시 빈 캔버스로 초기화
+              context.clearRect(0, 0, canvas.width, canvas.height)
+              const dataURL = canvas.toDataURL('image/png')
+              historyRef.current = [dataURL]
+              setCurrentHistoryIndex(0)
+            }
+          }
+
+          img.onerror = () => {
+            console.error('이미지 로드 실패')
+            // 이미지 로드 실패 시 빈 캔버스로 초기화
+            context.clearRect(0, 0, canvas.width, canvas.height)
+            const dataURL = canvas.toDataURL('image/png')
+            historyRef.current = [dataURL]
+            setCurrentHistoryIndex(0)
+          }
+
+          const objectUrl = URL.createObjectURL(blob)
+          img.src = objectUrl
+
+          // 메모리 누수 방지를 위해 URL 해제
+          return () => URL.revokeObjectURL(objectUrl)
+        })
+        .catch((error) => {
+          console.error('이미지 가져오기 실패:', error)
+          // 이미지 로드 실패 시 빈 캔버스로 초기화
+          context.clearRect(0, 0, canvas.width, canvas.height)
+          const dataURL = canvas.toDataURL('image/png')
+          historyRef.current = [dataURL]
+          setCurrentHistoryIndex(0)
+        })
+    }
+  }, [initialImage, canvasRefToUse])
 
   // 실행 취소 (Undo)
   const undo = useCallback(() => {
@@ -168,50 +260,6 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
     [canvasRefToUse],
   )
 
-  const erase = useCallback(
-    (position: { x: number; y: number }) => {
-      const canvas = canvasRefToUse.current
-      if (!canvas) return
-
-      const context = canvas.getContext('2d', { willReadFrequently: true })
-      if (!context) return
-
-      context.save()
-      context.globalCompositeOperation = 'destination-out'
-      context.beginPath()
-      context.arc(position.x, position.y, eraseSize / 2, 0, Math.PI * 2)
-      context.fill()
-      context.restore()
-    },
-    [eraseSize, canvasRefToUse],
-  )
-
-  const startDrawing = useCallback(
-    (event: ReactMouseEvent | ReactTouchEvent) => {
-      if ('touches' in event && event.cancelable) {
-        event.preventDefault()
-      }
-      setIsDrawing(true)
-      setShouldSaveOnStop(true)
-      const position = getCanvasCoordinates(event)
-      setLastPosition(position)
-
-      if (activeTool === 'eraser') {
-        erase(position)
-      }
-    },
-    [activeTool, getCanvasCoordinates, erase],
-  )
-
-  const stopDrawing = useCallback(() => {
-    if (isDrawing && shouldSaveOnStop) {
-      saveToHistory() // 그리기 완료 시 히스토리에 저장
-    }
-    setIsDrawing(false)
-    setShouldSaveOnStop(false)
-    setLastPosition(null)
-  }, [isDrawing, shouldSaveOnStop, saveToHistory])
-
   const draw = useCallback(
     (event: ReactMouseEvent | ReactTouchEvent) => {
       if ('touches' in event && event.cancelable) {
@@ -225,18 +273,77 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
       const currentPosition = getCanvasCoordinates(event)
 
       if (activeTool === 'pen') {
+        context.save()
         context.beginPath()
         context.moveTo(lastPosition.x, lastPosition.y)
         context.lineTo(currentPosition.x, currentPosition.y)
+        context.strokeStyle = strokeColor
+        context.lineWidth = lineWidth
+        context.lineCap = 'round'
+        context.lineJoin = 'round'
         context.stroke()
+        context.restore()
       } else if (activeTool === 'eraser') {
-        erase(currentPosition)
+        context.save()
+        context.globalCompositeOperation = 'destination-out'
+        context.beginPath()
+        context.arc(currentPosition.x, currentPosition.y, eraseSize / 2, 0, Math.PI * 2)
+        context.fill()
+        context.restore()
       }
 
       setLastPosition(currentPosition)
     },
-    [isDrawing, activeTool, lastPosition, getCanvasCoordinates, erase, canvasRefToUse],
+    [
+      isDrawing,
+      activeTool,
+      lastPosition,
+      getCanvasCoordinates,
+      strokeColor,
+      lineWidth,
+      eraseSize,
+      canvasRefToUse,
+    ],
   )
+
+  const startDrawing = useCallback(
+    (event: ReactMouseEvent | ReactTouchEvent) => {
+      if ('touches' in event && event.cancelable) {
+        event.preventDefault()
+      }
+      setIsDrawing(true)
+      setShouldSaveOnStop(true)
+      const position = getCanvasCoordinates(event)
+      setLastPosition(position)
+
+      if (activeTool === 'eraser') {
+        const context = canvasRefToUse.current?.getContext('2d', { willReadFrequently: true })
+        if (context) {
+          context.save()
+          context.globalCompositeOperation = 'destination-out'
+          context.beginPath()
+          context.arc(position.x, position.y, eraseSize / 2, 0, Math.PI * 2)
+          context.fill()
+          context.restore()
+        }
+      }
+    },
+    [activeTool, getCanvasCoordinates, eraseSize, canvasRefToUse],
+  )
+
+  const stopDrawing = useCallback(() => {
+    if (isDrawing && shouldSaveOnStop) {
+      const canvas = canvasRefToUse.current
+      if (canvas) {
+        const dataURL = canvas.toDataURL('image/png')
+        historyRef.current = [...historyRef.current.slice(0, currentHistoryIndex + 1), dataURL]
+        setCurrentHistoryIndex(currentHistoryIndex + 1)
+      }
+    }
+    setIsDrawing(false)
+    setShouldSaveOnStop(false)
+    setLastPosition(null)
+  }, [isDrawing, shouldSaveOnStop, currentHistoryIndex, canvasRefToUse])
 
   const clearCanvas = () => {
     const canvas = canvasRefToUse.current
@@ -319,7 +426,8 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
   useEffect(() => {
     const updateCanvasSize = () => {
       const container = canvasRefToUse.current?.parentElement
-      if (container) {
+      if (container && !initialImage) {
+        // initialImage가 없을 때만 크기 조정
         // 부모 요소의 크기에 맞게 설정
         const newWidth = container.clientWidth
         // 적절한 비율 유지 (예: 16:9)
@@ -345,7 +453,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
     window.addEventListener('resize', updateCanvasSize)
 
     return () => window.removeEventListener('resize', updateCanvasSize)
-  }, [canvasRefToUse])
+  }, [canvasRefToUse, initialImage])
 
   // 캔버스에 그리기 설정 업데이트
   useEffect(() => {
@@ -360,6 +468,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({ canvasRef: externalCanv
         context.lineWidth = lineWidth
         context.lineCap = 'round'
         context.strokeStyle = strokeColor
+        context.lineJoin = 'round' // 선 연결 부분을 부드럽게
       }
     }
   }, [strokeColor, lineWidth, dpr, canvasRefToUse])

@@ -252,7 +252,10 @@ const Character = () => {
               onChange={(e) => setEditForm({ ...editForm, prompt: e.target.value })}
             />
           ) : (
-            <PaintingCanvas canvasRef={canvasRef} />
+            <PaintingCanvas
+              canvasRef={canvasRef}
+              initialImage={(characterData as ICharacterResponse)?.imageUrl}
+            />
           )}
         </div>
         <div className="flex justify-end gap-2">
