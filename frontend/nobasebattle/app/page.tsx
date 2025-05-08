@@ -14,6 +14,7 @@ import {
 } from '@/utils/characters'
 import { useRouter } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import Invitation from '@/components/event/Invitation';
 
 type CharacterType = "text" | "image";
 
@@ -25,6 +26,9 @@ const MainPage = () => {
   const [error, setError] = useState<string | null>(null)
   const [loadedTypes, setLoadedTypes] = useState<Set<CharacterType>>(new Set())
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [isInvitationOpen, setIsInvitationOpen] = useState(true);
+  const [mounted, setMounted] = useState(false);
+
   const router = useRouter()
 
   const fetchCharacters = useCallback(async () => {
