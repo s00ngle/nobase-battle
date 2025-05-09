@@ -18,7 +18,7 @@ const Invitation = ({ onClose, onJoin, onHide }: InvitationProps) => {
           alt="close"
           width={24}
           height={24}
-          className="absolute top-4 right-4 cursor-pointer z-10"
+          className="absolute top-8 right-4 cursor-pointer z-10"
           onClick={onClose}
         />
         <Image
@@ -28,7 +28,7 @@ const Invitation = ({ onClose, onJoin, onHide }: InvitationProps) => {
           priority
           style={{ objectFit: 'contain' }}
         />
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%]">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%]">
           <Button
             text="투기장 참가하기"
             className={`w-full border-1 text-black cursor-pointer ${hover} ${transparentForm}`}
