@@ -86,6 +86,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
 }) => {
   const internalCanvasRef = useRef<HTMLCanvasElement | null>(null)
   const canvasRefToUse = externalCanvasRef || internalCanvasRef
+  const containerRef = useRef<HTMLDivElement>(null)
 
   // 색상 옵션
   const colorOptions = ['#000000', '#FF0000', '#0000FF', '#008000', '#800080', '#FFA500']
@@ -173,10 +174,39 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
     [setEraseSize],
   )
 
+  // 캔버스 크기 조정 및 내용 유지를 위한 useEffect
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      const canvas = canvasRefToUse.current
+      if (!canvas) return
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      // 현재 캔버스 내용 저장
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+
+      // 캔버스 크기 조정
+      canvas.width = canvasWidth
+      canvas.height = canvasHeight
+
+      // 저장된 내용 복원
+      ctx.putImageData(imageData, 0, 0)
+    })
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current)
+    }
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [canvasWidth, canvasHeight, canvasRefToUse])
+
   return (
     <div className="mt-4 flex flex-col gap-2">
       <span className="text-sm">캐릭터 그림</span>
-      <div className={`w-full rounded-xl p-4 ${transparentForm}`}>
+      <div ref={containerRef} className={`w-full rounded-xl p-4 ${transparentForm}`}>
         <div className="relative" style={{ touchAction: 'none', zIndex: 0 }}>
           <canvas
             ref={canvasRefToUse}
@@ -201,8 +231,10 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
                 if (!ctx) return
 
                 const rect = canvas.getBoundingClientRect()
-                const x = e.clientX - rect.left
-                const y = e.clientY - rect.top
+                const scaleX = canvas.width / rect.width
+                const scaleY = canvas.height / rect.height
+                const x = (e.clientX - rect.left) * scaleX
+                const y = (e.clientY - rect.top) * scaleY
 
                 // 현재 클릭한 위치의 픽셀 데이터 가져오기
                 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
