@@ -33,10 +33,13 @@ const EventPage = () => {
     fetchData()
   }, [])
 
+  const isEventEnded = eventData?.data.endTime && new Date(eventData.data.endTime) < new Date()
+
   return (
     <div className="w-full max-w-150 flex flex-col items-center gap-6">
       <EventTimer eventData={eventData} isLoading={isLoading} />
 
+      {!isEventEnded && <Button text="도전하기" onClick={() => router.push('/event/list')} />}
       <div className="text-2xl font-bold">&lt;{eventData?.data.text}&gt; 랭킹 현황</div>
       <RankingList
         rankingData={
@@ -50,7 +53,6 @@ const EventPage = () => {
         rankingType="image"
         canPractice={false}
       />
-      <Button text="도전하기" onClick={() => router.push('/event/list')} />
     </div>
   )
 }

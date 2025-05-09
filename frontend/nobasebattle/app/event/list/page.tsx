@@ -38,6 +38,18 @@ const EventCharacterListPage = () => {
     setSelectedCharacter(selectedCharacter === characterId ? null : characterId)
   }
 
+  if (!isLoading && characters.length === 0) {
+    return (
+      <div className="w-full max-w-150 flex flex-col items-center gap-6">
+        <h2 className="text-xl mb-4">이벤트 참여 캐릭터 선택</h2>
+        <div className="w-full p-8 text-center border rounded-lg bg-gray-50 dark:bg-gray-800">
+          <p className="text-lg mb-4">그림 캐릭터가 하나도 없습니다.</p>
+          <Button text="캐릭터 만들기" onClick={() => router.push('/create/image')} />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full max-w-150 flex flex-col items-center gap-6">
       <h2 className="text-xl mb-4">이벤트 참여 캐릭터 선택</h2>
