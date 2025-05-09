@@ -26,12 +26,12 @@ const EventTimer = ({ eventData, isLoading }: EventTimerProps) => {
         return
       }
 
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24))
+      // const days = Math.floor(distance / (1000 * 60 * 60 * 24))
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
       const seconds = Math.floor((distance % (1000 * 60)) / 1000)
 
-      setTimeLeft(`${days}일 ${hours}시간 ${minutes}분 ${seconds}초`)
+      setTimeLeft(`${hours}시간 ${minutes}분 ${seconds}초`)
     }
 
     updateTimer()
