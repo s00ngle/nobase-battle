@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Random;
 
 @Slf4j
@@ -234,47 +233,27 @@ public class BattleService {
             throw InvalidBattleModeException.EXCEPTION;
         }
 
-        List<ImageCharacter> potentialOpponents = imageCharacterRepository.findByUserIdNot(currentUserId);
-
-        if (potentialOpponents.isEmpty()) {
-            List<ImageCharacter> myOtherCharacters = imageCharacterRepository.findByUserIdAndIdNot(
-                    currentUserId, myCharacter.getId());
-
-            if (myOtherCharacters.isEmpty()) {
-                throw ImageCharacterNotFoundException.EXCEPTION;
-            }
-
-            return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
-        }
-
-        return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
-//        String myId = myCharacter.getId();
+//        List<ImageCharacter> potentialOpponents = imageCharacterRepository.findByUserIdNot(currentUserId);
 //
-//        return rankSearchUtils.matchImageCharacter(myId).orElseThrow(() -> OpponentRequiredException.EXCEPTION);
+//        if (potentialOpponents.isEmpty()) {
+//            List<ImageCharacter> myOtherCharacters = imageCharacterRepository.findByUserIdAndIdNot(
+//                    currentUserId, myCharacter.getId());
+//
+//            if (myOtherCharacters.isEmpty()) {
+//                throw ImageCharacterNotFoundException.EXCEPTION;
+//            }
+//
+//            return myOtherCharacters.get(random.nextInt(myOtherCharacters.size()));
+//        }
+//
+//        return potentialOpponents.get(random.nextInt(potentialOpponents.size()));
+        String myId = myCharacter.getId();
+
+        return rankSearchUtils.matchEventCharacter(myId).orElseThrow(() -> OpponentRequiredException.EXCEPTION);
 
     }
 
     private Battle calculateTextBattleResult(TextCharacter myCharacter, TextCharacter opponentCharacter) {
-
-//        int myElo = myCharacter.getEloScore() != null ? myCharacter.getEloScore() : 1000;
-//        int opponentElo = opponentCharacter.getEloScore() != null ? opponentCharacter.getEloScore() : 1000;
-//        int battleResult;
-//
-//        double expectedWinRate = 1.0 / (1.0 + Math.pow(10.0, (opponentElo - myElo) / 400.0));
-//
-//        double randomValue = random.nextDouble();
-//
-//        if (randomValue < expectedWinRate * 0.8) {
-//            battleResult = 1;  // 승리
-//        } else if (randomValue < expectedWinRate * 1.2) {
-//            battleResult = 0;  // 무승부
-//        } else {
-//            battleResult = -1; // 패배
-//        }
-//
-//        String battleLog = "Batte Log";
-
-        log.info("OpenAI API를 통해 이미지 배틀 결과 판정 시작");
 
         OpenAIService.BattleResult battleResult = openAIService.analyzeTextAndDetermineBattle(
                 myCharacter.getName(),
@@ -283,41 +262,15 @@ public class BattleService {
                 opponentCharacter.getPrompt()
         );
 
-        log.info("OpenAI API 배틀 결과: {}, 배틀 로그 길이: {}",
-                battleResult.getResult(),
-                battleResult.getBattleLog().length());
-
         return createAndSaveTextBattle(
                 myCharacter,
                 opponentCharacter,
                 battleResult.getResult(),
                 battleResult.getBattleLog()
         );
-
-//        return createAndSaveImageBattle(myCharacter, opponentCharacter, battleResult, battleLog);
     }
 
     private Battle calculateImageBattleResult(ImageCharacter myCharacter, ImageCharacter opponentCharacter) {
-
-//        int myElo = myCharacter.getEloScore() != null ? myCharacter.getEloScore() : 1000;
-//        int opponentElo = opponentCharacter.getEloScore() != null ? opponentCharacter.getEloScore() : 1000;
-//        int battleResult;
-//
-//        double expectedWinRate = 1.0 / (1.0 + Math.pow(10.0, (opponentElo - myElo) / 400.0));
-//
-//        double randomValue = random.nextDouble();
-//
-//        if (randomValue < expectedWinRate * 0.8) {
-//            battleResult = 1;  // 승리
-//        } else if (randomValue < expectedWinRate * 1.2) {
-//            battleResult = 0;  // 무승부
-//        } else {
-//            battleResult = -1; // 패배
-//        }
-//
-//        String battleLog = "Batte Log";
-
-        log.info("OpenAI API를 통해 이미지 배틀 결과 판정 시작");
 
         OpenAIService.BattleResult battleResult = openAIService.analyzeImagesAndDetermineBattle(
                 myCharacter.getName(),
@@ -325,10 +278,6 @@ public class BattleService {
                 opponentCharacter.getName(),
                 opponentCharacter.getImageUrl()
         );
-
-        log.info("OpenAI API 배틀 결과: {}, 배틀 로그 길이: {}",
-                battleResult.getResult(),
-                battleResult.getBattleLog().length());
 
         return createAndSaveImageBattle(
                 myCharacter,
@@ -336,31 +285,9 @@ public class BattleService {
                 battleResult.getResult(),
                 battleResult.getBattleLog()
         );
-
-//        return createAndSaveImageBattle(myCharacter, opponentCharacter, battleResult, battleLog);
     }
 
     private Battle calculateEventBattleResult(ImageCharacter myCharacter, ImageCharacter opponentCharacter) {
-
-//        int myElo = myCharacter.getEloScore() != null ? myCharacter.getEloScore() : 1000;
-//        int opponentElo = opponentCharacter.getEloScore() != null ? opponentCharacter.getEloScore() : 1000;
-//        int battleResult;
-//
-//        double expectedWinRate = 1.0 / (1.0 + Math.pow(10.0, (opponentElo - myElo) / 400.0));
-//
-//        double randomValue = random.nextDouble();
-//
-//        if (randomValue < expectedWinRate * 0.8) {
-//            battleResult = 1;  // 승리
-//        } else if (randomValue < expectedWinRate * 1.2) {
-//            battleResult = 0;  // 무승부
-//        } else {
-//            battleResult = -1; // 패배
-//        }
-//
-//        String battleLog = "Batte Log";
-
-        log.info("OpenAI API를 통해 이미지 배틀 결과 판정 시작");
 
         OpenAIService.BattleResult battleResult = openAIService.analyzeImagesAndDetermineBattle(
                 myCharacter.getName(),
@@ -368,10 +295,6 @@ public class BattleService {
                 opponentCharacter.getName(),
                 opponentCharacter.getImageUrl()
         );
-
-        log.info("OpenAI API 배틀 결과: {}, 배틀 로그 길이: {}",
-                battleResult.getResult(),
-                battleResult.getBattleLog().length());
 
         return createAndSaveEventBattle(
                 myCharacter,
@@ -379,33 +302,6 @@ public class BattleService {
                 battleResult.getResult(),
                 battleResult.getBattleLog()
         );
-
-//        return createAndSaveImageBattle(myCharacter, opponentCharacter, battleResult, battleLog);
-    }
-
-    private Battle calculateTextBattleResult(ImageCharacter myCharacter, ImageCharacter opponentCharacter) {
-
-        log.info("OpenAI API를 통해 x 배틀 결과 판정 시작");
-
-        OpenAIService.BattleResult battleResult = openAIService.analyzeImagesAndDetermineBattle(
-                myCharacter.getName(),
-                myCharacter.getImageUrl(),
-                opponentCharacter.getName(),
-                opponentCharacter.getImageUrl()
-        );
-
-        log.info("OpenAI API 배틀 결과: {}, 배틀 로그 길이: {}",
-                battleResult.getResult(),
-                battleResult.getBattleLog().length());
-
-        return createAndSaveImageBattle(
-                myCharacter,
-                opponentCharacter,
-                battleResult.getResult(),
-                battleResult.getBattleLog()
-        );
-
-//        return createAndSaveImageBattle(myCharacter, opponentCharacter, battleResult, battleLog);
     }
 
     private void updateCharactersStats(ImageCharacter myCharacter, ImageCharacter opponentCharacter, int result) {
@@ -541,7 +437,6 @@ public class BattleService {
     }
 
     private Battle createAndSaveImageBattle(ImageCharacter myCharacter, ImageCharacter opponentCharacter, int result, String battleLog) {
-
         Battle battle = Battle.builder()
                 .firstCharacterId(myCharacter.getId())
                 .secondCharacterId(opponentCharacter.getId())
