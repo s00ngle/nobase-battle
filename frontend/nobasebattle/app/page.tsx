@@ -15,6 +15,7 @@ import {
 import { useRouter } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import Invitation from '@/components/event/Invitation';
+import { sendGAEvent } from '@next/third-parties/google';
 
 type CharacterType = "text" | "image";
 
@@ -143,6 +144,11 @@ const MainPage = () => {
   const joinEvent = () => {
     router.push("/event");
     setIsInvitationOpen(false);
+    sendGAEvent("event", "join_event", {
+      event_category: "event",
+      event_label: "join_event",
+      value: 1
+    });
   };
 
   const HideTodayHandler = () => {
@@ -150,6 +156,11 @@ const MainPage = () => {
     today.setHours(23, 59, 59, 999);
     localStorage.setItem("hideInvitationUntil", today.getTime().toString());
     setIsInvitationOpen(false);
+    sendGAEvent("event", "hide_event", {
+      event_category: "event",
+      event_label: "hide_event",
+      value: 1
+    });
   };
 
   useEffect(() => {
