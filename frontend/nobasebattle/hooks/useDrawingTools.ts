@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { MouseEvent as ReactMouseEvent, TouchEvent as ReactTouchEvent } from 'react'
 
-type Tool = 'pen' | 'eraser'
+type Tool = 'pen' | 'eraser' | 'fill'
 
 interface UseDrawingToolsProps {
   canvasRef: React.RefObject<HTMLCanvasElement | null>

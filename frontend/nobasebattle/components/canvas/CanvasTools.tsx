@@ -1,6 +1,6 @@
 import { hover, transparentForm } from '@/styles/form'
 
-type Tool = 'pen' | 'eraser'
+type Tool = 'pen' | 'eraser' | 'fill'
 
 interface CanvasToolsProps {
   activeTool: Tool
@@ -29,6 +29,15 @@ export const CanvasTools = ({ activeTool, onToolChange }: CanvasToolsProps) => {
           onClick={() => onToolChange('eraser')}
         >
           지우개
+        </button>
+        <button
+          type="button"
+          className={`px-3 py-1 rounded cursor-pointer border ${transparentForm} ${hover} ${
+            activeTool === 'fill' ? 'bg-gray-500/20 dark:bg-white/20' : 'border-transparent'
+          }`}
+          onClick={() => onToolChange('fill')}
+        >
+          채우기
         </button>
       </div>
     </div>
