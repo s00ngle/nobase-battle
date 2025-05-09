@@ -290,7 +290,6 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
   // 모바일 터치 이벤트 처리
   const handleTouchStart = useCallback(
     (e: React.TouchEvent<HTMLCanvasElement>) => {
-      e.preventDefault()
       const touch = e.touches[0]
       const canvas = canvasRefToUse.current
       if (!canvas) return
@@ -321,7 +320,6 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
 
   const handleTouchMove = useCallback(
     (e: React.TouchEvent<HTMLCanvasElement>) => {
-      e.preventDefault()
       const touch = e.touches[0]
       draw({
         clientX: touch.clientX,
@@ -331,13 +329,9 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
     [draw],
   )
 
-  const handleTouchEnd = useCallback(
-    (e: React.TouchEvent<HTMLCanvasElement>) => {
-      e.preventDefault()
-      stopDrawing()
-    },
-    [stopDrawing],
-  )
+  const handleTouchEnd = useCallback(() => {
+    stopDrawing()
+  }, [stopDrawing])
 
   return (
     <div className="mt-4 flex flex-col gap-2">
