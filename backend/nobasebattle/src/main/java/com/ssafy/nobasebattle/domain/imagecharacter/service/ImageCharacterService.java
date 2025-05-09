@@ -65,12 +65,15 @@ public class ImageCharacterService {
         ImageCharacter imageCharacter = queryImageCharacter(imageCharacterId);
         imageCharacter.validUserIsHost(userId);
 
-        // S3에서 이미지 삭제
 //        if (imageCharacter.getImageUrl() != null && !imageCharacter.getImageUrl().isEmpty()) {
 //            s3Service.deleteFile(imageCharacter.getImageUrl());
 //        }
 
         rankSearchUtils.deleteImageCharacterFromRank(imageCharacter);
+
+        if(imageCharacter.getEventInfo() != null){
+            rankSearchUtils.deleteEventCharacterFromRank(imageCharacter);
+        }
 
         imageCharacterRepository.delete(imageCharacter);
     }
@@ -84,18 +87,15 @@ public class ImageCharacterService {
         imageCharacter.updateName(updateImageCharacterRequest);
 
         if (imageFile != null && !imageFile.isEmpty()) {
-            // 기존 이미지가 있으면 S3에서 삭제
 //            if (imageCharacter.getImageUrl() != null && !imageCharacter.getImageUrl().isEmpty()) {
 //                s3Service.deleteFile(imageCharacter.getImageUrl());
 //            }
 
-            // 새 이미지 업로드
             String imageUrl = s3Service.uploadFile(imageFile, IMAGE_DIRECTORY);
             imageCharacter.updateImageUrl(imageUrl);
         }
 
         imageCharacterRepository.save(imageCharacter);
-        insertRanking(imageCharacter);
         Long ranking = getRanking(imageCharacter);
         List<BadgeInfo> badges = badgeService.getBadgeInfos(imageCharacter.getBadges());
         return getImageCharacterResponse(imageCharacter, ranking, badges);
@@ -106,7 +106,6 @@ public class ImageCharacterService {
         String currentUserId = SecurityUtils.getCurrentUserId();
         ImageCharacter imageCharacter = queryImageCharacter(imageCharacterId);
         imageCharacter.validUserIsHost(currentUserId);
-        insertRanking(imageCharacter);
         Long ranking = getRanking(imageCharacter);
         List<BadgeInfo> badges = badgeService.getBadgeInfos(imageCharacter.getBadges());
         return getImageCharacterResponse(imageCharacter, ranking, badges);
@@ -117,7 +116,13 @@ public class ImageCharacterService {
         String currentUserId = SecurityUtils.getCurrentUserId();
         ImageCharacter imageCharacter = queryImageCharacter(imageCharacterId);
         imageCharacter.validUserIsHost(currentUserId);
-        insertEventRanking(imageCharacter);
+
+        if(imageCharacter.getEventInfo() == null){
+            EventInfo eventInfo = new EventInfo(eventService.getLatestEventEntity());
+            imageCharacter.updateEventInfo(eventInfo);
+            insertEventRanking(imageCharacter);
+        }
+
         Long ranking = getEventRanking(imageCharacter);
         List<BadgeInfo> badges = badgeService.getBadgeInfos(imageCharacter.getBadges());
         return getEventImageCharacterResponse(imageCharacter, ranking, badges);
@@ -158,11 +163,6 @@ public class ImageCharacterService {
     }
 
     private ImageCharacterResponse getEventImageCharacterResponse(ImageCharacter imageCharacter, Long ranking, List<BadgeInfo> badges) {
-        if(imageCharacter.getEventInfo() == null) {
-            EventInfo eventinfo = new EventInfo(eventService.getLatestEventEntity());
-            imageCharacter.updateEventInfo(eventinfo);
-        }
-
         return new ImageCharacterResponse(imageCharacter, imageCharacter.getEventInfo(), ranking, badges);
     }
 
@@ -171,7 +171,7 @@ public class ImageCharacterService {
     }
 
     private void insertEventRanking(ImageCharacter imageCharacter) {
-        rankSearchUtils.addImageCharacterToRank(imageCharacter);
+        rankSearchUtils.addEventCharacterToRank(imageCharacter);
     }
 
     private Long getRanking(ImageCharacter imageCharacter) {
@@ -187,12 +187,6 @@ public class ImageCharacterService {
 
     private Long getEventRanking(ImageCharacter imageCharacter) {
 
-        LocalDate today = LocalDate.now();
-        LocalDate createdDate = imageCharacter.getCreatedAt().toLocalDate();
-
-        if (today.equals(createdDate)) {
-            return rankSearchUtils.getTodayImageCharacterRank(imageCharacter.getId());
-        }
-        return rankSearchUtils.getImageCharacterRank(imageCharacter.getId());
+        return rankSearchUtils.getEventCharacterRank(imageCharacter.getId());
     }
 }
