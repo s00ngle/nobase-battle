@@ -9,7 +9,6 @@
     import lombok.RequiredArgsConstructor;
     import org.springframework.context.annotation.Bean;
     import org.springframework.context.annotation.Configuration;
-    import org.springframework.http.HttpMethod;
     import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
     import org.springframework.security.config.annotation.web.builders.HttpSecurity;
     import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,7 +44,7 @@
                     .authorizeHttpRequests((registry) ->
                             registry
                                     .requestMatchers("/api/v1/users/signup","/api/v1/users/anonymous","/actuator/**").permitAll()
-                                    .requestMatchers(HttpMethod.PATCH, "/api/v1/users/profile").hasRole("USER") //
+                                    //.requestMatchers(HttpMethod.PATCH, "/api/v1/users/profile").hasRole("USER") //
                                     .anyRequest().authenticated()
                                     //.anyRequest().authenticated()
                     );

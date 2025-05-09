@@ -11,6 +11,7 @@ import com.ssafy.nobasebattle.domain.user.presentation.dto.response.UsernameChec
 import com.ssafy.nobasebattle.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -32,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public AuthTokensResponse registerUser(@RequestBody RegisterRequest registerRequest) {
+    public AuthTokensResponse registerUser(@RequestBody @Validated RegisterRequest registerRequest) {
         return userService.registerUser(registerRequest);
     }
 
@@ -57,7 +58,7 @@ public class UserController {
     }
 
     @PatchMapping("/profile")
-    public UserResponse updateUserProfile(@RequestBody UpdateProfileRequest updateProfileRequest) {
+    public UserResponse updateUserProfile(@RequestBody @Validated UpdateProfileRequest updateProfileRequest) {
         return userService.updateUserProfile(updateProfileRequest);
     }
 

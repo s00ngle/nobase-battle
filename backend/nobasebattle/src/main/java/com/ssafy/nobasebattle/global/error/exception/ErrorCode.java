@@ -18,6 +18,8 @@ public enum ErrorCode {
     INVALID_BATTLE_MODE(400, "유효하지 않은 배틀 모드입니다."),
     OPPONENT_REQUIRED(400, "CHALLENGE 모드에서는 상대 캐릭터 ID가 필요합니다."),
     BATTLE_AGAINST_SELF(400, "자신의 캐릭터끼리 배틀할 수 없습니다."),
+    METHOD_NOT_ALLOWED(400, "http method가 올바르지 않습니다 확인해주세요"),
+    URL_INPUT_ERROR(400, "url이 올바르지 않습니다 확인해주세요"),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     INVALID_TOKEN(401, "토큰이 유효하지 않습니다."),
@@ -27,6 +29,7 @@ public enum ErrorCode {
     /* 403 UNAUTHORIZED : 인가되지 않은 사용자 */
     REFRESH_TOKEN_EXPIRED_TOKEN(HttpStatus.FORBIDDEN.value(),"refreshToken 만료되었습니다."),
     NECESSARY_LOGIN(403,"로그인이 반드시 필요한 서비스입니다"),
+    BATTLE_OUTSIDE_EVENT_TIME(403, "이벤트 시간 외에는 전투를 시작할 수 없습니다."),
 
     /* 404 NOT_FOUND : Resource를 찾을 수 없음 */
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
@@ -36,6 +39,7 @@ public enum ErrorCode {
     FILE_OVER_SIZE(404,  "FILE 크기가 10mb를 초과 하였습니다"),
     TEXT_CHARACTER_NOT_FOUND(404, "캐릭터를 찾을 수 없습니다"),
     IMAGE_CHARACTER_NOT_FOUND(404, "캐릭터를 찾을 수 없습니다"),
+    EVENT_NOT_FOUND(404, "이벤트가 없습니다"),
 
     /* 429 Too Many Requests : 시간 제한 내 중복 요청 */
     BATTLE_COOLDOWN(429, "10초 내에는 다시 배틀을 신청할 수 없습니다."),

@@ -2,6 +2,8 @@ package com.ssafy.nobasebattle.domain.imagecharacter.service;
 
 import com.ssafy.nobasebattle.domain.badge.presentation.dto.BadgeInfo;
 import com.ssafy.nobasebattle.domain.badge.service.BadgeService;
+import com.ssafy.nobasebattle.domain.battle.presentation.dto.EventInfo;
+import com.ssafy.nobasebattle.domain.battle.service.EventService;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.ImageCharacter;
 import com.ssafy.nobasebattle.domain.imagecharacter.domain.repository.ImageCharacterRepository;
 import com.ssafy.nobasebattle.domain.imagecharacter.exception.ImageCharacterNotFoundException;
@@ -34,6 +36,7 @@ public class ImageCharacterService {
     private final ImageCharacterRepository imageCharacterRepository;
     private final BadgeService badgeService;
     private final RankSearchUtils rankSearchUtils;
+    private final EventService eventService;
 
     private static final String IMAGE_DIRECTORY = "character-images";
 
@@ -62,12 +65,15 @@ public class ImageCharacterService {
         ImageCharacter imageCharacter = queryImageCharacter(imageCharacterId);
         imageCharacter.validUserIsHost(userId);
 
-        // S3에서 이미지 삭제
 //        if (imageCharacter.getImageUrl() != null && !imageCharacter.getImageUrl().isEmpty()) {
 //            s3Service.deleteFile(imageCharacter.getImageUrl());
 //        }
 
         rankSearchUtils.deleteImageCharacterFromRank(imageCharacter);
+
+        if(imageCharacter.getEventInfo() != null){
+            rankSearchUtils.deleteEventCharacterFromRank(imageCharacter);
+        }
 
         imageCharacterRepository.delete(imageCharacter);
     }
@@ -81,18 +87,15 @@ public class ImageCharacterService {
         imageCharacter.updateName(updateImageCharacterRequest);
 
         if (imageFile != null && !imageFile.isEmpty()) {
-            // 기존 이미지가 있으면 S3에서 삭제
 //            if (imageCharacter.getImageUrl() != null && !imageCharacter.getImageUrl().isEmpty()) {
 //                s3Service.deleteFile(imageCharacter.getImageUrl());
 //            }
 
-            // 새 이미지 업로드
             String imageUrl = s3Service.uploadFile(imageFile, IMAGE_DIRECTORY);
             imageCharacter.updateImageUrl(imageUrl);
         }
 
         imageCharacterRepository.save(imageCharacter);
-        insertRanking(imageCharacter);
         Long ranking = getRanking(imageCharacter);
         List<BadgeInfo> badges = badgeService.getBadgeInfos(imageCharacter.getBadges());
         return getImageCharacterResponse(imageCharacter, ranking, badges);
@@ -103,10 +106,26 @@ public class ImageCharacterService {
         String currentUserId = SecurityUtils.getCurrentUserId();
         ImageCharacter imageCharacter = queryImageCharacter(imageCharacterId);
         imageCharacter.validUserIsHost(currentUserId);
-        insertRanking(imageCharacter);
         Long ranking = getRanking(imageCharacter);
         List<BadgeInfo> badges = badgeService.getBadgeInfos(imageCharacter.getBadges());
         return getImageCharacterResponse(imageCharacter, ranking, badges);
+    }
+
+    public ImageCharacterResponse getEventImageCharacterDetail(String imageCharacterId) {
+
+        String currentUserId = SecurityUtils.getCurrentUserId();
+        ImageCharacter imageCharacter = queryImageCharacter(imageCharacterId);
+        imageCharacter.validUserIsHost(currentUserId);
+
+        if(imageCharacter.getEventInfo() == null){
+            EventInfo eventInfo = new EventInfo(eventService.getLatestEventEntity());
+            imageCharacter.updateEventInfo(eventInfo);
+            insertEventRanking(imageCharacter);
+        }
+
+        Long ranking = getEventRanking(imageCharacter);
+        List<BadgeInfo> badges = badgeService.getBadgeInfos(imageCharacter.getBadges());
+        return getEventImageCharacterResponse(imageCharacter, ranking, badges);
     }
 
     public List<ImageCharacterResponse> findAllUsersImageCharacter() {
@@ -143,8 +162,16 @@ public class ImageCharacterService {
         return new ImageCharacterResponse(imageCharacter, ranking, badges);
     }
 
+    private ImageCharacterResponse getEventImageCharacterResponse(ImageCharacter imageCharacter, Long ranking, List<BadgeInfo> badges) {
+        return new ImageCharacterResponse(imageCharacter, imageCharacter.getEventInfo(), ranking, badges);
+    }
+
     private void insertRanking(ImageCharacter imageCharacter) {
         rankSearchUtils.addImageCharacterToRank(imageCharacter);
+    }
+
+    private void insertEventRanking(ImageCharacter imageCharacter) {
+        rankSearchUtils.addEventCharacterToRank(imageCharacter);
     }
 
     private Long getRanking(ImageCharacter imageCharacter) {
@@ -156,5 +183,10 @@ public class ImageCharacterService {
             return rankSearchUtils.getTodayImageCharacterRank(imageCharacter.getId());
         }
         return rankSearchUtils.getImageCharacterRank(imageCharacter.getId());
+    }
+
+    private Long getEventRanking(ImageCharacter imageCharacter) {
+
+        return rankSearchUtils.getEventCharacterRank(imageCharacter.getId());
     }
 }

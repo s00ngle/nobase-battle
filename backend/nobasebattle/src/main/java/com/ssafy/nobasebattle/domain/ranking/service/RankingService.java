@@ -40,6 +40,7 @@ public class RankingService {
     private static final String TEXT_RANKING_PREFIX = "text_character:";
     private static final String IMAGE_RANKING_KEY = "image_character_ranking";
     private static final String IMAGE_RANKING_PREFIX = "image_character:";
+    private static final String EVENT_RANKING_KEY = "event_character_ranking";
 
     @EventListener(ApplicationReadyEvent.class)
     @Scheduled(cron = "0 0 0 * * *")
@@ -123,6 +124,10 @@ public class RankingService {
         return getFromRedisZSet(IMAGE_RANKING_KEY + ":" + LocalDate.now(), "IMAGE", count);
     }
 
+    public List<RankingCharacterResponse> getEventTopCharacters(int count) {
+        return getFromRedisZSet(EVENT_RANKING_KEY, "EVENT", count);
+    }
+
     private List<RankingCharacterResponse> getFromRedisZSet(String zsetKey, String type, int count) {
         Set<TypedTuple<Object>> top = redisTemplate.opsForZSet().reverseRangeWithScores(zsetKey, 0, count - 1);
 
@@ -169,6 +174,23 @@ public class RankingService {
                         .createdAt(image.getCreatedAt())
                         .updatedAt(image.getUpdatedAt())
                         .badges(badgeService.getBadgeInfos(image.getBadges()))
+                        .build();
+                } else if ("EVENT".equals(type) && obj instanceof ImageCharacter event) {
+                    User user = userRepository.findById(((ImageCharacter) obj).getUserId()).orElse(null);
+
+                    return RankingCharacterResponse.builder()
+                        .rank(rankCounter.getAndIncrement())
+                        .username(user.getNickname())
+                        .characterId(event.getId())
+                        .name(event.getName())
+                        .imageUrl(event.getImageUrl())
+                        .wins(event.getEventInfo().getWins())
+                        .losses(event.getEventInfo().getLosses())
+                        .draws(event.getEventInfo().getDraws())
+                        .eloScore(event.getEventInfo().getEloScore())
+                        .createdAt(event.getCreatedAt())
+                        .updatedAt(event.getUpdatedAt())
+                        .badges(badgeService.getBadgeInfos(event.getBadges()))
                         .build();
                 } else {
                     return null;

@@ -2,6 +2,7 @@ package com.ssafy.nobasebattle.domain.imagecharacter.domain;
 
 import com.ssafy.nobasebattle.domain.badge.domain.Badge;
 import com.ssafy.nobasebattle.domain.badge.presentation.dto.response.BadgeResponse;
+import com.ssafy.nobasebattle.domain.battle.presentation.dto.EventInfo;
 import com.ssafy.nobasebattle.domain.imagecharacter.presentation.dto.request.UpdateImageCharacterRequest;
 import com.ssafy.nobasebattle.domain.textcharacter.exception.NotTextCharacterHostException;
 import com.ssafy.nobasebattle.global.common.BaseEntity;
@@ -28,6 +29,7 @@ public class ImageCharacter extends BaseEntity {
     private Integer winStreak;
     private Integer loseStreak;
     private LocalDateTime lastBattleTime;
+    private EventInfo eventInfo;
     private List<BadgeResponse> badges;
 
     @Builder
@@ -71,6 +73,10 @@ public class ImageCharacter extends BaseEntity {
         this.eloScore = eloScore;
     }
 
+//    public void updateEventEloScore(Integer eloScore) {
+//        this.EventInfo = EventInfo.;
+//    }
+
     public void updateLastBattleTime() {
         this.lastBattleTime = LocalDateTime.now();
     }
@@ -88,6 +94,8 @@ public class ImageCharacter extends BaseEntity {
     public void resetLoseStreak() { this.loseStreak = 0; }
 
     public void resetWinStreak() { this.winStreak = 0; }
+
+    public void updateEventInfo(EventInfo eventInfo) { this.eventInfo = eventInfo; }
 
     public double calculateWinRate() {
         int w = wins != null ? wins : 0;
