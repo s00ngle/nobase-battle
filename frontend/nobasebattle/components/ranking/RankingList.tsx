@@ -7,18 +7,21 @@ import { useRouter } from 'next/navigation'
 interface IRankingList {
   rankingData: CharacterRankingApiResponse
   rankingType: 'text' | 'image'
+  canPractice?: boolean
 }
 
-const RankingList = ({ rankingData, rankingType }: IRankingList) => {
+const RankingList = ({ rankingData, rankingType, canPractice = true }: IRankingList) => {
   const router = useRouter()
   const data = rankingData?.data
 
   const handleRankerClick = (characterId: string, name: string, imageUrl = '') => {
-    const encodedName = encodeURIComponent(name)
-    const encodedImageUrl = encodeURIComponent(imageUrl || '')
-    router.push(
-      `/practice?opponentId=${characterId}&type=${rankingType}&name=${encodedName}&imageUrl=${encodedImageUrl}`,
-    )
+    if (canPractice) {
+      const encodedName = encodeURIComponent(name)
+      const encodedImageUrl = encodeURIComponent(imageUrl || '')
+      router.push(
+        `/practice?opponentId=${characterId}&type=${rankingType}&name=${encodedName}&imageUrl=${encodedImageUrl}`,
+      )
+    }
   }
 
   return (
@@ -28,7 +31,7 @@ const RankingList = ({ rankingData, rankingType }: IRankingList) => {
           <div
             key={item.characterId}
             onClick={() => handleRankerClick(item.characterId, item.name, item.imageUrl)}
-            className="cursor-pointer"
+            className={`${canPractice ? 'cursor-pointer' : 'cursor-default'}`}
           >
             <RankingItem
               rank={item.rank}
