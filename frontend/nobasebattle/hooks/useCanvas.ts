@@ -7,43 +7,24 @@ interface UseCanvasProps {
 }
 
 export const useCanvas = ({ canvasRef, initialImage }: UseCanvasProps) => {
-  const [canvasWidth, setCanvasWidth] = useState(400)
-  const [canvasHeight, setCanvasHeight] = useState(250)
   const historyRef = useRef<string[]>([])
   const [currentHistoryIndex, setCurrentHistoryIndex] = useState(-1)
   const isInitialImageLoaded = useRef(false)
 
-  // 캔버스 크기 업데이트
-  const updateCanvasSize = useCallback(() => {
-    const container = canvasRef.current?.parentElement
-    if (!container) return
-
-    const newWidth = container.clientWidth
-    const newHeight = Math.floor((newWidth * 9) / 16)
-
-    setCanvasWidth(newWidth)
-    setCanvasHeight(newHeight)
-
-    const canvas = canvasRef.current
-    if (canvas) {
-      canvas.width = newWidth
-      canvas.height = newHeight
-    }
-  }, [canvasRef])
-
   // 초기 이미지 로드
   useEffect(() => {
-    if (!initialImage || !canvasRef.current) return
+    if (!initialImage || !canvasRef.current) {
+      console.log('No initial image or canvas ref:', {
+        initialImage,
+        hasCanvas: !!canvasRef.current,
+      })
+      return
+    }
 
-    const canvas = canvasRef.current
-    const context = canvas.getContext('2d', { willReadFrequently: true })
-    if (!context) return
-
-    // 캔버스 크기 먼저 업데이트
-    updateCanvasSize()
-
+    console.log('Starting to load initial image:', initialImage)
     const img = new Image()
     img.crossOrigin = 'anonymous'
+
     img.onload = () => {
       const canvas = canvasRef.current
       if (!canvas) return
@@ -51,9 +32,42 @@ export const useCanvas = ({ canvasRef, initialImage }: UseCanvasProps) => {
       const context = canvas.getContext('2d', { willReadFrequently: true })
       if (!context) return
 
+      console.log('Image loaded successfully:', {
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight,
+        canvasWidth: canvas.width,
+        canvasHeight: canvas.height,
+      })
+
       // 이미지를 캔버스 크기에 맞게 그리기
       context.clearRect(0, 0, canvas.width, canvas.height)
-      context.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+      // 이미지 비율 유지하면서 캔버스에 맞추기
+      const imgRatio = img.naturalWidth / img.naturalHeight
+      const canvasRatio = canvas.width / canvas.height
+
+      let drawWidth = canvas.width
+      let drawHeight = canvas.height
+      let offsetX = 0
+      let offsetY = 0
+
+      if (imgRatio > canvasRatio) {
+        drawHeight = canvas.width / imgRatio
+        offsetY = (canvas.height - drawHeight) / 2
+      } else {
+        drawWidth = canvas.height * imgRatio
+        offsetX = (canvas.width - drawWidth) / 2
+      }
+
+      console.log('Drawing image with dimensions:', {
+        drawWidth,
+        drawHeight,
+        offsetX,
+        offsetY,
+      })
+
+      // 이미지 그리기
+      context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight)
 
       try {
         // 히스토리에 초기 상태 저장
@@ -61,25 +75,27 @@ export const useCanvas = ({ canvasRef, initialImage }: UseCanvasProps) => {
         historyRef.current = [dataURL]
         setCurrentHistoryIndex(0)
         isInitialImageLoaded.current = true
+        console.log('Initial image saved to history')
       } catch (error) {
         console.error('Failed to save initial image to history:', error)
       }
     }
+
     img.onerror = (error) => {
       console.error('Failed to load image:', error)
     }
 
     // 프록시를 통해 이미지 로드
     const proxyUrl = `/api/next/characters/image/proxy?url=${encodeURIComponent(initialImage)}`
+    console.log('Loading image from proxy URL:', proxyUrl)
     img.src = proxyUrl
-  }, [initialImage, canvasRef, updateCanvasSize])
 
-  // 윈도우 리사이즈 이벤트 처리
-  useEffect(() => {
-    updateCanvasSize()
-    window.addEventListener('resize', updateCanvasSize)
-    return () => window.removeEventListener('resize', updateCanvasSize)
-  }, [updateCanvasSize])
+    // 컴포넌트 언마운트 시 cleanup
+    return () => {
+      img.onload = null
+      img.onerror = null
+    }
+  }, [initialImage, canvasRef])
 
   const saveToHistory = useCallback(() => {
     const canvas = canvasRef.current
@@ -169,8 +185,6 @@ export const useCanvas = ({ canvasRef, initialImage }: UseCanvasProps) => {
   }, [canvasRef])
 
   return {
-    canvasWidth,
-    canvasHeight,
     currentHistoryIndex,
     historyRef,
     undo,

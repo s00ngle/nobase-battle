@@ -89,6 +89,69 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const lastImageDataRef = useRef<ImageData | null>(null)
 
+  // drawImage 함수 오버라이드
+  useEffect(() => {
+    const canvas = canvasRefToUse.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    if (!ctx) return
+
+    const originalDrawImage = ctx.drawImage
+    ctx.drawImage = (
+      image: CanvasImageSource,
+      dxOrSx: number,
+      dyOrSy: number,
+      dwOrSw?: number,
+      dhOrSh?: number,
+      dx?: number,
+      dy?: number,
+      dw?: number,
+      dh?: number,
+    ): void => {
+      // initialImage를 통한 이미지 로딩은 허용
+      if (image instanceof HTMLImageElement) {
+        try {
+          // 이미지가 완전히 로드되었는지 확인
+          if (image.complete && image.naturalWidth !== 0) {
+            console.log('Drawing image on canvas:', {
+              imageWidth: image.naturalWidth,
+              imageHeight: image.naturalHeight,
+              canvasWidth: canvas.width,
+              canvasHeight: canvas.height,
+            })
+            originalDrawImage.call(
+              ctx,
+              image,
+              dxOrSx,
+              dyOrSy,
+              dwOrSw || 0,
+              dhOrSh || 0,
+              dx || 0,
+              dy || 0,
+              dw || 0,
+              dh || 0,
+            )
+          } else {
+            console.warn('Image not fully loaded yet')
+          }
+        } catch (error) {
+          console.error('Failed to draw image:', error)
+        }
+        return
+      }
+
+      // 외부에서 직접 호출하는 경우 차단
+      alert('보안상의 이유로 외부 이미지 업로드가 차단되었습니다.')
+    }
+
+    return () => {
+      if (ctx) {
+        ctx.drawImage = originalDrawImage
+      }
+    }
+  }, [canvasRefToUse])
+
   // 색상 옵션
   const colorOptions = ['#000000', '#FF0000', '#0000FF', '#008000', '#800080', '#FFA500']
   // 선 굵기 옵션
@@ -96,17 +159,8 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
   // 지우개 크기 옵션
   const eraserSizeOptions = [10, 20, 30, 40]
 
-  const {
-    canvasWidth,
-    canvasHeight,
-    currentHistoryIndex,
-    historyRef,
-    undo,
-    redo,
-    clearCanvas,
-    saveCanvas,
-    saveToHistory,
-  } = useCanvas({ canvasRef: canvasRefToUse, initialImage })
+  const { currentHistoryIndex, historyRef, undo, redo, clearCanvas, saveCanvas, saveToHistory } =
+    useCanvas({ canvasRef: canvasRefToUse, initialImage })
 
   const {
     strokeColor,
@@ -177,20 +231,46 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
 
   // 캔버스 크기 조정 및 내용 유지를 위한 useEffect
   useEffect(() => {
+    const canvas = canvasRefToUse.current
+    if (!canvas) return
+
+    const container = containerRef.current
+    if (!container) return
+
+    const newWidth = container.clientWidth - 32 // padding 고려
+    const newHeight = Math.floor((newWidth * 9) / 16)
+
+    // 캔버스 크기 설정
+    canvas.width = newWidth
+    canvas.height = newHeight
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    if (!ctx) return
+
+    // 캔버스 초기화
+    ctx.fillStyle = 'white'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
     const resizeObserver = new ResizeObserver(() => {
       const canvas = canvasRefToUse.current
       if (!canvas) return
 
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
+      const container = containerRef.current
+      if (!container) return
+
+      const newWidth = container.clientWidth - 32
+      const newHeight = Math.floor((newWidth * 9) / 16)
 
       // 현재 캔버스 내용 저장
+      const ctx = canvas.getContext('2d', { willReadFrequently: true })
+      if (!ctx) return
+
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
       lastImageDataRef.current = imageData
 
       // 캔버스 크기 조정
-      canvas.width = canvasWidth
-      canvas.height = canvasHeight
+      canvas.width = newWidth
+      canvas.height = newHeight
 
       // 저장된 내용 복원
       if (lastImageDataRef.current) {
@@ -205,7 +285,7 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
     return () => {
       resizeObserver.disconnect()
     }
-  }, [canvasWidth, canvasHeight, canvasRefToUse])
+  }, [canvasRefToUse])
 
   // 모바일 터치 이벤트 처리
   const handleTouchStart = useCallback(
@@ -268,8 +348,8 @@ const PaintingCanvas: React.FC<PaintingCanvasProps> = ({
             ref={canvasRefToUse}
             className="bg-white rounded-xl touch-none"
             style={{
-              width: `${canvasWidth}px`,
-              height: `${canvasHeight}px`,
+              width: '100%',
+              height: 'auto',
               touchAction: 'none',
               position: 'relative',
               zIndex: 0,
