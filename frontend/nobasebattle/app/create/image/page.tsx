@@ -2,6 +2,7 @@
 
 import CreateCharacterForm from '@/components/character/CreateCharacterForm'
 import PaintingCanvas from '@/components/common/PaintingCanvas'
+import { useCharacterStore } from '@/store/characterStore'
 import { createImageCharacter } from '@/utils/characters'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
@@ -10,6 +11,7 @@ const CreatePage = () => {
   const [name, setName] = useState<string>('')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const router = useRouter()
+  const { setSelectedType } = useCharacterStore()
 
   const nameHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value)
@@ -44,6 +46,7 @@ const CreatePage = () => {
         image: blob,
       })
 
+      setSelectedType('image')
       alert('캐릭터 생성 완료')
       router.push('/')
     } catch (error) {

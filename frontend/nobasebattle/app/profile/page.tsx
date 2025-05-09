@@ -139,10 +139,15 @@ const Profile = () => {
                     label="닉네임"
                     value={nickname}
                     onChange={(e) => {
-                      setNickname(e.target.value)
-                      setIsNicknameAvailable(null)
+                      const value = e.target.value
+                      if (value.length <= 10) {
+                        setNickname(value)
+                        setIsNicknameAvailable(null)
+                      }
                     }}
+                    maxLength={10}
                   />
+                  <span className="text-sm text-gray-500 text-right">{nickname.length}/10</span>
                 </div>
                 <Button
                   text={isCheckingNickname ? '확인중...' : '중복확인'}
