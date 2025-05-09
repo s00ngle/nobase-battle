@@ -29,6 +29,7 @@ public enum ErrorCode {
     /* 403 UNAUTHORIZED : 인가되지 않은 사용자 */
     REFRESH_TOKEN_EXPIRED_TOKEN(HttpStatus.FORBIDDEN.value(),"refreshToken 만료되었습니다."),
     NECESSARY_LOGIN(403,"로그인이 반드시 필요한 서비스입니다"),
+    BATTLE_OUTSIDE_EVENT_TIME(403, "이벤트 시간 외에는 전투를 시작할 수 없습니다."),
 
     /* 404 NOT_FOUND : Resource를 찾을 수 없음 */
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),

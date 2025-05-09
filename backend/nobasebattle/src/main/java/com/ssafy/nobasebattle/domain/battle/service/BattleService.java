@@ -2,11 +2,9 @@ package com.ssafy.nobasebattle.domain.battle.service;
 
 import com.ssafy.nobasebattle.domain.badge.service.BadgeService;
 import com.ssafy.nobasebattle.domain.battle.domain.Battle;
+import com.ssafy.nobasebattle.domain.battle.domain.Event;
 import com.ssafy.nobasebattle.domain.battle.domain.repository.BattleRepository;
-import com.ssafy.nobasebattle.domain.battle.exception.BattleAgainstSelfException;
-import com.ssafy.nobasebattle.domain.battle.exception.BattleCooldownException;
-import com.ssafy.nobasebattle.domain.battle.exception.InvalidBattleModeException;
-import com.ssafy.nobasebattle.domain.battle.exception.OpponentRequiredException;
+import com.ssafy.nobasebattle.domain.battle.exception.*;
 import com.ssafy.nobasebattle.domain.battle.presentation.dto.EventInfo;
 import com.ssafy.nobasebattle.domain.battle.presentation.dto.request.BattleRequest;
 import com.ssafy.nobasebattle.domain.battle.presentation.dto.response.BattleResponse;
@@ -89,6 +87,8 @@ public class BattleService {
         String currentUserId = SecurityUtils.getCurrentUserId();
 
         ImageCharacter myCharacter = findAndValidateImageCharacter(battleRequest.getCharacterId(), currentUserId);
+
+        checkEventTime(eventService.getLatestEventEntity());
 
         ImageCharacter opponentCharacter = selectEventOpponent(battleRequest, myCharacter, currentUserId);
 
@@ -472,5 +472,14 @@ public class BattleService {
                 .build();
 
         return battleRepository.save(battle);
+    }
+
+    private void checkEventTime(Event event) {
+
+        LocalDateTime now = LocalDateTime.now();
+
+        if (event == null || now.isBefore(event.getStartTime()) || now.isAfter(event.getEndTime())) {
+            throw BattleOutsideEventTimeException.EXCEPTION;
+        }
     }
 }
