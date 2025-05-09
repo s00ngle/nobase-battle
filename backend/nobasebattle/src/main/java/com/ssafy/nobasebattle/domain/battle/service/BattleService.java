@@ -97,7 +97,7 @@ public class BattleService {
         myCharacter.updateLastBattleTime();
 
         updateEventCharactersStats(myCharacter, opponentCharacter, battle.getResult());
-//        rankSearchUtils.addImageCharacterToRank(myCharacter);
+        rankSearchUtils.addEventCharacterToRank(myCharacter);
 
         return new BattleResponse(battle, myCharacter, opponentCharacter);
     }
