@@ -1,10 +1,11 @@
-"use client";
+'use client'
 
 import { ErrorBoundary } from '@/app/components/common/ErrorBoundary'
 import type { ImageCharacter, TextCharacter } from '@/app/types/character'
 import CharacterList from '@/components/character/CharacterList'
 import CharacterTypeToggle from '@/components/character/CharacterTypeToggle'
 import Button from '@/components/common/Button'
+import Invitation from '@/components/event/Invitation'
 import { useCharacterStore } from '@/store/characterStore'
 import {
   fetchImageCharacters,
@@ -12,12 +13,12 @@ import {
   updateImageCharacter,
   updateTextCharacter,
 } from '@/utils/characters'
+import { getLatestEvent } from '@/utils/event'
+import { sendGAEvent } from '@next/third-parties/google'
 import { useRouter } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
-import Invitation from '@/components/event/Invitation';
-import { sendGAEvent } from '@next/third-parties/google';
 
-type CharacterType = "text" | "image";
+type CharacterType = 'text' | 'image'
 
 const MainPage = () => {
   const { selectedType, setSelectedType } = useCharacterStore()
@@ -27,34 +28,34 @@ const MainPage = () => {
   const [error, setError] = useState<string | null>(null)
   const [loadedTypes, setLoadedTypes] = useState<Set<CharacterType>>(new Set())
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [isInvitationOpen, setIsInvitationOpen] = useState(true);
-  const [mounted, setMounted] = useState(false);
+  const [isInvitationOpen, setIsInvitationOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   const router = useRouter()
 
   const fetchCharacters = useCallback(async () => {
     try {
-      setIsLoading(true);
-      if (selectedType === "text") {
-        const characters = await fetchTextCharacters();
-        setTextCharacters(characters);
+      setIsLoading(true)
+      if (selectedType === 'text') {
+        const characters = await fetchTextCharacters()
+        setTextCharacters(characters)
       } else {
-        const characters = await fetchImageCharacters();
-        setImageCharacters(characters);
+        const characters = await fetchImageCharacters()
+        setImageCharacters(characters)
       }
-      setError(null);
-      setLoadedTypes((prev) => new Set(prev).add(selectedType));
+      setError(null)
+      setLoadedTypes((prev) => new Set(prev).add(selectedType))
     } catch (err) {
-      console.error("Error fetching characters:", err);
-      setError("캐릭터 목록을 불러오는 중 오류가 발생했습니다.");
+      console.error('Error fetching characters:', err)
+      setError('캐릭터 목록을 불러오는 중 오류가 발생했습니다.')
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  }, [selectedType]);
+  }, [selectedType])
 
   useEffect(() => {
-    fetchCharacters();
-  }, [fetchCharacters]);
+    fetchCharacters()
+  }, [fetchCharacters])
 
   const handleClickText = useCallback(() => {
     setEditingId(null)
@@ -67,8 +68,8 @@ const MainPage = () => {
   }, [setSelectedType])
 
   const currentCharacters = useMemo(() => {
-    return selectedType === "text" ? textCharacters : imageCharacters;
-  }, [selectedType, textCharacters, imageCharacters]);
+    return selectedType === 'text' ? textCharacters : imageCharacters
+  }, [selectedType, textCharacters, imageCharacters])
 
   const handleUpdate = useCallback(
     async (id: string, data: { name: string; prompt?: string; image?: Blob }) => {
@@ -124,54 +125,70 @@ const MainPage = () => {
         onChangeImage={handleClickImage}
       />
     ),
-    [selectedType, handleClickText, handleClickImage]
-  );
+    [selectedType, handleClickText, handleClickImage],
+  )
 
   const handleCreateClick = useCallback(
     (type: CharacterType) => {
-      const characterCount =
-        type === "text" ? textCharacters.length : imageCharacters.length;
+      const characterCount = type === 'text' ? textCharacters.length : imageCharacters.length
       if (characterCount >= 5) {
-        alert("캐릭터는 최대 5개까지만 생성할 수 있습니다.");
-        return;
+        alert('캐릭터는 최대 5개까지만 생성할 수 있습니다.')
+        return
       }
-      setSelectedType(type);
-      router.push(`/create/${type}`);
+      setSelectedType(type)
+      router.push(`/create/${type}`)
     },
-    [router, textCharacters.length, imageCharacters.length, setSelectedType]
-  );
+    [router, textCharacters.length, imageCharacters.length, setSelectedType],
+  )
 
   const joinEvent = () => {
-    router.push("/event");
-    setIsInvitationOpen(false);
-    sendGAEvent("event", "join_event", {
-      event_category: "event",
-      event_label: "join_event",
-      value: 1
-    });
-  };
+    router.push('/event')
+    setIsInvitationOpen(false)
+    sendGAEvent('event', 'join_event', {
+      event_category: 'event',
+      event_label: 'join_event',
+      value: 1,
+    })
+  }
 
   const HideTodayHandler = () => {
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    localStorage.setItem("hideInvitationUntil", today.getTime().toString());
-    setIsInvitationOpen(false);
-    sendGAEvent("event", "hide_event", {
-      event_category: "event",
-      event_label: "hide_event",
-      value: 1
-    });
-  };
+    const today = new Date()
+    today.setHours(23, 59, 59, 999)
+    localStorage.setItem('hideInvitationUntil', today.getTime().toString())
+    setIsInvitationOpen(false)
+    sendGAEvent('event', 'hide_event', {
+      event_category: 'event',
+      event_label: 'hide_event',
+      value: 1,
+    })
+  }
 
   useEffect(() => {
-    setMounted(true);
-    const hideUntil = localStorage.getItem("hideInvitationUntil");
-    if (hideUntil && Number(hideUntil) > Date.now()) {
-      setIsInvitationOpen(false);
-    }
-  }, []);
+    const checkEventStatus = async () => {
+      try {
+        const event = await getLatestEvent()
+        const now = new Date()
+        const endTime = new Date(event.data.endTime)
 
-  if (!mounted) return null;
+        if (now <= endTime) {
+          const hideUntil = localStorage.getItem('hideInvitationUntil')
+          if (!hideUntil || Number(hideUntil) <= Date.now()) {
+            setIsInvitationOpen(true)
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching event:', error)
+      }
+    }
+
+    checkEventStatus()
+  }, [])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
 
   return (
     <div className="w-full max-w-150 flex flex-col items-center gap-6">
@@ -191,21 +208,15 @@ const MainPage = () => {
       </ErrorBoundary>
 
       <div className="flex flex-col gap-3">
-        {selectedType === "text" && (
-          <Button
-            text="텍스트로 캐릭터 생성"
-            onClick={() => handleCreateClick("text")}
-          />
+        {selectedType === 'text' && (
+          <Button text="텍스트로 캐릭터 생성" onClick={() => handleCreateClick('text')} />
         )}
-        {selectedType === "image" && (
-          <Button
-            text="그림으로 캐릭터 생성"
-            onClick={() => handleCreateClick("image")}
-          />
+        {selectedType === 'image' && (
+          <Button text="그림으로 캐릭터 생성" onClick={() => handleCreateClick('image')} />
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default MainPage;
+export default MainPage
