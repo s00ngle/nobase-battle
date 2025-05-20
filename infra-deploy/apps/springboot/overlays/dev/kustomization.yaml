@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+images:
+  - name: springboot
+    newName: registry.gitlab.com/s12-final/s12p31b206/springboot
+    newTag: dev-0
