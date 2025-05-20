@@ -23,6 +23,6 @@ spec:
           image: springboot  # 이건 kustomize edit set image로 바뀜
           ports:
             - containerPort: 8080
-      envFrom:
-        - configMapRef:
-            name: spring-env
+          envFrom:
+            - configMapRef:
+                name: spring-env
