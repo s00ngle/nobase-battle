@@ -2,7 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../../base
+  - spring-env.yaml
+
+patchesStrategicMerge:
+  - patch-volume.yaml
 images:
   - name: springboot
-    newName: registry.gitlab.com/s12-final/s12p31b206/springboot
+    newName: docker.io/unrequiredone/nobasebattle
     newTag: dev-0
