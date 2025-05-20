@@ -7,10 +7,6 @@ spec:
     spec:
       containers:
         - name: springboot
-          volumeMounts:
-            - name: spring-env
-              mountPath: /app/.env
-      volumes:
-        - name: spring-env
-          configMap:
-            name: spring-env
+          envFrom:
+            - configMapRef:
+                name: spring-env
