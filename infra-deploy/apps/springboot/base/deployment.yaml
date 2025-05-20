@@ -14,8 +14,12 @@ spec:
       labels:
         app: springboot
     spec:
+      imagePullSecrets:
+        - name: gitlab-registry-auth
+      nodeSelector:
+        worker: worker1
       containers:
         - name: springboot
-          image: springboot  # 이건 kustomize edit set image로 바뀜
+          image: springboot
           ports:
             - containerPort: 8080
