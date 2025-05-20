@@ -10,7 +10,6 @@ spec:
           volumeMounts:
             - name: spring-env
               mountPath: /app/.env
-              subPath: .env
       volumes:
         - name: spring-env
           configMap:
