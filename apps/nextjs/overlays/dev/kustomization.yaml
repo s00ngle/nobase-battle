@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+images:
+  - name: nextjs
+    newName: docker.io/unrequiredone/nobasebattle
+    newTag: fdev-0
