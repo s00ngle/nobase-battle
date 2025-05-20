@@ -15,11 +15,11 @@ spec:
         app: springboot
     spec:
       imagePullSecrets:
-        - name: gitlab-registry-auth
+        - name: dockerhub-auth
       nodeSelector:
         worker: worker1
       containers:
         - name: springboot
-          image: springboot
+          image: springboot  # 이건 kustomize edit set image로 바뀜
           ports:
             - containerPort: 8080
