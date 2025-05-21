@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot
+spec:
+  template:
+    spec:
+      containers:
+        - name: springboot
+          envFrom:
+            - configMapRef:
+                name: spring-env
