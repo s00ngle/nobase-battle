@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: k8m
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      securityContext:
+        fsGroup: 988
+      nodeName: ip-172-26-13-88
+      containers:
+        - name: jenkins
+          image: jenkins/jenkins:lts
+          ports:
+            - containerPort: 8080
+            - containerPort: 50000
+          volumeMounts:
+            - name: jenkins-home
+              mountPath: /var/jenkins_home
+            - name: docker-sock
+              mountPath: /var/run/docker.sock
+            - name: docker-bin
+              mountPath: /usr/bin/docker
+            - name: kustomize-bin
+              mountPath: /usr/local/bin/kustomize
+            - name: kubectl-bin
+              mountPath: /usr/bin/kubectl
+      volumes:
+        - name: jenkins-home
+          persistentVolumeClaim:
+            claimName: jenkins-pvc
+        - name: docker-sock
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+        - name: docker-bin
+          hostPath:
+            path: /usr/bin/docker
+            type: File
+        - name: kustomize-bin
+          hostPath:
+            path: /usr/local/bin/kustomize
+            type: File
+        - name: kubectl-bin
+          hostPath:
+            path: /usr/bin/kubectl
+            type: File
