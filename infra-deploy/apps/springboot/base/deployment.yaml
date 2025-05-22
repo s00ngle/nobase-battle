@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot
+  labels:
+    app: springboot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot
+  template:
+    metadata:
+      labels:
+        app: springboot
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      imagePullSecrets:
+        - name: dockerhub-auth
+      nodeSelector:
+        worker: worker1
+      containers:
+        - name: springboot
+          image: springboot  # 이건 kustomize edit set image로 바뀜
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: spring-env
