@@ -149,11 +149,12 @@
 ## 기술 스택
 
 ### Frontend
-- React
-- JavaScript
+- Next.js
+- TypeScript
+- TailwindCSS
+- Zustand
 - HTML/CSS
-- Axios
-- AWS S3(이미지 저장)
+- Axios 개조 -> lux
 - Google Analytics
 
 ### Backend
@@ -190,9 +191,9 @@
 ## 개발 환경
 
 ### Frontend
+- Next.js
+- TypeScript
 - Node.js
-- React
-- JavaScript
 
 ### Backend
 - Java 17
