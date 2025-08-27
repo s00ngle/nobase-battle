@@ -1,4 +1,5 @@
 # 무근본배틀 (NoBaseBattle)
+<img width="1292" height="243" alt="image" src="https://github.com/user-attachments/assets/44c5d712-ee79-4e10-be03-73d18e87b817" />
 
 > AI 프롬프팅과 이미지 생성을 활용한 상상력으로 싸우는 캐릭터 배틀 게임 서비스
 
@@ -167,7 +168,7 @@
 <br />
 
 ## 시스템 아키텍처
-
+<img width="2048" height="1152" alt="image" src="https://github.com/user-attachments/assets/dfae8a3a-9319-442e-b3ea-ce599e4e1ecb" />
 <!-- 시스템 아키텍처 이미지가 있다면 추가 -->
 <!-- <img src="system_architecture.png" alt="시스템 아키텍처" width="800px"> -->
 
@@ -214,6 +215,47 @@
 
 ## 주요 화면
 
+### 메인 페이지
+<img src="https://github.com/user-attachments/assets/45cb03fa-694d-4201-93bb-ffcb2c837b14" width="200" />
+<img src="https://github.com/user-attachments/assets/34d98ba6-5c6b-4324-847f-c5f97a5640b4" width="200" />
+
+### 캐릭터 생성
+<img src="https://github.com/user-attachments/assets/a9a50f91-18fd-4e12-b93e-26b1190920cc" width="200" />
+<img src="https://github.com/user-attachments/assets/23a8e89f-405e-41d8-970a-b02c9bc8efbd" width="200" />
+<img src="https://github.com/user-attachments/assets/30ee01c4-8136-4a64-8d59-ec170c884ad3" width="200" />
+
+### 캐릭터 목록 & 상세
+<img src="https://github.com/user-attachments/assets/139ee246-d95c-4b5a-b9fe-a8da1f61d35a" width="200" />
+<img src="https://github.com/user-attachments/assets/e4e5c350-2071-44c6-b9b5-bf6bb9c0477f" width="200" />
+<img src="https://github.com/user-attachments/assets/97e98e63-83fb-40a0-989e-78a7d17c4b08" width="200" />
+
+### 배틀 화면
+<img src="https://github.com/user-attachments/assets/06f7df1c-8128-4ce8-a1e0-85f3eea6358c" width="200" />
+<img src="https://github.com/user-attachments/assets/b491b9b5-40c2-4b0e-b5b2-9e94a6bac869" width="200" />
+
+### 랭킹
+<img src="https://github.com/user-attachments/assets/e3d828a0-2112-46ac-aaba-501db9b5fd11" width="200" />
+
+
+
+<!--
+<img width="402" height="874" alt="메인 페이지" src="https://github.com/user-attachments/assets/45cb03fa-694d-4201-93bb-ffcb2c837b14" />
+<img width="402" height="874" alt="메인 페이지-1" src="https://github.com/user-attachments/assets/34d98ba6-5c6b-4324-847f-c5f97a5640b4" />
+<img width="402" height="874" alt="캐릭터 생성" src="https://github.com/user-attachments/assets/a9a50f91-18fd-4e12-b93e-26b1190920cc" />
+<img width="402" height="874" alt="텍스트 캐릭터 생성" src="https://github.com/user-attachments/assets/23a8e89f-405e-41d8-970a-b02c9bc8efbd" />
+<img width="402" height="874" alt="이미지 캐릭터 생성" src="https://github.com/user-attachments/assets/30ee01c4-8136-4a64-8d59-ec170c884ad3" />
+<img width="402" height="874" alt="캐릭터 목록" src="https://github.com/user-attachments/assets/139ee246-d95c-4b5a-b9fe-a8da1f61d35a" />
+<img width="402" height="874" alt="텍스트 캐릭터 상세" src="https://github.com/user-attachments/assets/e4e5c350-2071-44c6-b9b5-bf6bb9c0477f" />
+<img width="402" height="874" alt="그림 캐릭터 상세" src="https://github.com/user-attachments/assets/97e98e63-83fb-40a0-989e-78a7d17c4b08" />
+<img width="402" height="874" alt="텍스트 캐릭터 배틀" src="https://github.com/user-attachments/assets/06f7df1c-8128-4ce8-a1e0-85f3eea6358c" />
+<img width="402" height="874" alt="그림 캐릭터 배틀" src="https://github.com/user-attachments/assets/b491b9b5-40c2-4b0e-b5b2-9e94a6bac869" />
+<img width="402" height="874" alt="랭킹" src="https://github.com/user-attachments/assets/e3d828a0-2112-46ac-aaba-501db9b5fd11" />
+-->
+
+
+
+
+
 <!-- <div align="center">
   <img src="screenshot1.png" alt="로그인 화면" width="45%">
   <img src="screenshot2.png" alt="캐릭터 생성 화면" width="45%">
@@ -240,3 +282,11 @@
 1. **서버 분리**: 개발 서버와 배포 서버 분리를 통한 안정적인 서비스 제공
 2. **모니터링 시스템**: 독립적인 서버 모니터링 시스템 구축
 3. **컨테이너 오케스트레이션**: Kubernetes를 활용한 확장성 있는 인프라 구성
+
+
+## 컴포넌트 설계
+<img width="2083" height="2369" alt="컴포넌트" src="https://github.com/user-attachments/assets/5ccddb41-1188-4391-839d-12dc44d2cddf" />
+
+
+## ERD
+<img width="1903" height="1097" alt="image" src="https://github.com/user-attachments/assets/68f7d8a9-a729-4088-abb9-18f90c0203fe" />
