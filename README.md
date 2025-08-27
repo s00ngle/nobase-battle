@@ -50,25 +50,45 @@
 <table>
   <tr>
     <td align="center"><b>이해수</b></td>
-    <td align="center"><b>김찬우</b></td>
-    <td align="center"><b>신동운</b></td>
-    <td align="center"><b>상승규</b></td>
     <td align="center"><b>김용순</b></td>
     <td align="center"><b>김선명</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="https://github.com/identicons/jasonlong.png" width="100px;" alt=""/></td>
-    <td align="center"><img src="https://github.com/identicons/jasonlong.png" width="100px;" alt=""/></td>
-    <td align="center"><img src="https://github.com/identicons/jasonlong.png" width="100px;" alt=""/></td>
-    <td align="center"><img src="https://github.com/identicons/jasonlong.png" width="100px;" alt=""/></td>
-    <td align="center"><img src="https://github.com/identicons/jasonlong.png" width="100px;" alt=""/></td>
-    <td align="center"><img src="https://github.com/identicons/jasonlong.png" width="100px;" alt=""/></td>
+    <td align="center"><img src="https://github.com/haesoooo.png" width="100px;" alt=""/></td>
+    <td align="center"><img src="https://github.com/s00ngle.png" width="100px;" alt=""/></td>
+    <td align="center"><img src="https://github.com/kimsnmyng.png" width="100px;" alt=""/></td>
   </tr>
   <tr>
     <td align="center">
       팀장 & PM<br />
       발표 및 프롬프팅
     </td>
+    <td align="center">
+      프론트엔드<br />
+      컴포넌트 설계 및 디자인<br />
+      그림 캐릭터<br />
+      로그인 및 배틀<br />
+      이벤트
+    </td>
+    <td align="center">
+      프론트엔드<br />
+      텍스트 캐릭터<br />
+      랭킹<br />
+      이벤트 모달창
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center"><b>김찬우</b></td>
+    <td align="center"><b>신동운</b></td>
+    <td align="center"><b>상승규</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="https://github.com/chanu2.png" width="100px;" alt=""/></td>
+    <td align="center"><img src="https://github.com/dwshin-dev.png" width="100px;" alt=""/></td>
+    <td align="center"><img src="https://github.com/AhihimanGD.png" width="100px;" alt=""/></td>
+  </tr>
+  <tr>
     <td align="center">
       백엔드<br />
       유저 인증인가<br />
@@ -90,24 +110,9 @@
       랭킹 시스템<br />
       Redis DB 관리
     </td>
-    <td align="center">
-      프론트엔드<br />
-      컴포넌트 설계<br />
-      페이지 디자인<br />
-      그림 캐릭터<br />
-      로그인<br />
-      캐릭터 배틀 기능<br />
-      이벤트<br />
-      프록시 ID 연결
-    </td>
-    <td align="center">
-      프론트엔드<br />
-      텍스트 캐릭터<br />
-      랭킹<br />
-      이벤트 모달창
-    </td>
   </tr>
 </table>
+
 
 <br />
 
